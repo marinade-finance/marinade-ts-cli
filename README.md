@@ -1,7 +1,7 @@
 # marinade-ts-cli
-Marinade typescript based client
+Marinade typescript based client.
 
-# Sample application reading Marinade state from typescript/javascript
+Sample application reading Marinade state from typescript/javascript
 
 ## Quickstart
 
