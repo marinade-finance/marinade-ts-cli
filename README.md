@@ -6,8 +6,9 @@ Marinade typescript based client
 ## Quickstart
 
 ```
-gti clone marinade-ts-cli
+gti clone https://github.com/marinade-finance/marinade-ts-cli.git
 cd marinade-ts-cli
+npm install
 npm run build
 node dist/marinade show
 ```
