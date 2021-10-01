@@ -63,4 +63,11 @@ export async function show(): Promise<void> {
   const LPPrice = totalLiqPoolValue.mul(new BN(10 ** lpMintInfo.decimals)).div(lpMintInfo.supply)
   console.log("  mSOL-SOL-LP price (SOL)", lamportsToSolBN(LPPrice))
 
+  console.log("--- TVL")
+  const tvlStaked = Math.round(tokenBalanceToNumber(mSolMintInfo.supply, mSolMintInfo.decimals) * msolPrice)
+  console.log("  Total Staked Value (SOL) ", tvlStaked.toLocaleString())
+  const tvlLiquidity = Math.round(lamportsToSolBN(totalLiqPoolValue))
+  console.log("  Total Liquidity-Pool (SOL) ", tvlLiquidity.toLocaleString())
+  console.log("  TVL (SOL) ", (tvlStaked+tvlLiquidity).toLocaleString())
+
 }
