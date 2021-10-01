@@ -1,5 +1,6 @@
 .anchor
 .DS_Store
 target
+dist
 **/*.rs.bk
 node_modules
