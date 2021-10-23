@@ -6,7 +6,7 @@ Sample application reading Marinade state from typescript/javascript
 ## Quickstart
 
 ```
-gti clone https://github.com/marinade-finance/marinade-ts-cli.git
+git clone https://github.com/marinade-finance/marinade-ts-cli.git
 cd marinade-ts-cli
 npm install
 npm run build
