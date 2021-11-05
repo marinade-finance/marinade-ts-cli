@@ -1,6 +1,7 @@
 import { BN } from "@project-serum/anchor";
 
-const LAMPORTS_PER_SOL = 1e9
+const SOL_DECIMALS = 9
+const LAMPORTS_PER_SOL = 10 ** SOL_DECIMALS
 
 export function withDecimalPoint(bn: BN, decimals: number): string {
   const s = bn.toString().padStart(decimals + 1, '0')
@@ -12,8 +13,8 @@ export function tokenBalanceToNumber(bn: BN, decimals: number): number {
   return Number(withDecimalPoint(bn, decimals))
 }
 
-export function lamportsToSolBN(bn: BN): number {
-  return tokenBalanceToNumber(bn, 9)
+export function lamportsToSolNumber(bn: BN): number {
+  return tokenBalanceToNumber(bn, SOL_DECIMALS)
 }
 
 

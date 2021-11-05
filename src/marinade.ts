@@ -1,34 +1,22 @@
-#!/bin/node
-import { program } from "commander";
-import { show } from "./commands/show.js";
+import { Config } from "./modules/config"
+import { Idl, Program, Provider, web3 } from "@project-serum/anchor"
+import * as marinadeIdl from "./marinade-idl.json"
+import { MarinadeState } from './marinade-state/marinade-state'
 
-async function main(argv: string[], _env: Record<string, unknown>) {
+export class Marinade {
+  constructor (public readonly config: Config = new Config()) {}
 
-  program
-    .version("0.0.1")
-    .allowExcessArguments(false);
+  readonly anchorProvider = Provider.local(this.config.anchorProviderUrl)
 
-  program
-    .command("show")
-    .description("show marinade state")
-    .action(show);
+  get marinadeProgram (): Program {
+    return new Program(
+      marinadeIdl as Idl,
+      this.config.marinadeProgramId,
+      this.anchorProvider,
+    )
+  }
 
-  // program
-  //   .command("stake <amount>")
-  //   .description("stake SOL get mSOL")
-  //   .action(stake);
-
-  // program
-  //   .command("unstake <amount>")
-  //   .option("-f, --max-fee","max fee accepted")
-  //   .option("-m, --min-sol","min SOL accepted")
-  //   .option("--sol","amount measured in sol")
-  //   .description("unstake mSOL, get SOL")
-  //   .action(unstakeNow);
-
-  program.parse(argv);
-
+  async getMarinadeState (): Promise<MarinadeState> {
+    return MarinadeState.fetch(this)
+  }
 }
-
-main(process.argv, process.env);
-
