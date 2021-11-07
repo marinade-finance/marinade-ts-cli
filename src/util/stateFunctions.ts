@@ -11,7 +11,7 @@ export function unstake_now_fee_bp(state: any, lamportsAvailable: BN, lamportsTo
 
   // if trying to get more than existing
   if (lamportsToObtain.gte(lamportsAvailable)) {
-    return state.lpMaxFee.basis_points;
+    return state.liqPool.lpMaxFee.basisPoints;
   }
   // result after operation
   let lamportsAfter = lamportsAvailable.sub(lamportsToObtain);
@@ -20,7 +20,7 @@ export function unstake_now_fee_bp(state: any, lamportsAvailable: BN, lamportsTo
     return state.liqPool.lpMinFee.basisPoints;
   }
   else {
-    const delta = state.liqPool.lpMaxFee.basisPoints - state.lpMinFee.basisPoints;
+    const delta = state.liqPool.lpMaxFee.basisPoints - state.liqPool.lpMinFee.basisPoints;
     return state.liqPool.lpMaxFee.basisPoints
       - proportional(new BN(delta), lamportsAfter, state.liqPool.lpLiquidityTarget).toNumber()
   }

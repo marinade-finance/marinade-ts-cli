@@ -67,10 +67,10 @@ export async function show(): Promise<void> {
 
   console.log("  Liquidity Target: ", lamportsToSolBN(state.liqPool.lpLiquidityTarget))
   // compute the fee to unstake-now! and get 1 SOL
-  console.log(`  Current-fee: ${unstake_now_fee_bp(state, mSolLegBalance, solToLamports(1)) / 100}%`)
+  console.log(`  Current-fee: ${unstake_now_fee_bp(state, solLegBalance, solToLamports(1)) / 100}%`)
   console.log(`  Min-Max-Fee: ${state.liqPool.lpMinFee.basisPoints / 100}% to ${state.liqPool.lpMaxFee.basisPoints / 100}%`)
-  const testAmount = 1000
-  console.log(`  fee to unstake-now! ${testAmount} SOL: ${unstake_now_fee_bp(state, mSolLegBalance, solToLamports(testAmount)) / 100}%`)
+  const testAmount = 250000
+  console.log(`  fee to unstake-now! ${testAmount} SOL: ${unstake_now_fee_bp(state, solLegBalance, solToLamports(testAmount)) / 100}%`)
   console.log()
 
   console.log("--- TVL")
