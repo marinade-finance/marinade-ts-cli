@@ -23,6 +23,7 @@ export class MarinadeState {
   mSolMint = MarinadeMint.build(this.anchorProvider, this.mSolMintAddress)
 
   lpMintAddress: web3.PublicKey = this.state.liqPool.lpMint
+  lpMintAuthority: web3.PublicKey = new web3.PublicKey('HZsepB79dnpvH6qfVgvMpS738EndHw3qSHo4Gv5WX1KA') // @todo get from config/some other place?
   lpMint = MarinadeMint.build(this.anchorProvider, this.lpMintAddress)
 
   mSolLeg = this.state.liqPool.msolLeg

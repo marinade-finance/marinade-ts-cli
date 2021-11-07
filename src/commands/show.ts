@@ -2,8 +2,8 @@ import BN from 'bn.js'
 import { Marinade } from '../marinade'
 import { lamportsToSolNumber } from '../util/conversion'
 
-export async function show(): Promise<void> {
-  // const marinade = new Marinade(new Config({ anchorProviderUrl: '...://...' }))
+export const show = async (): Promise<void> => {
+  // const marinade = new Marinade(new MarinadeConfig({ anchorProviderUrl: '...://...' }))
   const marinade = new Marinade()
   const marinadeState = await marinade.getMarinadeState()
 

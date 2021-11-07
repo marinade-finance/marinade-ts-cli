@@ -1,6 +1,6 @@
 import { Provider, web3 } from '@project-serum/anchor'
 import { MintInfo, Token } from '@solana/spl-token'
-import { mintClient } from '../util/anchor'
+import { getMintClient } from '../util/anchor'
 import { tokenBalanceToNumber } from '../util/conversion'
 
 export class MarinadeMint {
@@ -13,7 +13,7 @@ export class MarinadeMint {
     return new MarinadeMint(anchorProvider, mintAddress)
   }
 
-  mintClient = (): Token => mintClient(this.anchorProvider, this.address)
+  mintClient = (): Token => getMintClient(this.anchorProvider, this.address)
   mintInfo = (): Promise<MintInfo> => this.mintClient().getMintInfo()
 
   async tokenBalance (mintInfoCached?: MintInfo): Promise<number> {

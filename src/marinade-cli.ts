@@ -1,17 +1,24 @@
 #!/bin/node
 import { program } from "commander";
-import { show } from "./commands/show.js";
+import { show } from "./commands/show";
+import { addLiquidity } from "./commands/add-liquidity";
 
 async function main(argv: string[], _env: Record<string, unknown>) {
 
   program
     .version("0.0.1")
-    .allowExcessArguments(false);
+    .allowExcessArguments(false)
 
   program
     .command("show")
     .description("show marinade state")
-    .action(show);
+    .action(show)
+
+  program
+    .command("add-liquidity <amount>")
+    .description("provide liquidity to the liquidity pool")
+    .option("--sol", "amount measured in SOL", false)
+    .action(addLiquidity)
 
   // program
   //   .command("stake <amount>")
@@ -26,9 +33,9 @@ async function main(argv: string[], _env: Record<string, unknown>) {
   //   .description("unstake mSOL, get SOL")
   //   .action(unstakeNow);
 
-  program.parse(argv);
+  program.parse(argv)
 
 }
 
-main(process.argv, process.env);
+main(process.argv, process.env)
 
