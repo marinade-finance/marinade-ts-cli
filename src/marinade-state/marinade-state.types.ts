@@ -1,5 +1,12 @@
 import type { web3, BN } from '@project-serum/anchor'
 
+export const enum LiquidityPoolSeed {
+  LP_MINT_AUTHORITY_SEED = 'liq_mint',
+  SOL_LEG_SEED = 'liq_sol',
+  MSOL_LEG_AUTHORITY_SEED = 'liq_st_sol_authority',
+  MSOL_LEG_SEED = 'liq_st_sol',
+}
+
 export namespace MarinadeStateResponse {
   export interface Fee {
     basisPoints: number

@@ -73,5 +73,4 @@ export const show = async (): Promise<void> => {
   console.log("  Total Staked Value (SOL) ", tvlStaked.toLocaleString())
   console.log("  Total Liquidity-Pool (SOL) ", tvlLiquidity.toLocaleString())
   console.log("  TVL (SOL) ", (tvlStaked + tvlLiquidity).toLocaleString())
-
 }

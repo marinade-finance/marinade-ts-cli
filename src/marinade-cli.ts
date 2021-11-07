@@ -2,6 +2,7 @@
 import { program } from "commander";
 import { show } from "./commands/show";
 import { addLiquidity } from "./commands/add-liquidity";
+import { removeLiquidity } from './commands/remove-liquidity'
 
 async function main(argv: string[], _env: Record<string, unknown>) {
 
@@ -14,11 +15,16 @@ async function main(argv: string[], _env: Record<string, unknown>) {
     .description("show marinade state")
     .action(show)
 
-  program
-    .command("add-liquidity <amount>")
-    .description("provide liquidity to the liquidity pool")
-    .option("--sol", "amount measured in SOL", false)
-    .action(addLiquidity)
+    program
+      .command("add-liquidity <amount>")
+      .description("provide liquidity to the liquidity pool")
+      .option("--sol", "amount measured in SOL", false)
+      .action(addLiquidity)
+
+    program
+      .command("remove-liquidity <lp-token-amount>")
+      .description("remove liquidity from the liquidity pool")
+      .action(removeLiquidity)
 
   // program
   //   .command("stake <amount>")

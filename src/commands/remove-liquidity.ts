@@ -1,21 +1,21 @@
 import { BN, Wallet } from '@project-serum/anchor'
 import { Marinade } from '../marinade'
 import { MarinadeConfig } from '../modules/marinade-config'
-import { solToLamportsBN } from '../util/conversion'
 
-export const addLiquidity = async (amount: number, { sol }: { sol: boolean }): Promise<void> => {
-  const amountLamports = sol ? solToLamportsBN(amount) : new BN(amount)
-  console.log('Adding liquidity:', amountLamports, 'lamports')
+export const removeLiquidity = async (amount: number): Promise<void> => {
+  console.log('Removing liquidity:', amount, 'LP tokens')
 
   const marinadeConfig = new MarinadeConfig({ wallet: Wallet.local().payer })
   const marinade = new Marinade(marinadeConfig)
   const {
     associatedLPTokenAccountAddress,
+    associatedMSolTokenAccountAddress,
     transactionSignature,
-  } = await marinade.addLiquidity(amountLamports)
+  } = await marinade.removeLiquidity(amount)
 
   console.log('Solana net:', marinade.config.anchorProviderUrl)
   console.log('Using fee payer', marinade.config.wallet.publicKey.toBase58())
   console.log('Using associated smart-lp account', associatedLPTokenAccountAddress.toBase58())
+  console.log('Using associated msol account', associatedMSolTokenAccountAddress.toBase58())
   console.log('Transaction', transactionSignature)
 }

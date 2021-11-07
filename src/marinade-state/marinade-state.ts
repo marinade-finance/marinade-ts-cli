@@ -1,7 +1,7 @@
 import { Provider, web3 } from '@project-serum/anchor'
 import { Marinade } from '../marinade'
 import { MarinadeMint } from '../marinade-mint/marinade-mint'
-import { MarinadeStateResponse } from './marinade-state.types'
+import { LiquidityPoolSeed, MarinadeStateResponse } from './marinade-state.types'
 
 export class MarinadeState {
   // @todo rework args
@@ -21,18 +21,19 @@ export class MarinadeState {
 
   mSolMintAddress: web3.PublicKey = this.state.msolMint
   mSolMint = MarinadeMint.build(this.anchorProvider, this.mSolMintAddress)
-
-  lpMintAddress: web3.PublicKey = this.state.liqPool.lpMint
-  lpMintAuthority: web3.PublicKey = new web3.PublicKey('HZsepB79dnpvH6qfVgvMpS738EndHw3qSHo4Gv5WX1KA') // @todo get from config/some other place?
-  lpMint = MarinadeMint.build(this.anchorProvider, this.lpMintAddress)
-
+  mSolLegAuthority = async () => this.findLiquidityPoolProgramAddress(LiquidityPoolSeed.MSOL_LEG_AUTHORITY_SEED)
   mSolLeg = this.state.liqPool.msolLeg
 
-  // @todo solLeg = this.state.liqPool.???
-  async solLeg () {
-    const seeds = [this.marinade.config.marinadeStateAddress.toBuffer(), Buffer.from("liq_sol")]
-    const [solLeg] = await web3.PublicKey.findProgramAddress(seeds, this.marinade.config.marinadeProgramId)
-    return solLeg
+  lpMintAddress: web3.PublicKey = this.state.liqPool.lpMint
+  lpMint = MarinadeMint.build(this.anchorProvider, this.lpMintAddress)
+  lpMintAuthority = async () => this.findLiquidityPoolProgramAddress(LiquidityPoolSeed.LP_MINT_AUTHORITY_SEED)
+
+  solLeg = async () => this.findLiquidityPoolProgramAddress(LiquidityPoolSeed.SOL_LEG_SEED)
+
+  private async findLiquidityPoolProgramAddress (seed: LiquidityPoolSeed): Promise<web3.PublicKey> {
+    const seeds = [this.marinade.config.marinadeStateAddress.toBuffer(), Buffer.from(seed)]
+    const [result] = await web3.PublicKey.findProgramAddress(seeds, this.marinade.config.marinadeProgramId)
+    return result
   }
 
   treasuryMsolAccount: web3.PublicKey = this.state.treasuryMsolAccount
