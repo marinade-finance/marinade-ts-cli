@@ -7,7 +7,7 @@ export function mSolPrice(state: any): number {
 }
 
 ///compute a linear fee based on liquidity amount, it goes from fee(0)=max -> fee(x>=target)=min
-export function unstake_now_fee_bp(state: any, lamportsAvailable: BN, lamportsToObtain: BN): number {
+export function unstakeNowFeeBp(state: any, lamportsAvailable: BN, lamportsToObtain: BN): number {
 
   // if trying to get more than existing
   if (lamportsToObtain.gte(lamportsAvailable)) {

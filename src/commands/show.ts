@@ -2,7 +2,7 @@ import { web3, Provider, Program, Idl, BN } from "@project-serum/anchor";
 import { Token, TOKEN_PROGRAM_ID, MintInfo, AccountInfo as TokenAccountInfo } from "@solana/spl-token";
 import * as marinadeIdl from "../marinade-idl.json";
 import { lamportsToSolBN, solToLamports, tokenBalanceToNumber } from "../util/conversion";
-import { mSolPrice, unstake_now_fee_bp } from "../util/stateFunctions";
+import { mSolPrice, unstakeNowFeeBp } from "../util/stateFunctions";
 
 export async function show(): Promise<void> {
 
@@ -67,10 +67,10 @@ export async function show(): Promise<void> {
 
   console.log("  Liquidity Target: ", lamportsToSolBN(state.liqPool.lpLiquidityTarget))
   // compute the fee to unstake-now! and get 1 SOL
-  console.log(`  Current-fee: ${unstake_now_fee_bp(state, solLegBalance, solToLamports(1)) / 100}%`)
+  console.log(`  Current-fee: ${unstakeNowFeeBp(state, solLegBalance, solToLamports(1)) / 100}%`)
   console.log(`  Min-Max-Fee: ${state.liqPool.lpMinFee.basisPoints / 100}% to ${state.liqPool.lpMaxFee.basisPoints / 100}%`)
   const testAmount = 250000
-  console.log(`  fee to unstake-now! ${testAmount} SOL: ${unstake_now_fee_bp(state, solLegBalance, solToLamports(testAmount)) / 100}%`)
+  console.log(`  fee to unstake-now! ${testAmount} SOL: ${unstakeNowFeeBp(state, solLegBalance, solToLamports(testAmount)) / 100}%`)
   console.log()
 
   console.log("--- TVL")
