@@ -1,7 +1,8 @@
 import { web3, Provider, Program, Idl, BN } from "@project-serum/anchor";
 import { Token, TOKEN_PROGRAM_ID, MintInfo, AccountInfo as TokenAccountInfo } from "@solana/spl-token";
 import * as marinadeIdl from "../marinade-idl.json";
-import { lamportsToSolBN, tokenBalanceToNumber } from "../util/conversion";
+import { lamportsToSolBN, solToLamports, tokenBalanceToNumber } from "../util/conversion";
+import { mSolPrice, unstake_now_fee_bp } from "../util/stateFunctions";
 
 export async function show(): Promise<void> {
 
@@ -38,7 +39,7 @@ export async function show(): Promise<void> {
   console.log("Min Stake Amounts", lamportsToSolBN(state.stakeSystem.minStake))
   console.log()
 
-  const msolPrice = state.msolPrice.toNumber() / 0x1_0000_0000;
+  const msolPrice = mSolPrice(state);
   console.log("mSol Price", msolPrice)
   console.log()
 
@@ -60,14 +61,23 @@ export async function show(): Promise<void> {
   const totalLiqPoolValue = solLegBalance.add(mSolLegBalance.muln(msolPrice))
 
   console.log("  Total Liq pool value (SOL) ", lamportsToSolBN(totalLiqPoolValue))
+  // LPPrice = total_value_in_the_liq_pool / lp_supply
   const LPPrice = totalLiqPoolValue.mul(new BN(10 ** lpMintInfo.decimals)).div(lpMintInfo.supply)
   console.log("  mSOL-SOL-LP price (SOL)", lamportsToSolBN(LPPrice))
+
+  console.log("  Liquidity Target: ", lamportsToSolBN(state.liqPool.lpLiquidityTarget))
+  // compute the fee to unstake-now! and get 1 SOL
+  console.log(`  Current-fee: ${unstake_now_fee_bp(state, mSolLegBalance, solToLamports(1)) / 100}%`)
+  console.log(`  Min-Max-Fee: ${state.liqPool.lpMinFee.basisPoints / 100}% to ${state.liqPool.lpMaxFee.basisPoints / 100}%`)
+  const testAmount = 1000
+  console.log(`  fee to unstake-now! ${testAmount} SOL: ${unstake_now_fee_bp(state, mSolLegBalance, solToLamports(testAmount)) / 100}%`)
+  console.log()
 
   console.log("--- TVL")
   const tvlStaked = Math.round(tokenBalanceToNumber(mSolMintInfo.supply, mSolMintInfo.decimals) * msolPrice)
   console.log("  Total Staked Value (SOL) ", tvlStaked.toLocaleString())
   const tvlLiquidity = Math.round(lamportsToSolBN(totalLiqPoolValue))
   console.log("  Total Liquidity-Pool (SOL) ", tvlLiquidity.toLocaleString())
-  console.log("  TVL (SOL) ", (tvlStaked+tvlLiquidity).toLocaleString())
+  console.log("  TVL (SOL) ", (tvlStaked + tvlLiquidity).toLocaleString())
 
 }

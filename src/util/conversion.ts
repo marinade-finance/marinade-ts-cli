@@ -16,4 +16,8 @@ export function lamportsToSolBN(bn: BN): number {
   return tokenBalanceToNumber(bn, 9)
 }
 
+export function solToLamports(sol: number): BN {
+  return new BN(Math.round(sol * LAMPORTS_PER_SOL))
+}
+
 
