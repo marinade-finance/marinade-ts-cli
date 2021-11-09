@@ -1,8 +1,8 @@
 #!/bin/node
-import { program } from "commander";
-import { show } from "./commands/show";
-import { addLiquidity } from "./commands/add-liquidity";
-import { removeLiquidity } from './commands/remove-liquidity'
+import { program } from "commander"
+import { show } from "./commands/show"
+import { addLiquidityAction } from "./commands/add-liquidity"
+import { removeLiquidityAction } from './commands/remove-liquidity'
 
 async function main(argv: string[], _env: Record<string, unknown>) {
 
@@ -16,15 +16,14 @@ async function main(argv: string[], _env: Record<string, unknown>) {
     .action(show)
 
   program
-    .command("add-liquidity <amount>")
+    .command("add-liquidity <amount-sol>")
     .description("provide liquidity to the liquidity pool")
-    .option("--sol", "amount measured in SOL", false)
-    .action(addLiquidity)
+    .action(addLiquidityAction)
 
   program
-    .command("remove-liquidity <lp-token-amount>")
+    .command("remove-liquidity <amount-sol>")
     .description("remove liquidity from the liquidity pool")
-    .action(removeLiquidity)
+    .action(removeLiquidityAction)
 
   // program
   //   .command("stake <amount>")
