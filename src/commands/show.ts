@@ -1,6 +1,6 @@
 import BN from 'bn.js'
 import { Marinade } from '../marinade'
-import { lamportsToSolNumber } from '../util/conversion'
+import { lamportsToSolNumber, solToLamportsBN } from '../util/conversion'
 
 export const show = async (): Promise<void> => {
   // const marinade = new Marinade(new MarinadeConfig({ anchorProviderUrl: '...://...' }))
@@ -68,6 +68,14 @@ export const show = async (): Promise<void> => {
 
   console.log("  Total Liq pool value (SOL) ", lamportsToSolNumber(totalLiqPoolValue))
   console.log("  mSOL-SOL-LP price (SOL)", lamportsToSolNumber(LPPrice))
+
+  console.log("  Liquidity Target: ", lamportsToSolNumber(state.liqPool.lpLiquidityTarget))
+  // compute the fee to unstake-now! and get 1 SOL
+  console.log(`  Current-fee: ${await marinadeState.unstakeNowFeeBp(solToLamportsBN(1)) / 100}%`)
+  console.log(`  Min-Max-Fee: ${state.liqPool.lpMinFee.basisPoints / 100}% to ${state.liqPool.lpMaxFee.basisPoints / 100}%`)
+  const testAmount = 250000
+  console.log(`  fee to unstake-now! ${testAmount} SOL: ${await marinadeState.unstakeNowFeeBp(solToLamportsBN(testAmount)) / 100}%`)
+  console.log()
 
   console.log("--- TVL")
   console.log("  Total Staked Value (SOL) ", tvlStaked.toLocaleString())

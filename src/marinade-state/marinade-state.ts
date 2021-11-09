@@ -1,6 +1,7 @@
-import { Provider, web3 } from '@project-serum/anchor'
+import { BN, Provider, web3 } from '@project-serum/anchor'
 import { Marinade } from '../marinade'
 import { MarinadeMint } from '../marinade-mint/marinade-mint'
+import * as StateHelper from '../util/state-helpers'
 import { LiquidityPoolSeed, MarinadeStateResponse } from './marinade-state.types'
 
 export class MarinadeState {
@@ -34,6 +35,20 @@ export class MarinadeState {
     const seeds = [this.marinade.config.marinadeStateAddress.toBuffer(), Buffer.from(seed)]
     const [result] = await web3.PublicKey.findProgramAddress(seeds, this.marinade.config.marinadeProgramId)
     return result
+  }
+
+  async unstakeNowFeeBp (lamportsToObtain: BN): Promise<number> {
+    const mSolMintClient = this.mSolMint.mintClient()
+    const mSolLegInfo = await mSolMintClient.getAccountInfo(this.mSolLeg)
+    const lamportsAvailable = mSolLegInfo.amount
+
+    return StateHelper.unstakeNowFeeBp(
+      this.state.liqPool.lpMinFee.basisPoints,
+      this.state.liqPool.lpMaxFee.basisPoints,
+      this.state.liqPool.lpLiquidityTarget,
+      lamportsAvailable,
+      lamportsToObtain,
+    )
   }
 
   treasuryMsolAccount: web3.PublicKey = this.state.treasuryMsolAccount
