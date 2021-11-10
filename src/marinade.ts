@@ -23,22 +23,22 @@ export class Marinade {
     return MarinadeState.fetch(this)
   }
 
-  async addLiquidity (amountLamports: BN | number): Promise<MarinadeResult.AddLiquidity> {
+  async addLiquidity (amountLamports: BN): Promise<MarinadeResult.AddLiquidity> {
     const ownerAddress = this.config.wallet.publicKey
     const marinadeState = await this.getMarinadeState()
     const transaction = new web3.Transaction()
 
     const {
       associatedTokenAccountAddress: associatedLPTokenAccountAddress,
-      createAccociateTokenInstruction,
+      createAssociateTokenInstruction,
     } = await getOrCreateAssociatedTokenAccount(this.anchorProvider, marinadeState.lpMintAddress, ownerAddress)
 
-    if (createAccociateTokenInstruction) {
-      transaction.add(createAccociateTokenInstruction)
+    if (createAssociateTokenInstruction) {
+      transaction.add(createAssociateTokenInstruction)
     }
 
     const addLiquidityInstruction = await this.marinadeProgram.instruction.addLiquidity(
-      new BN(amountLamports),
+      amountLamports,
       {
         accounts: {
           state: this.config.marinadeStateAddress,
@@ -63,7 +63,7 @@ export class Marinade {
     }
   }
 
-  async removeLiquidity (amountLamports: BN | number): Promise<MarinadeResult.RemoveLiquidity> {
+  async removeLiquidity (amountLamports: BN ): Promise<MarinadeResult.RemoveLiquidity> {
     const ownerAddress = this.config.wallet.publicKey
     const marinadeState = await this.getMarinadeState()
     const transaction = new web3.Transaction()
@@ -72,14 +72,14 @@ export class Marinade {
 
     const {
       associatedTokenAccountAddress: associatedMSolTokenAccountAddress,
-      createAccociateTokenInstruction,
+      createAssociateTokenInstruction,
     } = await getOrCreateAssociatedTokenAccount(this.anchorProvider, marinadeState.mSolMintAddress, ownerAddress)
 
-    if (createAccociateTokenInstruction) {
-      transaction.add(createAccociateTokenInstruction)
+    if (createAssociateTokenInstruction) {
+      transaction.add(createAssociateTokenInstruction)
     }
     const removeLiquidityInstruction = await this.marinadeProgram.instruction.removeLiquidity(
-      new BN(amountLamports),
+      amountLamports,
       {
         accounts: {
           state: this.config.marinadeStateAddress,

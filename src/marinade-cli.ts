@@ -31,10 +31,9 @@ async function main(argv: string[], _env: Record<string, unknown>) {
   //   .action(stake);
 
   // program
-  //   .command("unstake <amount>")
+  //   .command("unstake <mSOL_amount>")
   //   .option("-f, --max-fee","max fee accepted")
   //   .option("-m, --min-sol","min SOL accepted")
-  //   .option("--sol","amount measured in sol")
   //   .description("unstake mSOL, get SOL")
   //   .action(unstakeNow);
 

@@ -18,10 +18,10 @@ export async function getTokenAccountInfo (mintClient: Token, publicKey: web3.Pu
 
 export async function getOrCreateAssociatedTokenAccount (anchorProvider: anchor.Provider, mintAddress: web3.PublicKey, ownerAddress: web3.PublicKey): Promise<{
   associatedTokenAccountAddress: web3.PublicKey
-  createAccociateTokenInstruction: web3.TransactionInstruction | null
+  createAssociateTokenInstruction: web3.TransactionInstruction | null
 }> {
   const associatedTokenAccountAddress = await getAssociatedTokenAccountAddress(mintAddress, ownerAddress)
-  let createAccociateTokenInstruction: web3.TransactionInstruction | null = null
+  let createAssociateTokenInstruction: web3.TransactionInstruction | null = null
 
   const mintClient = getMintClient(anchorProvider, mintAddress)
 
@@ -32,7 +32,7 @@ export async function getOrCreateAssociatedTokenAccount (anchorProvider: anchor.
       throw err
     }
 
-    createAccociateTokenInstruction = Token.createAssociatedTokenAccountInstruction(
+    createAssociateTokenInstruction = Token.createAssociatedTokenAccountInstruction(
       ASSOCIATED_TOKEN_PROGRAM_ID,
       TOKEN_PROGRAM_ID,
       mintAddress,
@@ -44,6 +44,6 @@ export async function getOrCreateAssociatedTokenAccount (anchorProvider: anchor.
 
   return {
     associatedTokenAccountAddress,
-    createAccociateTokenInstruction,
+    createAssociateTokenInstruction,
   }
 }

@@ -12,10 +12,10 @@ export function tokenBalanceToNumber (bn: BN, decimals: number): number {
   return Number(withDecimalPoint(bn, decimals))
 }
 
-export function lamportsToSolNumber (bn: BN): number {
+export function lamportsToSol (bn: BN): number {
   return tokenBalanceToNumber(bn, SOL_DECIMALS)
 }
 
-export function solToLamportsBN (amountSol: number): BN {
+export function solToLamports (amountSol: number): BN {
   return new BN(amountSol.toFixed(SOL_DECIMALS).replace('.', ''))
 }
