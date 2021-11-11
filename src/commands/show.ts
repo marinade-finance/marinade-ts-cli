@@ -2,7 +2,7 @@ import BN from 'bn.js'
 import { Marinade } from '../marinade'
 import { lamportsToSol, solToLamports } from '../util/conversion'
 
-export const show = async (): Promise<void> => {
+export const show = async (options: Object): Promise<void> => {
   // const marinade = new Marinade(new MarinadeConfig({ anchorProviderUrl: '...://...' }))
   const marinade = new Marinade()
   const marinadeState = await marinade.getMarinadeState()
@@ -81,4 +81,18 @@ export const show = async (): Promise<void> => {
   console.log("  Total Staked Value (SOL) ", tvlStaked.toLocaleString())
   console.log("  Total Liquidity-Pool (SOL) ", tvlLiquidity.toLocaleString())
   console.log("  TVL (SOL) ", (tvlStaked + tvlLiquidity).toLocaleString())
+
+  if ('list' in options) {
+    console.log()
+    console.log("  Validator_manager_authority", state.validatorSystem.managerAuthority.toBase58())
+    console.log(`  Stake list account: ${state.stakeSystem.stakeList.account} with ${state.stakeSystem.stakeList.count}/${"?"} stakes`)
+    console.log("-----------------")
+    console.log("-- Validators ---")
+    console.log(`  List account: ${state.validatorSystem.validatorList.account} with ${state.validatorSystem.validatorList.count}/${"?"} validators`)
+    console.log("-------------------------------------------------------------")
+    const validatorInfo = await mSolMintClient.getAccountInfo(state.validatorSystem.validatorList.account)
+    console.log(validatorInfo)
+    console.log(`{}) Validator ${state.validatorSystem.validatorList.account}, marinade-staked {:.2} SOL, score-pct:{:.4}%, {} stake-accounts`)
+  }
+
 }

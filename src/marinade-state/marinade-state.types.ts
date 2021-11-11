@@ -15,10 +15,10 @@ export namespace MarinadeStateResponse {
   }
 
   export interface AccountList {
-    account: web3.PublicKey[]
+    account: web3.PublicKey
     itemSize: number
     count: number
-    newAccount: web3.PublicKey[]
+    newAccount: web3.PublicKey
     copiedCount: number
   }
 
