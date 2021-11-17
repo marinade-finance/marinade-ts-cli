@@ -4,7 +4,7 @@ import { MarinadeConfig } from '../modules/marinade-config'
 import { solToLamports } from '../util/conversion'
 
 export async function addLiquidityAction (amountSol: string | number): Promise<void> {
-  const amountLamports:BN = solToLamports(Number(amountSol))
+  const amountLamports: BN = solToLamports(Number(amountSol))
   console.log('Adding liquidity:', amountSol, 'SOL', amountLamports.toString(), 'lamports')
 
   const marinadeConfig = new MarinadeConfig({ wallet: Wallet.local().payer })

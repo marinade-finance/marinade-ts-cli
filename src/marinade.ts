@@ -107,7 +107,7 @@ export class Marinade {
     }
   }
 
-  async deposit (amountLamports: BN): Promise<MarinadeResult.Stake> {
+  async deposit (amountLamports: BN): Promise<MarinadeResult.Deposit> {
     const ownerAddress = this.config.wallet.publicKey
     const marinadeState = await this.getMarinadeState()
     const transaction = new web3.Transaction()
@@ -134,6 +134,47 @@ export class Marinade {
           liqPoolSolLegPda: await marinadeState.solLeg(),
           mintTo: associatedMSolTokenAccountAddress,
           transferFrom: ownerAddress,
+          systemProgram: SYSTEM_PROGRAM_ID,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        },
+      }
+    )
+
+    transaction.add(depositInstruction)
+    const transactionSignature = await this.anchorProvider.send(transaction)
+
+    return {
+      associatedMSolTokenAccountAddress,
+      transactionSignature,
+    }
+  }
+
+  async liquidUnstake (amountLamports: BN): Promise<MarinadeResult.LiquidUnstake> {
+    const ownerAddress = this.config.wallet.publicKey
+    const marinadeState = await this.getMarinadeState()
+    const transaction = new web3.Transaction()
+
+    const {
+      associatedTokenAccountAddress: associatedMSolTokenAccountAddress,
+      createAssociateTokenInstruction,
+    } = await getOrCreateAssociatedTokenAccount(this.anchorProvider, marinadeState.mSolMintAddress, ownerAddress)
+
+    if (createAssociateTokenInstruction) {
+      transaction.add(createAssociateTokenInstruction)
+    }
+
+    const depositInstruction = await this.marinadeProgram.instruction.liquidUnstake(
+      amountLamports,
+      {
+        accounts: {
+          state: this.config.marinadeStateAddress,
+          msolMint: marinadeState.mSolMintAddress,
+          liqPoolMsolLeg: marinadeState.mSolLeg,
+          liqPoolSolLegPda: await marinadeState.solLeg(),
+          getMsolFrom: associatedMSolTokenAccountAddress,
+          getMsolFromAuthority: ownerAddress,
+          transferSolTo: ownerAddress,
+          treasuryMsolAccount: marinadeState.treasuryMsolAccount,
           systemProgram: SYSTEM_PROGRAM_ID,
           tokenProgram: TOKEN_PROGRAM_ID,
         },
