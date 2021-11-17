@@ -3,6 +3,7 @@ import { program } from "commander"
 import { show } from "./commands/show"
 import { addLiquidityAction } from "./commands/add-liquidity"
 import { removeLiquidityAction } from './commands/remove-liquidity'
+import { stakeAction } from './commands/stake'
 
 async function main(argv: string[], _env: Record<string, unknown>) {
 
@@ -14,6 +15,11 @@ async function main(argv: string[], _env: Record<string, unknown>) {
     .command("show")
     .description("show marinade state")
     .action(show)
+
+  program
+    .command("stake <amount-sol>")
+    .description("stake SOL")
+    .action(stakeAction)
 
   program
     .command("add-liquidity <amount-sol>")

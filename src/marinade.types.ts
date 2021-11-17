@@ -11,4 +11,9 @@ export namespace MarinadeResult {
     associatedMSolTokenAccountAddress: web3.PublicKey
     transactionSignature: any
   }
+
+  export interface Stake {
+    associatedMSolTokenAccountAddress: web3.PublicKey
+    transactionSignature: any
+  }
 }
