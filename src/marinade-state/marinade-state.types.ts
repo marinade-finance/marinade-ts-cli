@@ -1,10 +1,12 @@
 import type { web3, BN } from '@project-serum/anchor'
 
-export const enum LiquidityPoolSeed {
-  LP_MINT_AUTHORITY_SEED = 'liq_mint',
-  SOL_LEG_SEED = 'liq_sol',
-  MSOL_LEG_AUTHORITY_SEED = 'liq_st_sol_authority',
-  MSOL_LEG_SEED = 'liq_st_sol',
+export const enum ProgramDerivedAddressSeed {
+  LIQ_POOL_MINT_AUTHORITY = 'liq_mint',
+  LIQ_POOL_MSOL_ACCOUNT = 'liq_st_sol',
+  LIQ_POOL_MSOL_AUTHORITY = 'liq_st_sol_authority',
+  LIQ_POOL_MSOL_MINT_AUTHORITY = 'st_mint',
+  LIQ_POOL_SOL_ACCOUNT = 'liq_sol',
+  RESERVE_ACCOUNT = 'reserve',
 }
 
 export namespace MarinadeStateResponse {

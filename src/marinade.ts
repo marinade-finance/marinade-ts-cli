@@ -106,4 +106,46 @@ export class Marinade {
       transactionSignature,
     }
   }
+
+  async deposit (amountLamports: BN): Promise<MarinadeResult.Stake> {
+    const ownerAddress = this.config.wallet.publicKey
+    const marinadeState = await this.getMarinadeState()
+    const transaction = new web3.Transaction()
+
+    const {
+      associatedTokenAccountAddress: associatedMSolTokenAccountAddress,
+      createAssociateTokenInstruction,
+    } = await getOrCreateAssociatedTokenAccount(this.anchorProvider, marinadeState.mSolMintAddress, ownerAddress)
+
+    if (createAssociateTokenInstruction) {
+      transaction.add(createAssociateTokenInstruction)
+    }
+
+    const depositInstruction = await this.marinadeProgram.instruction.deposit(
+      amountLamports,
+      {
+        accounts: {
+          reservePda: await marinadeState.reserveAddress(),
+          state: this.config.marinadeStateAddress,
+          msolMint: marinadeState.mSolMintAddress,
+          msolMintAuthority: await marinadeState.mSolMintAuthority(),
+          liqPoolMsolLegAuthority: await marinadeState.mSolLegAuthority(),
+          liqPoolMsolLeg: marinadeState.mSolLeg,
+          liqPoolSolLegPda: await marinadeState.solLeg(),
+          mintTo: associatedMSolTokenAccountAddress,
+          transferFrom: ownerAddress,
+          systemProgram: SYSTEM_PROGRAM_ID,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        },
+      }
+    )
+
+    transaction.add(depositInstruction)
+    const transactionSignature = await this.anchorProvider.send(transaction)
+
+    return {
+      associatedMSolTokenAccountAddress,
+      transactionSignature,
+    }
+  }
 }
