@@ -163,7 +163,7 @@ export class Marinade {
       transaction.add(createAssociateTokenInstruction)
     }
 
-    const depositInstruction = await this.marinadeProgram.instruction.liquidUnstake(
+    const liquidUnstakeInstruction = await this.marinadeProgram.instruction.liquidUnstake(
       amountLamports,
       {
         accounts: {
@@ -181,7 +181,7 @@ export class Marinade {
       }
     )
 
-    transaction.add(depositInstruction)
+    transaction.add(liquidUnstakeInstruction)
     const transactionSignature = await this.anchorProvider.send(transaction)
 
     return {
