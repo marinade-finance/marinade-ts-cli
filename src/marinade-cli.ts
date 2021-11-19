@@ -4,6 +4,7 @@ import { show } from "./commands/show"
 import { addLiquidityAction } from "./commands/add-liquidity"
 import { removeLiquidityAction } from './commands/remove-liquidity'
 import { stakeAction } from './commands/stake'
+import { liquidUnstakeAction } from './commands/liquid-unstake'
 
 async function main(argv: string[], _env: Record<string, unknown>) {
 
@@ -20,6 +21,11 @@ async function main(argv: string[], _env: Record<string, unknown>) {
     .command("stake <amount-sol>")
     .description("stake SOL")
     .action(stakeAction)
+
+  program
+    .command("liquid-unstake <amount-sol>")
+    .description("Unstake SOL using liquidity pool")
+    .action(liquidUnstakeAction)
 
   program
     .command("add-liquidity <amount-sol>")
