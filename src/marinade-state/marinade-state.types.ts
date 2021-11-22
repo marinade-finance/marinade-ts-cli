@@ -1,4 +1,4 @@
-import type { web3, BN } from '@project-serum/anchor'
+import { web3, BN } from '@project-serum/anchor'
 
 export const enum ProgramDerivedAddressSeed {
   LIQ_POOL_MINT_AUTHORITY = 'liq_mint',
@@ -7,6 +7,7 @@ export const enum ProgramDerivedAddressSeed {
   LIQ_POOL_MSOL_MINT_AUTHORITY = 'st_mint',
   LIQ_POOL_SOL_ACCOUNT = 'liq_sol',
   RESERVE_ACCOUNT = 'reserve',
+  UNIQUE_VALIDATOR = 'unique_validator',
 }
 
 export namespace MarinadeStateResponse {
@@ -15,10 +16,10 @@ export namespace MarinadeStateResponse {
   }
 
   export interface AccountList {
-    account: web3.PublicKey[]
+    account: web3.PublicKey
     itemSize: number
     count: number
-    newAccount: web3.PublicKey[]
+    newAccount: web3.PublicKey
     copiedCount: number
   }
 
