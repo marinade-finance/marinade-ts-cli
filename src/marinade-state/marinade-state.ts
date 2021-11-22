@@ -36,7 +36,7 @@ export class MarinadeState {
 
   solLeg = async () => this.findProgramDerivedAddress(ProgramDerivedAddressSeed.LIQ_POOL_SOL_ACCOUNT)
 
-  private async findProgramDerivedAddress (seed: ProgramDerivedAddressSeed | string, extraSeeds: Buffer[] = []): Promise<web3.PublicKey> {
+  private async findProgramDerivedAddress (seed: ProgramDerivedAddressSeed, extraSeeds: Buffer[] = []): Promise<web3.PublicKey> {
     const seeds = [this.marinade.config.marinadeStateAddress.toBuffer(), Buffer.from(seed), ...extraSeeds]
     const [result] = await web3.PublicKey.findProgramAddress(seeds, this.marinade.config.marinadeProgramId)
     return result
