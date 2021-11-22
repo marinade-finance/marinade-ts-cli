@@ -59,52 +59,6 @@ export async function getOrCreateAssociatedTokenAccount (anchorProvider: anchor.
   }
 }
 
-/**
- * {
- *   "context": {
- *     "slot": 95910876
- *   },
- *   "value": {
- *     "data": {
- *       "parsed": {
- *         "info": {
- *           "meta": {
- *             "authorized": {
- *               "staker": "2wxV78m4cNR8QBZDvCwHd8o2ZzDxQH82fbso41FgZuLa",
- *               "withdrawer": "2wxV78m4cNR8QBZDvCwHd8o2ZzDxQH82fbso41FgZuLa"
- *             },
- *             "lockup": {
- *               "custodian": "11111111111111111111111111111111",
- *               "epoch": 0,
- *               "unixTimestamp": 0
- *             },
- *             "rentExemptReserve": "2282880"
- *           },
- *           "stake": {
- *             "creditsObserved": 261270,
- *             "delegation": {
- *               "activationEpoch": "221",
- *               "deactivationEpoch": "18446744073709551615",
- *               "stake": "1997717120",
- *               "voter": "Cgm7d47egM4ZYbXVukxTu38mrutJ5vZMtrTaMtoGsbxJ",
- *               "warmupCooldownRate": 0.25
- *             }
- *           }
- *         },
- *         "type": "delegated"
- *       },
- *       "program": "stake",
- *       "space": 200
- *     },
- *     "executable": false,
- *     "lamports": 2000000000,
- *     "owner": {
- *       "_bn": "06a1d8179137542a983437bdfe2a7ab2557f535c8a78722b68a49dc000000000"
- *     },
- *     "rentEpoch": 221
- *   }
- * }
- */
 export async function getParsedStakeAccountInfo (anchorProvider: anchor.Provider, stakeAccountAddress: web3.PublicKey): Promise<ParsedStakeAccountInfo> {
   const { value: stakeAccountInfo } = await anchorProvider.connection.getParsedAccountInfo(stakeAccountAddress)
 
