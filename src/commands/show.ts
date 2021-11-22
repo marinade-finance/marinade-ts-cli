@@ -3,7 +3,6 @@ import { Marinade } from '../marinade'
 import { lamportsToSol, solToLamports } from '../util/conversion'
 
 export const show = async (options: Object): Promise<void> => {
-  // const marinade = new Marinade(new MarinadeConfig({ anchorProviderUrl: '...://...' }))
   const marinade = new Marinade()
   const marinadeState = await marinade.getMarinadeState()
 
@@ -88,11 +87,44 @@ export const show = async (options: Object): Promise<void> => {
     console.log(`  Stake list account: ${state.stakeSystem.stakeList.account} with ${state.stakeSystem.stakeList.count}/${"?"} stakes`)
     console.log("-----------------")
     console.log("-- Validators ---")
+    console.log(`  Total staked: ${lamportsToSol(state.validatorSystem.totalActiveBalance)} SOL`)
     console.log(`  List account: ${state.validatorSystem.validatorList.account} with ${state.validatorSystem.validatorList.count}/${"?"} validators`)
     console.log("-------------------------------------------------------------")
-    const validatorInfo = await mSolMintClient.getAccountInfo(state.validatorSystem.validatorList.account)
-    console.log(validatorInfo)
-    console.log(`{}) Validator ${state.validatorSystem.validatorList.account}, marinade-staked {:.2} SOL, score-pct:{:.4}%, {} stake-accounts`)
-  }
 
+    let totalStaked = 0;
+    let totalStakedFullyActivated = 0;
+    const epochInfo = await marinadeState.epochInfo();
+
+    const validatorAccounts = await marinadeState.validatorAccountList();
+    const stakeAccountList = await marinadeState.stakeAccountList();
+
+    const stakeDelegationList = await marinadeState.stakeDelegationList();
+    validatorAccounts.forEach((validator, validatorIndex) => {
+      const validatorStakeDelegationList = stakeDelegationList.filter(delegation => delegation.voter === validator.account.toBase58())
+      console.log(`${validatorIndex+1}) Validator ${state.validatorSystem.validatorList.account}`
+          + `, marinade-staked ${lamportsToSol(state.validatorSystem.totalActiveBalance)} SOL`
+          + `, score-pct:, ${validatorStakeDelegationList.length} stake-accounts`);
+      for (const [index, delegation] of validatorStakeDelegationList.entries()) {
+        // let extra_balance = lamportsToSol(
+        //     delegation.balance
+        //     - delegation.stake
+        //     - stake.stake.meta().unwrap().rent_exempt_reserve,
+        // );
+        // if extra_balance > 0.0 {
+        //   print!(" (extra balance {})", extra_balance);
+        // }
+
+        console.log(`  ${index}. Stake ${stakeAccountList[index].account.toBase58()} delegated`
+            + ` ${lamportsToSol(new BN(delegation.stake))} activation_epoch:${delegation.activationEpoch}`)
+        totalStaked += Number(delegation.stake);
+        if (Number(delegation.activationEpoch) < epochInfo.epoch - 1) {
+          totalStakedFullyActivated += Number(delegation.stake);
+        }
+      }
+    })
+    console.log("-------------------------------------------------------------")
+    console.log(`${validatorAccounts.length} validators with stake`
+        + `, total_staked ${lamportsToSol(new BN(totalStaked))} total_staked_fully_activated ${lamportsToSol(new BN(totalStakedFullyActivated))}`
+        + `, warming-up in this epoch:${lamportsToSol(new BN(totalStaked - totalStakedFullyActivated))}`)
+  }
 }

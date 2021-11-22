@@ -7,6 +7,8 @@ export const enum ProgramDerivedAddressSeed {
   LIQ_POOL_MSOL_MINT_AUTHORITY = 'st_mint',
   LIQ_POOL_SOL_ACCOUNT = 'liq_sol',
   RESERVE_ACCOUNT = 'reserve',
+  STAKE_WITHDRAW = 'withdraw',
+  STAKE_DEPOSIT = 'deposit',
 }
 
 export namespace MarinadeStateResponse {
@@ -79,4 +81,18 @@ export interface MarinadeStateResponse {
   minWithdraw: BN
   stakingSolCap: BN
   emergencyCoolingDown: BN
+}
+
+export namespace MarinadeStakeProgramResponse {
+  export interface Delegation {
+    activationEpoch: string,
+    deactivationEpoch: string,
+    stake: string, // lamports
+    voter: string,
+    warmupCooldownRate: number,
+  }
+}
+
+export interface MarinadeStakeProgramResponse {
+
 }

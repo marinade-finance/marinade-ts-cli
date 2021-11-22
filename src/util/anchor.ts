@@ -3,6 +3,7 @@ import * as anchor from '@project-serum/anchor'
 import { AccountInfo, ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
 export const SYSTEM_PROGRAM_ID = new web3.PublicKey('11111111111111111111111111111111')
+export const STAKE_PROGRAM_ID = new web3.PublicKey('Stake11111111111111111111111111111111111111')
 
 export function getMintClient (anchorProvider: Provider, mintAddress: web3.PublicKey): Token {
   return new Token(anchorProvider.connection, mintAddress, TOKEN_PROGRAM_ID, web3.Keypair.generate())

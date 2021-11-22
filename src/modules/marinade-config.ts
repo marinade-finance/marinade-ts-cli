@@ -1,4 +1,6 @@
 import { web3 } from "@project-serum/anchor"
+const dotenv = require('dotenv');
+dotenv.config();
 
 const loadEnvVariable = (envVariableKey: string, defValue: string): string => process.env[envVariableKey] ?? defValue
 
