@@ -16,7 +16,7 @@ import {deserializeUnchecked} from "borsh";
 import {
   List_StakeDiscriminator_StakeRecord_u32_,
   List_ValidatorRecordDiscriminator_ValidatorRecord_u32_,
-  MARINADE_BORSH_SCHEMA
+  MARINADE_BORSH_SCHEMA, StakeRecord, ValidatorRecord
 } from "./marinade_finance_schema";
 
 export class MarinadeState {
@@ -35,7 +35,7 @@ export class MarinadeState {
 
   reserveAddress = async () => this.findProgramDerivedAddress(ProgramDerivedAddressSeed.RESERVE_ACCOUNT)
   epochInfo = async () => this.anchorProvider.connection.getEpochInfo()
-  validatorAccountList = async () : Promise<AccountList[]> => {
+  validatorRecordList = async () : Promise<ValidatorRecord[]> => {
     const validatorList = this.state.validatorSystem.validatorList;
     const validatorRecords : AccountInfo<Buffer>[] = await this.anchorProvider.connection.getMultipleAccountsInfo([validatorList.account]) as AccountInfo<Buffer>[];
 
@@ -44,43 +44,31 @@ export class MarinadeState {
     for (let index = 0; index < validatorList.count; index++) {
       const start = 8 + index * validatorList.itemSize;
 
-      const validatorRecord : List_ValidatorRecordDiscriminator_ValidatorRecord_u32_ = deserializeUnchecked(MARINADE_BORSH_SCHEMA, List_ValidatorRecordDiscriminator_ValidatorRecord_u32_, validatorRecordData?.slice(start, start + validatorList.itemSize) as Buffer);
-      const accountList : AccountList = {
-        account : validatorRecord.account.value,
-        itemSize: validatorRecord.item_size,
-        count: validatorRecord.count,
-        newAccount: validatorRecord.new_account.value,
-        copiedCount: validatorRecord.copied_count
-      }
-
-      validatorAccountLists.push(accountList);
+      const validatorRecord : ValidatorRecord = deserializeUnchecked(MARINADE_BORSH_SCHEMA, ValidatorRecord, validatorRecordData?.slice(start, start + validatorList.itemSize) as Buffer);
+      validatorAccountLists.push(validatorRecord);
     }
 
     return validatorAccountLists;
   }
-  stakeAccountList = async () : Promise<AccountList[]> => {
+
+  stakeRecordList = async () : Promise<StakeRecord[]> => {
     const stakeList = this.state.stakeSystem.stakeList;
-    const stakeRecords : AccountInfo<Buffer>[] = await this.anchorProvider.connection.getMultipleAccountsInfo([stakeList.account]) as AccountInfo<Buffer>[];
+    const accountInfos : AccountInfo<Buffer>[] = await this.anchorProvider.connection.getMultipleAccountsInfo([stakeList.account]) as AccountInfo<Buffer>[];
 
-    const stakeRecordData = stakeRecords[0]?.data;
-    const stakeAccountLists = new Array();
-    for (let index = 0; index < stakeList.count; index++) {
-      const start = 8 + index * stakeList.itemSize;
+    const stakeRecordList = new Array<StakeRecord>();
+    accountInfos.forEach(accountInfo => {
+      const stakeRecordData = accountInfo?.data;
+      for (let index = 0; index < stakeList.count; index++) {
+        const start = 8 + index * stakeList.itemSize;
 
-      const stakeRecord : List_StakeDiscriminator_StakeRecord_u32_ = deserializeUnchecked(MARINADE_BORSH_SCHEMA, List_StakeDiscriminator_StakeRecord_u32_, stakeRecordData?.slice(start, start + stakeList.itemSize) as Buffer);
-      const accountList : AccountList = {
-        account : stakeRecord.account.value,
-        itemSize: stakeRecord.item_size,
-        count: stakeRecord.count,
-        newAccount: stakeRecord.new_account.value,
-        copiedCount: stakeRecord.copied_count
+        const stakeRecord : StakeRecord = deserializeUnchecked(MARINADE_BORSH_SCHEMA, StakeRecord, stakeRecordData?.slice(start, start + stakeList.itemSize) as Buffer);
+        stakeRecordList.push(stakeRecord);
       }
+    })
 
-      stakeAccountLists.push(accountList);
-    }
-
-    return stakeAccountLists;
+    return stakeRecordList;
   }
+
   stakeDelegationList = async () : Promise<Delegation[]> => {
     const stakeAccountInfos = await this.anchorProvider.connection.getParsedProgramAccounts(STAKE_PROGRAM_ID,
         {

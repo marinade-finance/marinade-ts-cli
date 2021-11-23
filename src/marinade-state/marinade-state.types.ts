@@ -1,4 +1,5 @@
 import type { web3, BN } from '@project-serum/anchor'
+import {Pubkey} from "./marinade_finance_schema";
 
 export const enum ProgramDerivedAddressSeed {
   LIQ_POOL_MINT_AUTHORITY = 'liq_mint',
@@ -92,7 +93,18 @@ export namespace MarinadeStakeProgramResponse {
     warmupCooldownRate: number,
   }
 }
-
-export interface MarinadeStakeProgramResponse {
-
-}
+//
+// export interface StakeRecord {
+//   stakeAccount: Pubkey;
+//   lastUpdateDelegatedLamports: number;
+//   lastUpdateEpoch: number;
+//   isEmergencyUnstaking: number;
+// }
+//
+// export interface ValidatorRecord {
+//   account: Pubkey;
+//   activeBalance: number;
+//   score: number;
+//   lastStakeDeltaEpoch: number;
+//   duplicationFlagBumpSeed: number;
+// }

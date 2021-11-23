@@ -167,6 +167,19 @@ export class ValidatorRecord {
         this.duplication_flag_bump_seed = duplication_flag_bump_seed;
     }
 }
+export class StakeRecord {
+    stake_account: Pubkey;
+    last_update_delegated_lamports: number;
+    last_update_epoch: number;
+    is_emergency_unstaking: number;
+
+    constructor({ stake_account, last_update_delegated_lamports, last_update_epoch, is_emergency_unstaking}: { stake_account: Pubkey, last_update_delegated_lamports: number, last_update_epoch: number, is_emergency_unstaking: number}) {
+        this.stake_account = stake_account;
+        this.last_update_delegated_lamports = last_update_delegated_lamports;
+        this.last_update_epoch = last_update_epoch;
+        this.is_emergency_unstaking = is_emergency_unstaking;
+    }
+}
 export class ValidatorSystem {
     validator_list: List_ValidatorRecordDiscriminator_ValidatorRecord_u32_;
     manager_authority: Pubkey;
@@ -277,6 +290,15 @@ export const MARINADE_BORSH_SCHEMA = new Map<Function, any>([
             ["beneficiary", Pubkey],
             ["lamports_amount", "u64"],
             ["created_epoch", "u64"],
+        ]
+    }],
+    [StakeRecord, {
+        "kind": "struct",
+        "fields": [
+            ["stake_account", Pubkey],
+            ["last_update_delegated_lamports", "u64"],
+            ["last_update_epoch", "u64"],
+            ["is_emergency_unstaking", "u8"],
         ]
     }],
     [ValidatorRecord, {

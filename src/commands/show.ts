@@ -95,15 +95,18 @@ export const show = async (options: Object): Promise<void> => {
     let totalStakedFullyActivated = 0;
     const epochInfo = await marinadeState.epochInfo();
 
-    const validatorAccounts = await marinadeState.validatorAccountList();
-    const stakeAccountList = await marinadeState.stakeAccountList();
+    const validatorAccounts = await marinadeState.validatorRecordList();
+    const stakeAccountList = await marinadeState.stakeRecordList();
 
     const stakeDelegationList = await marinadeState.stakeDelegationList();
     validatorAccounts.forEach((validator, validatorIndex) => {
-      const validatorStakeDelegationList = stakeDelegationList.filter(delegation => delegation.voter === validator.account.toBase58())
+      if (validator.active_balance.toNumber() <= 0) return;
+
+      const validatorStakeDelegationList = stakeDelegationList.filter(delegation => delegation.voter === validator.validator_account.value.toBase58())
       console.log(`${validatorIndex+1}) Validator ${state.validatorSystem.validatorList.account}`
           + `, marinade-staked ${lamportsToSol(state.validatorSystem.totalActiveBalance)} SOL`
           + `, score-pct:, ${validatorStakeDelegationList.length} stake-accounts`);
+
       for (const [index, delegation] of validatorStakeDelegationList.entries()) {
         // let extra_balance = lamportsToSol(
         //     delegation.balance
@@ -114,7 +117,7 @@ export const show = async (options: Object): Promise<void> => {
         //   print!(" (extra balance {})", extra_balance);
         // }
 
-        console.log(`  ${index}. Stake ${stakeAccountList[index].account.toBase58()} delegated`
+        console.log(`  ${index}. Stake ${stakeAccountList[index].stake_account.value.toBase58()} delegated`
             + ` ${lamportsToSol(new BN(delegation.stake))} activation_epoch:${delegation.activationEpoch}`)
         totalStaked += Number(delegation.stake);
         if (Number(delegation.activationEpoch) < epochInfo.epoch - 1) {
