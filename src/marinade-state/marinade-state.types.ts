@@ -93,18 +93,3 @@ export namespace MarinadeStakeProgramResponse {
     warmupCooldownRate: number,
   }
 }
-//
-// export interface StakeRecord {
-//   stakeAccount: Pubkey;
-//   lastUpdateDelegatedLamports: number;
-//   lastUpdateEpoch: number;
-//   isEmergencyUnstaking: number;
-// }
-//
-// export interface ValidatorRecord {
-//   account: Pubkey;
-//   activeBalance: number;
-//   score: number;
-//   lastStakeDeltaEpoch: number;
-//   duplicationFlagBumpSeed: number;
-// }
