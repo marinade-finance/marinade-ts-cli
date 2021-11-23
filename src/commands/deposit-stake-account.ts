@@ -1,7 +1,4 @@
-import { Wallet, BN, web3 } from '@project-serum/anchor'
-import { Marinade } from '../marinade'
-import { MarinadeConfig } from '../modules/marinade-config'
-import { solToLamports } from '../util/conversion'
+import { Marinade, MarinadeConfig, Wallet, web3 } from '@marinade.finance/marinade-ts-sdk'
 
 export async function depositStakeAccountAction (stakeAccount: string): Promise<void> {
   const stakeAccountAddress = new web3.PublicKey(stakeAccount)
