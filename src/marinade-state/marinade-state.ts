@@ -1,7 +1,9 @@
 import { BN, Provider, web3 } from '@project-serum/anchor'
+import { deserializeUnchecked } from 'borsh'
 import { Marinade } from '../marinade'
 import { MarinadeMint } from '../marinade-mint/marinade-mint'
 import * as StateHelper from '../util/state-helpers'
+import { MARINADE_BORSH_SCHEMA, ValidatorRecord } from './marinade-borsch'
 import { ProgramDerivedAddressSeed, MarinadeStateResponse } from './marinade-state.types'
 
 export class MarinadeState {
@@ -34,11 +36,13 @@ export class MarinadeState {
 
   solLeg = async () => this.findProgramDerivedAddress(ProgramDerivedAddressSeed.LIQ_POOL_SOL_ACCOUNT)
 
-  private async findProgramDerivedAddress (seed: ProgramDerivedAddressSeed): Promise<web3.PublicKey> {
-    const seeds = [this.marinade.config.marinadeStateAddress.toBuffer(), Buffer.from(seed)]
+  private async findProgramDerivedAddress (seed: ProgramDerivedAddressSeed, extraSeeds: Buffer[] = []): Promise<web3.PublicKey> {
+    const seeds = [this.marinade.config.marinadeStateAddress.toBuffer(), Buffer.from(seed), ...extraSeeds]
     const [result] = await web3.PublicKey.findProgramAddress(seeds, this.marinade.config.marinadeProgramId)
     return result
   }
+
+  validatorDuplicationFlag = async (validatorAddress: web3.PublicKey) => this.findProgramDerivedAddress(ProgramDerivedAddressSeed.UNIQUE_VALIDATOR, [validatorAddress.toBuffer()])
 
   async unstakeNowFeeBp (lamportsToObtain: BN): Promise<number> {
     const mSolMintClient = this.mSolMint.mintClient()
@@ -51,6 +55,28 @@ export class MarinadeState {
       this.state.liqPool.lpLiquidityTarget,
       lamportsAvailable,
       lamportsToObtain,
+    )
+  }
+
+  async getValidators (): Promise<ValidatorRecord[]> {
+    const validatorListItemSize = this.state.validatorSystem.validatorList.itemSize
+    const validatorRecordBounds = (validatorIndex: number) => [8 + validatorIndex * validatorListItemSize, 8 + (validatorIndex + 1) * validatorListItemSize]
+
+    const validators = await this.anchorProvider.connection.getAccountInfo(this.state.validatorSystem.validatorList.account)
+
+    if (!validators) {
+      throw new Error(`Failed to fetch validators' details!`)
+    }
+
+    return Array.from(
+      { length: this.state.validatorSystem.validatorList.count },
+      (_, index) => {
+        return deserializeUnchecked(
+          MARINADE_BORSH_SCHEMA,
+          ValidatorRecord,
+          validators.data.slice(...validatorRecordBounds(index))
+        )
+      }
     )
   }
 

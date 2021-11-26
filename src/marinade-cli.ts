@@ -5,6 +5,7 @@ import { addLiquidityAction } from "./commands/add-liquidity"
 import { removeLiquidityAction } from './commands/remove-liquidity'
 import { stakeAction } from './commands/stake'
 import { liquidUnstakeAction } from './commands/liquid-unstake'
+import { depositStakeAccountAction } from './commands/deposit-stake-account'
 
 async function main(argv: string[], _env: Record<string, unknown>) {
 
@@ -16,6 +17,11 @@ async function main(argv: string[], _env: Record<string, unknown>) {
     .command("show")
     .description("show marinade state")
     .action(show)
+
+  program
+    .command("deposit-stake-account <stake-account>")
+    .description("deposit stake account")
+    .action(depositStakeAccountAction)
 
   program
     .command("stake <amount-sol>")
@@ -37,21 +43,7 @@ async function main(argv: string[], _env: Record<string, unknown>) {
     .description("remove liquidity from the liquidity pool")
     .action(removeLiquidityAction)
 
-  // program
-  //   .command("stake <amount>")
-  //   .description("stake SOL get mSOL")
-  //   .action(stake);
-
-  // program
-  //   .command("unstake <mSOL_amount>")
-  //   .option("-f, --max-fee","max fee accepted")
-  //   .option("-m, --min-sol","min SOL accepted")
-  //   .description("unstake mSOL, get SOL")
-  //   .action(unstakeNow);
-
   program.parse(argv)
-
 }
 
 main(process.argv, process.env)
-
