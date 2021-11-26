@@ -1,6 +1,4 @@
-import BN from 'bn.js'
-import { Marinade } from '../marinade'
-import { lamportsToSol, solToLamports } from '../util/conversion'
+import { Marinade, MarinadeUtils, BN } from '@marinade.finance/marinade-ts-sdk'
 
 export const show = async (): Promise<void> => {
   // const marinade = new Marinade(new MarinadeConfig({ anchorProviderUrl: '...://...' }))
@@ -33,7 +31,7 @@ export const show = async (): Promise<void> => {
 
   const tvlStaked = Math.round(mSolMintBalance * mSolPrice) // @todo move as getter to MarinadeState
   const totalLiqPoolValue = solLegBalance.add(mSolLegBalance.muln(mSolPrice))
-  const tvlLiquidity = Math.round(lamportsToSol(totalLiqPoolValue))
+  const tvlLiquidity = Math.round(MarinadeUtils.lamportsToSol(totalLiqPoolValue))
 
   const LPPrice = totalLiqPoolValue.mul(new BN(10 ** lpMintInfo.decimals)).div(lpMintInfo.supply)
 
@@ -50,7 +48,7 @@ export const show = async (): Promise<void> => {
   console.log("Treasury mSOL account", treasuryMsolAccount.toBase58())
   console.log("Rewards commission", rewardsCommissionPercent, "%")
   console.log("Stake Account Count", state.stakeSystem.stakeList.count)
-  console.log("Min Stake Amounts", lamportsToSol(state.stakeSystem.minStake))
+  console.log("Min Stake Amounts", MarinadeUtils.lamportsToSol(state.stakeSystem.minStake))
   console.log()
 
   console.log("mSol Price", mSolPrice)
@@ -61,20 +59,20 @@ export const show = async (): Promise<void> => {
   console.log("  LP supply: ", lpMintBalance)
 
   console.log("  SOL leg", solLeg.toBase58())
-  console.log("  SOL leg Balance", lamportsToSol(solLegBalance))
+  console.log("  SOL leg Balance", MarinadeUtils.lamportsToSol(solLegBalance))
 
   console.log("  mSOL leg", mSolLeg.toBase58())
-  console.log("  mSOL leg Balance", lamportsToSol(mSolLegBalance))
+  console.log("  mSOL leg Balance", MarinadeUtils.lamportsToSol(mSolLegBalance))
 
-  console.log("  Total Liq pool value (SOL) ", lamportsToSol(totalLiqPoolValue))
-  console.log("  mSOL-SOL-LP price (SOL)", lamportsToSol(LPPrice))
+  console.log("  Total Liq pool value (SOL) ", MarinadeUtils.lamportsToSol(totalLiqPoolValue))
+  console.log("  mSOL-SOL-LP price (SOL)", MarinadeUtils.lamportsToSol(LPPrice))
 
-  console.log("  Liquidity Target: ", lamportsToSol(state.liqPool.lpLiquidityTarget))
+  console.log("  Liquidity Target: ", MarinadeUtils.lamportsToSol(state.liqPool.lpLiquidityTarget))
   // compute the fee to unstake-now! and get 1 SOL
-  console.log(`  Current-fee: ${await marinadeState.unstakeNowFeeBp(solToLamports(1)) / 100}%`)
+  console.log(`  Current-fee: ${await marinadeState.unstakeNowFeeBp(MarinadeUtils.solToLamports(1)) / 100}%`)
   console.log(`  Min-Max-Fee: ${state.liqPool.lpMinFee.basisPoints / 100}% to ${state.liqPool.lpMaxFee.basisPoints / 100}%`)
   const testAmount = 250000
-  console.log(`  fee to unstake-now! ${testAmount} SOL: ${await marinadeState.unstakeNowFeeBp(solToLamports(testAmount)) / 100}%`)
+  console.log(`  fee to unstake-now! ${testAmount} SOL: ${await marinadeState.unstakeNowFeeBp(MarinadeUtils.solToLamports(testAmount)) / 100}%`)
   console.log()
 
   console.log("--- TVL")

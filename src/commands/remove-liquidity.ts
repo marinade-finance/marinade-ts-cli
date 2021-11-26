@@ -1,10 +1,7 @@
-import { Wallet } from '@project-serum/anchor'
-import { Marinade } from '../marinade'
-import { MarinadeConfig } from '../modules/marinade-config'
-import { solToLamports } from '../util/conversion'
+import { Marinade, MarinadeConfig, MarinadeUtils, Wallet } from '@marinade.finance/marinade-ts-sdk'
 
 export async function removeLiquidityAction (amountSol: string | number): Promise<void> {
-  const amountLamports = solToLamports(Number(amountSol))
+  const amountLamports = MarinadeUtils.solToLamports(Number(amountSol))
   console.log('Removing liquidity:', amountSol, 'SOL', amountLamports.toString(), 'lamports')
 
   const marinadeConfig = new MarinadeConfig({ wallet: Wallet.local().payer })

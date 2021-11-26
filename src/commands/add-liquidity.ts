@@ -1,10 +1,7 @@
-import { Wallet, BN } from '@project-serum/anchor'
-import { Marinade } from '../marinade'
-import { MarinadeConfig } from '../modules/marinade-config'
-import { solToLamports } from '../util/conversion'
+import { Marinade, MarinadeConfig, MarinadeUtils, Wallet, BN } from '@marinade.finance/marinade-ts-sdk'
 
 export async function addLiquidityAction (amountSol: string | number): Promise<void> {
-  const amountLamports: BN = solToLamports(Number(amountSol))
+  const amountLamports: BN = MarinadeUtils.solToLamports(Number(amountSol))
   console.log('Adding liquidity:', amountSol, 'SOL', amountLamports.toString(), 'lamports')
 
   const marinadeConfig = new MarinadeConfig({ wallet: Wallet.local().payer })
