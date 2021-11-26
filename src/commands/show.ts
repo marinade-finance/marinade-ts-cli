@@ -5,9 +5,6 @@ export const show = async (): Promise<void> => {
   const marinade = new Marinade()
   const marinadeState = await marinade.getMarinadeState()
 
-  console.log(await marinadeState.getStakeRecords())
-  console.log(await marinadeState.getValidatorRecords())
-
   const {
     state,
     lpMint,
