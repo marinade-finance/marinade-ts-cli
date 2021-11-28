@@ -1,7 +1,9 @@
 import { Marinade, MarinadeUtils, BN } from '@marinade.finance/marinade-ts-sdk'
+import {StakeInfo} from "@marinade.finance/marinade-ts-sdk/dist/marinade-state/borsh/stake-info";
+import {Delegation, Meta} from "@marinade.finance/marinade-ts-sdk/dist/marinade-state/borsh/stake-state";
+import {U64_MAX} from "@marinade.finance/marinade-ts-sdk/dist/util";
 
-export const show = async (): Promise<void> => {
-  // const marinade = new Marinade(new MarinadeConfig({ anchorProviderUrl: '...://...' }))
+export async function show(options: Object): Promise<void> {
   const marinade = new Marinade()
   const marinadeState = await marinade.getMarinadeState()
 
@@ -79,4 +81,83 @@ export const show = async (): Promise<void> => {
   console.log("  Total Staked Value (SOL) ", tvlStaked.toLocaleString())
   console.log("  Total Liquidity-Pool (SOL) ", tvlLiquidity.toLocaleString())
   console.log("  TVL (SOL) ", (tvlStaked + tvlLiquidity).toLocaleString())
+
+  if ('list' in options) {
+    console.log()
+    console.log("  Validator_manager_authority", state.validatorSystem.managerAuthority.toBase58())
+    console.log(`  Stake list account: ${state.stakeSystem.stakeList.account} with ${state.stakeSystem.stakeList.count}/${"?"} stakes`)
+    console.log("-----------------")
+    console.log("-- Validators ---")
+    console.log(`  Total staked: ${MarinadeUtils.lamportsToSol(state.validatorSystem.totalActiveBalance)} SOL`)
+    console.log(`  List account: ${state.validatorSystem.validatorList.account} with ${state.validatorSystem.validatorList.count}/${"?"} validators`)
+    console.log("-------------------------------------------------------------")
+
+    const epochInfo = await marinadeState.epochInfo()
+    const validatorAccounts = await marinadeState.getValidatorRecords()
+    const stakeInfos = await marinadeState.getStakeInfos()
+
+    let totalStaked = new BN(0)
+    let totalStakedFullyActivated = new BN(0)
+
+    validatorAccounts
+        .forEach((validator, validatorIndex) => {
+      if (validator.activeBalance.toNumber() <= 0) return
+
+      const validatorStakes:StakeInfo[] = stakeInfos
+          .filter(stakeInfo => stakeInfo.stake.Stake?.stake.delegation)
+          .filter(stakeInfo => U64_MAX.eq(stakeInfo.stake.Stake?.stake.delegation.deactivationEpoch as BN))
+          .filter(stakeInfo => stakeInfo.stake.Stake?.stake.delegation.voterPubkey.toBase58() == validator.validatorAccount.toBase58())
+      console.log(`${validatorIndex+1}) Validator ${validator.validatorAccount.toBase58()}`
+          + `, marinade-staked ${MarinadeUtils.lamportsToSol(validator.activeBalance).toFixed(2)} SOL`
+          + `, score-pct: ${(validator.score * 100/ state.validatorSystem.totalValidatorScore).toFixed(4)}%, ${validatorStakes.length} stake-accounts`)
+
+      for (const [index, stakeInfo] of validatorStakes.entries()) {
+
+        let delegation = stakeInfo.stake.Stake?.stake.delegation as Delegation
+        let meta = stakeInfo.stake.Stake?.meta as Meta
+
+        let extraBalance = MarinadeUtils.lamportsToSol(
+            stakeInfo.balance
+                .add(delegation.stake.neg())
+                .add(meta.rentExemptReserve.neg()))
+
+        console.log(`  ${stakeInfo.index}. Stake ${stakeInfo.record.stakeAccount.toBase58()} delegated`
+            + ` ${MarinadeUtils.lamportsToSol(delegation?.stake as BN)} activation_epoch:${delegation.activationEpoch}`
+            + (extraBalance > 0 ? ` (extra balance ${extraBalance})` : ""))
+
+        totalStaked = totalStaked.add(delegation.stake)
+        if (delegation.activationEpoch.toNumber() < epochInfo.epoch - 1) {
+          totalStakedFullyActivated = totalStakedFullyActivated.add(delegation.stake)
+        }
+      }
+      console.log("-------------------------")
+    })
+    console.log(`${validatorAccounts.length} validators with stake`
+        + `, total_staked ${MarinadeUtils.lamportsToSol(new BN(totalStaked))} total_staked_fully_activated ${MarinadeUtils.lamportsToSol(new BN(totalStakedFullyActivated))}`
+        + `, warming-up in this epoch:${MarinadeUtils.lamportsToSol(totalStaked.add(totalStakedFullyActivated.neg()))}`)
+
+    let coolingDownStakes: StakeInfo[] = stakeInfos
+        .filter(stakeInfo => !U64_MAX.eq(stakeInfo.stake.Stake?.stake.delegation.deactivationEpoch as BN))
+    if (coolingDownStakes.length > 0) {
+      console.log("-------------------------")
+      console.log("-- Cooling down stakes --")
+
+      coolingDownStakes.forEach(stakeInfo => {
+        let delegation = stakeInfo.stake.Stake?.stake.delegation
+        if (delegation) {
+          let meta = stakeInfo.stake.Stake?.meta as Meta
+          let extraBalance = MarinadeUtils.lamportsToSol(
+              stakeInfo.balance
+                  .add(delegation.stake.neg())
+                  .add(meta.rentExemptReserve.neg()))
+
+          console.log(`  ${stakeInfo.index}. Stake ${stakeInfo.record.stakeAccount.toBase58()} delegated`
+              + ` ${MarinadeUtils.lamportsToSol(delegation?.stake as BN)} to ${delegation.voterPubkey.toBase58()}`
+              + (extraBalance > 0 ? ` (extra balance ${extraBalance})` : ""))
+        } else {
+          console.log(`  ${stakeInfo.index}. Stake ${stakeInfo.record.stakeAccount.toBase58()} (full balance ${stakeInfo.balance})`)
+        }
+      })
+    }
+  }
 }

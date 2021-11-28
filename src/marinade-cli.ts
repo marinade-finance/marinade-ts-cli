@@ -15,6 +15,7 @@ async function main(argv: string[], _env: Record<string, unknown>) {
 
   program
     .command("show")
+    .option("-l, --list","list marinade validators & stake accounts")
     .description("show marinade state")
     .action(show)
 
