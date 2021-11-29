@@ -17,7 +17,7 @@
     "author": "lucio_tato",
     "license": "ISC",
     "dependencies": {
-        "@marinade.finance/marinade-ts-sdk": "^0.0.2",
+        "@marinade.finance/marinade-ts-sdk": "^0.0.3",
         "@project-serum/anchor": "^0.14.0",
         "@solana/spl-token": "^0.1.8",
         "borsh": "^0.6.0",
