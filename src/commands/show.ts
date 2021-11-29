@@ -83,6 +83,9 @@ export async function show(options: Object): Promise<void> {
   console.log("  TVL (SOL) ", (tvlStaked + tvlLiquidity).toLocaleString())
 
   if ('list' in options) {
+    const validatorRecords = await marinadeState.getValidatorRecords()
+    const stakeInfos = await marinadeState.getStakeInfos()
+
     console.log()
     console.log("  Validator_manager_authority", state.validatorSystem.managerAuthority.toBase58())
     console.log(`  Stake list account: ${state.stakeSystem.stakeList.account} with ${state.stakeSystem.stakeList.count}/${"?"} stakes`)
@@ -93,20 +96,21 @@ export async function show(options: Object): Promise<void> {
     console.log("-------------------------------------------------------------")
 
     const epochInfo = await marinadeState.epochInfo()
-    const validatorAccounts = await marinadeState.getValidatorRecords()
-    const stakeInfos = await marinadeState.getStakeInfos()
 
     let totalStaked = new BN(0)
     let totalStakedFullyActivated = new BN(0)
 
-    validatorAccounts
+    validatorRecords
         .forEach((validator, validatorIndex) => {
+
+      // Find stakeInfo by delegation for current validator and active stakes
       if (validator.activeBalance.toNumber() <= 0) return
 
       const validatorStakes:StakeInfo[] = stakeInfos
           .filter(stakeInfo => stakeInfo.stake.Stake?.stake.delegation)
-          .filter(stakeInfo => U64_MAX.eq(stakeInfo.stake.Stake?.stake.delegation.deactivationEpoch as BN))
           .filter(stakeInfo => stakeInfo.stake.Stake?.stake.delegation.voterPubkey.toBase58() == validator.validatorAccount.toBase58())
+          .filter(stakeInfo => U64_MAX.eq(stakeInfo.stake.Stake?.stake.delegation.deactivationEpoch as BN))
+
       console.log(`${validatorIndex+1}) Validator ${validator.validatorAccount.toBase58()}`
           + `, marinade-staked ${MarinadeUtils.lamportsToSol(validator.activeBalance).toFixed(2)} SOL`
           + `, score-pct: ${(validator.score * 100/ state.validatorSystem.totalValidatorScore).toFixed(4)}%, ${validatorStakes.length} stake-accounts`)
@@ -118,8 +122,8 @@ export async function show(options: Object): Promise<void> {
 
         let extraBalance = MarinadeUtils.lamportsToSol(
             stakeInfo.balance
-                .add(delegation.stake.neg())
-                .add(meta.rentExemptReserve.neg()))
+                .sub(delegation.stake)
+                .sub(meta.rentExemptReserve))
 
         console.log(`  ${stakeInfo.index}. Stake ${stakeInfo.record.stakeAccount.toBase58()} delegated`
             + ` ${MarinadeUtils.lamportsToSol(delegation?.stake as BN)} activation_epoch:${delegation.activationEpoch}`
@@ -132,12 +136,15 @@ export async function show(options: Object): Promise<void> {
       }
       console.log("-------------------------")
     })
-    console.log(`${validatorAccounts.length} validators with stake`
-        + `, total_staked ${MarinadeUtils.lamportsToSol(new BN(totalStaked))} total_staked_fully_activated ${MarinadeUtils.lamportsToSol(new BN(totalStakedFullyActivated))}`
-        + `, warming-up in this epoch:${MarinadeUtils.lamportsToSol(totalStaked.add(totalStakedFullyActivated.neg()))}`)
 
+    console.log(`${validatorRecords.length} validators with stake`
+        + `, total_staked ${MarinadeUtils.lamportsToSol(new BN(totalStaked))} total_staked_fully_activated ${MarinadeUtils.lamportsToSol(new BN(totalStakedFullyActivated))}`
+        + `, warming-up in this epoch:${MarinadeUtils.lamportsToSol(totalStaked.sub(totalStakedFullyActivated))}`)
+
+    // find cooling down stakes by empty delegation or deactivationEpoch != U64_MAX
     let coolingDownStakes: StakeInfo[] = stakeInfos
-        .filter(stakeInfo => !U64_MAX.eq(stakeInfo.stake.Stake?.stake.delegation.deactivationEpoch as BN))
+        .filter(stakeInfo => !stakeInfo.stake.Stake?.stake.delegation
+                            || !U64_MAX.eq(stakeInfo.stake.Stake?.stake.delegation.deactivationEpoch as BN))
     if (coolingDownStakes.length > 0) {
       console.log("-------------------------")
       console.log("-- Cooling down stakes --")
@@ -148,8 +155,8 @@ export async function show(options: Object): Promise<void> {
           let meta = stakeInfo.stake.Stake?.meta as Meta
           let extraBalance = MarinadeUtils.lamportsToSol(
               stakeInfo.balance
-                  .add(delegation.stake.neg())
-                  .add(meta.rentExemptReserve.neg()))
+                  .sub(delegation.stake)
+                  .sub(meta.rentExemptReserve))
 
           console.log(`  ${stakeInfo.index}. Stake ${stakeInfo.record.stakeAccount.toBase58()} delegated`
               + ` ${MarinadeUtils.lamportsToSol(delegation?.stake as BN)} to ${delegation.voterPubkey.toBase58()}`
