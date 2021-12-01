@@ -4,3 +4,7 @@ target
 dist
 **/*.rs.bk
 node_modules
+marinade-ts-cli.iml
+.idea/workspace.xml
+.idea/vcs.xml
+.idea/modules.xml
