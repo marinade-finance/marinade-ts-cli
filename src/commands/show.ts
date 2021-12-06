@@ -1,7 +1,9 @@
-import {MarinadeBorsh, Marinade, MarinadeUtils, BN, MarinadeState} from '@marinade.finance/marinade-ts-sdk'
+import { Marinade, MarinadeUtils, BN, MarinadeConfig, MarinadeBorsh, MarinadeState } from '@marinade.finance/marinade-ts-sdk'
+import { connection } from '../utils/anchor'
 
 export async function show(options: Object): Promise<void> {
-  const marinade = new Marinade()
+  const config = new MarinadeConfig({ connection })
+  const marinade = new Marinade(config)
   const marinadeState = await marinade.getMarinadeState()
 
   const {
@@ -26,7 +28,7 @@ export async function show(options: Object): Promise<void> {
   const mSolLegBalance = mSolLegInfo.amount
 
   const solLeg = await marinadeState.solLeg() // @todo fetch from Marinade instead?, rm await
-  const solLegBalance = new BN(await marinade.anchorProvider.connection.getBalance(solLeg)).sub(state.rentExemptForTokenAcc)
+  const solLegBalance = new BN(await connection.getBalance(solLeg)).sub(state.rentExemptForTokenAcc)
 
   const tvlStaked = Math.round(mSolMintBalance * mSolPrice) // @todo move as getter to MarinadeState
   const totalLiqPoolValue = solLegBalance.add(mSolLegBalance.muln(mSolPrice))
@@ -36,7 +38,7 @@ export async function show(options: Object): Promise<void> {
 
   console.log(state) // Access to raw internal structure is allowed
 
-  console.log("Marinade.Finance ProgramId", marinade.config.marinadeProgramId.toBase58())
+  console.log("Marinade.Finance ProgramId", marinade.config.marinadeFinanceProgramId.toBase58())
   console.log("Marinade.Finance State", marinade.config.marinadeStateAddress.toBase58())
   console.log()
 
