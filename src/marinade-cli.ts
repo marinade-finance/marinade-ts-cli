@@ -21,16 +21,19 @@ async function main(argv: string[], _env: Record<string, unknown>) {
 
   program
     .command("deposit-stake-account <stake-account>")
+    .option("-r, --referral <referral-code>", "Use the referral code")
     .description("deposit stake account")
     .action(depositStakeAccountAction)
 
   program
     .command("stake <amount-sol>")
+    .option("-r, --referral <referral-code>", "Use the referral code")
     .description("stake SOL")
     .action(stakeAction)
 
   program
     .command("liquid-unstake <amount-sol>")
+    .option("-r, --referral <referral-code>", "Use the referral code")
     .description("Unstake SOL using liquidity pool")
     .action(liquidUnstakeAction)
 
