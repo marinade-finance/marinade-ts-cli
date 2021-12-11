@@ -1,4 +1,4 @@
-#!/bin/node
+#!/usr/bin/env node
 import { program } from "commander"
 import { show } from "./commands/show"
 import { addLiquidityAction } from "./commands/add-liquidity"
