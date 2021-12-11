@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { program } from "commander"
 import { show } from "./commands/show"
+import { balance } from "./commands/balance"
 import { addLiquidityAction } from "./commands/add-liquidity"
 import { removeLiquidityAction } from './commands/remove-liquidity'
 import { stakeAction } from './commands/deposit'
@@ -15,9 +16,14 @@ async function main(argv: string[], _env: Record<string, unknown>) {
 
   program
     .command("show")
-    .option("-l, --list","list marinade validators & stake accounts")
+    .option("-l, --list", "list marinade validators & stake accounts")
     .description("show marinade state")
     .action(show)
+
+  program
+    .command("balance")
+    .description("show your account balances")
+    .action(balance)
 
   program
     .command("deposit-stake-account <stake-account>")
