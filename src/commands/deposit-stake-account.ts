@@ -1,5 +1,5 @@
 import { Marinade, MarinadeConfig, Wallet, web3 } from '@marinade.finance/marinade-ts-sdk'
-import { connection, provider, PROVIDER_URL } from '../utils/anchor'
+import { connection, getNodeJsProvider, PROVIDER_URL } from '../utils/anchor'
 
 type Options = Partial<{
   referral: string
@@ -9,15 +9,20 @@ export async function depositStakeAccountAction (stakeAccount: string, { referra
   const stakeAccountAddress = new web3.PublicKey(stakeAccount)
   console.log('Depositing stake account:', stakeAccountAddress.toBase58())
 
-  const publicKey = Wallet.local().payer.publicKey
+  console.log('Provider url:', PROVIDER_URL)
+  const provider = getNodeJsProvider()
+  console.log('Using fee payer', provider.wallet.publicKey.toBase58())
+
+  if (referral) {
+    console.log('Referral account:', referral)
+  }
   const referralCode = referral ? new web3.PublicKey(referral) : null
-  const marinadeConfig = new MarinadeConfig({ connection, publicKey, referralCode })
+
+  const marinadeConfig = new MarinadeConfig({ connection, publicKey:provider.wallet.publicKey, referralCode })
   const marinade = new Marinade(marinadeConfig)
 
-  const {    transaction  } = await marinade.depositStakeAccount(stakeAccountAddress)
-  const transactionSignature = await provider.send(transaction)
+  const { transaction } = await marinade.depositStakeAccount(stakeAccountAddress)
+  const signature = await provider.send(transaction)
 
-  console.log('Solana net:', PROVIDER_URL)
-  console.log('Using fee payer', provider.wallet.publicKey.toBase58())
-  console.log('Transaction', transactionSignature)
+  console.log('Transaction signature', signature)
 }

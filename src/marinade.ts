@@ -3,7 +3,7 @@ import { program } from "commander"
 import { show } from "./commands/show"
 import { addLiquidityAction } from "./commands/add-liquidity"
 import { removeLiquidityAction } from './commands/remove-liquidity'
-import { stakeAction } from './commands/stake'
+import { stakeAction } from './commands/deposit'
 import { liquidUnstakeAction } from './commands/liquid-unstake'
 import { depositStakeAccountAction } from './commands/deposit-stake-account'
 

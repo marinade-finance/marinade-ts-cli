@@ -36,7 +36,7 @@ export async function show(options: Object): Promise<void> {
 
   const LPPrice = totalLiqPoolValue.mul(new BN(10 ** lpMintInfo.decimals)).div(lpMintInfo.supply)
 
-  console.log(state) // Access to raw internal structure is allowed
+  //console.log(state) // Access to raw internal structure is allowed
 
   console.log("Marinade.Finance ProgramId", marinade.config.marinadeFinanceProgramId.toBase58())
   console.log("Marinade.Finance State", marinade.config.marinadeStateAddress.toBase58())
