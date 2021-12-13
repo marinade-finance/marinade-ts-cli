@@ -1,5 +1,5 @@
 import { Marinade, MarinadeConfig, MarinadeUtils, Wallet, BN, web3 } from '@marinade.finance/marinade-ts-sdk'
-import { getNodeJsProvider, PROVIDER_URL } from '../utils/anchor'
+import { getNodeJsProvider, getProviderUrl } from '../utils/anchor'
 
 type Options = Partial<{
   referral: string
@@ -9,7 +9,7 @@ export async function stakeAction(amountSol: string | number, { referral }: Opti
   const amountLamports: BN = MarinadeUtils.solToLamports(Number(amountSol))
   console.log('Staking:', amountSol, 'SOL', amountLamports.toString(), 'lamports')
 
-  console.log('Provider url:', PROVIDER_URL)
+  console.log('Provider url:', getProviderUrl())
   const provider = getNodeJsProvider()
   console.log('Using fee payer', provider.wallet.publicKey.toBase58())
 

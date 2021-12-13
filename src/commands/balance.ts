@@ -1,6 +1,6 @@
 import { Marinade, MarinadeUtils, BN, MarinadeConfig, MarinadeBorsh, MarinadeState, Provider } from '@marinade.finance/marinade-ts-sdk'
 import { lamportsToSol, getAssociatedTokenAccountAddress } from '@marinade.finance/marinade-ts-sdk/dist/src/util'
-import { connection, getNodeJsProvider } from '../utils/anchor'
+import { getNodeJsProvider } from '../utils/anchor'
 
 
 export async function balance(options: Object): Promise<void> {
@@ -10,7 +10,7 @@ export async function balance(options: Object): Promise<void> {
   console.log(`Main account: ${provider.wallet.publicKey.toBase58()}`)
   console.log(`Note: transactions can take up to a minute to be reflected here`)
 
-  const config = new MarinadeConfig({ connection })
+  const config = new MarinadeConfig({ connection:provider.connection })
   const marinade = new Marinade(config)
   const marinadeState = await marinade.getMarinadeState()
 
@@ -26,7 +26,7 @@ export async function balance(options: Object): Promise<void> {
   } = marinadeState
 
 
-  const balanceLamports = new BN(await connection.getBalance(provider.wallet.publicKey))
+  const balanceLamports = new BN(await provider.connection.getBalance(provider.wallet.publicKey))
   console.log(`SOL Balance: ${lamportsToSol(balanceLamports)}`)
 
   const userMSolATA = await getAssociatedTokenAccountAddress(mSolMintAddress, provider.wallet.publicKey)

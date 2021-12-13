@@ -1,11 +1,19 @@
 import { Provider, Wallet, web3 } from '@marinade.finance/marinade-ts-sdk'
 import * as path from 'path'
 
-export const PROVIDER_URL = 'https://api.devnet.solana.com'
-export const connection = new web3.Connection(PROVIDER_URL)
-
 export function getUserRootFolder():string {
   return process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE || `~`;
+}
+
+export function getProviderUrl():string {
+  if (!process.env.ANCHOR_PROVIDER_URL) {
+    process.env.ANCHOR_PROVIDER_URL = 'https://api.devnet.solana.com'
+  }
+  return process.env.ANCHOR_PROVIDER_URL
+}
+
+export function getConnection(){
+  return new web3.Connection(getProviderUrl())
 }
 
 export function getNodeJsLocalWallet(): Wallet {
@@ -17,7 +25,7 @@ export function getNodeJsLocalWallet(): Wallet {
 
 export function getNodeJsProvider(): Provider {
   return new Provider(
-    connection,
+    getConnection(),
     getNodeJsLocalWallet(),
     { commitment: 'confirmed' },
   )

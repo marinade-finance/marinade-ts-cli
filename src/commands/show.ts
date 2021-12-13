@@ -1,7 +1,9 @@
 import { Marinade, MarinadeUtils, BN, MarinadeConfig, MarinadeBorsh, MarinadeState } from '@marinade.finance/marinade-ts-sdk'
-import { connection } from '../utils/anchor'
+import { getConnection } from '../utils/anchor'
 
 export async function show(options: Object): Promise<void> {
+
+  const connection = getConnection()
   const config = new MarinadeConfig({ connection })
   const marinade = new Marinade(config)
   const marinadeState = await marinade.getMarinadeState()

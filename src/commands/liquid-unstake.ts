@@ -1,6 +1,6 @@
 import { Wallet, BN } from '@project-serum/anchor'
 import { Marinade, MarinadeConfig, MarinadeUtils, web3 } from '@marinade.finance/marinade-ts-sdk'
-import { connection, getNodeJsProvider, PROVIDER_URL } from '../utils/anchor'
+import { getConnection, getNodeJsProvider, getProviderUrl } from '../utils/anchor'
 
 type Options = Partial<{
   referral: string
@@ -10,7 +10,7 @@ export async function liquidUnstakeAction (amountSol: string | number, { referra
   const amountLamports: BN = MarinadeUtils.solToLamports(Number(amountSol))
   console.log('Liquid-unstaking:', amountSol, 'SOL', amountLamports.toString(), 'lamports')
 
-  console.log('Provider url:', PROVIDER_URL)
+  console.log('Provider url:', getProviderUrl())
   const provider = getNodeJsProvider()
   console.log('Using fee payer', provider.wallet.publicKey.toBase58())
 
@@ -19,7 +19,7 @@ export async function liquidUnstakeAction (amountSol: string | number, { referra
   }
   const referralCode = referral ? new web3.PublicKey(referral) : null
   
-  const marinadeConfig = new MarinadeConfig({ connection, publicKey:provider.wallet.publicKey, referralCode })
+  const marinadeConfig = new MarinadeConfig({ connection:provider.connection, publicKey:provider.wallet.publicKey, referralCode })
   const marinade = new Marinade(marinadeConfig)
 
   const { associatedMSolTokenAccountAddress, transaction } = await marinade.liquidUnstake(amountLamports)
