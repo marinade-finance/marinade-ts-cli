@@ -21,6 +21,7 @@ Options:
 
 Commands:
   show [options]                                   show marinade state
+  show-referral-state <referral>                   show referral partner's state
   balance                                          show your account balances
   deposit-stake-account [options] <stake-account>  deposit stake account
   stake [options] <amount-sol>                     stake SOL
