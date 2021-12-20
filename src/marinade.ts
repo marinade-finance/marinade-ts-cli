@@ -7,8 +7,9 @@ import { removeLiquidityAction } from './commands/remove-liquidity'
 import { stakeAction } from './commands/deposit'
 import { liquidUnstakeAction } from './commands/liquid-unstake'
 import { depositStakeAccountAction } from './commands/deposit-stake-account'
+import { showReferralStateAction } from './commands/show-referral-state'
 
-async function main(argv: string[], _env: Record<string, unknown>) {
+async function main (argv: string[], _env: Record<string, unknown>) {
 
   program
     .version("0.0.1")
@@ -19,6 +20,11 @@ async function main(argv: string[], _env: Record<string, unknown>) {
     .option("-l, --list", "list marinade validators & stake accounts")
     .description("show marinade state")
     .action(show)
+
+  program
+    .command("show-referral-state <referral>")
+    .description("show referral partner's state")
+    .action(showReferralStateAction)
 
   program
     .command("balance")
