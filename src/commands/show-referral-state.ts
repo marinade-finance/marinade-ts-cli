@@ -12,14 +12,15 @@ export async function showReferralStateAction (referral: string): Promise<void> 
   const marinadeConfig = new MarinadeConfig({ connection: provider.connection, referralCode })
   const marinade = new Marinade(marinadeConfig)
 
-  const { state } = await marinade.getReferralPartnerState()
+  const { state: referralState } = await marinade.getReferralPartnerState()
 
   console.log('---')
-  console.log('Partner Account:', state.partnerAccount.toBase58())
-  console.log('Token Partner Account:', state.tokenPartnerAccount.toBase58())
-  if (state.pause) console.log('--PAUSED--');
+  console.log('Partner:', referralState.partnerName)
+  console.log('Partner Main Account:', referralState.partnerAccount.toBase58())
+  console.log('Partner mSOL Token Account:', referralState.tokenPartnerAccount.toBase58())
+  if (referralState.pause) console.log('--PAUSED--');
 
-  const lastTransferTimeTimestamp = state.lastTransferTime.toNumber()
+  const lastTransferTimeTimestamp = referralState.lastTransferTime.toNumber()
   const lastTransferTime = new Date(lastTransferTimeTimestamp * 1e3)
   // commented because auto-transfers are not enabled yet
   // console.log('---')
@@ -31,18 +32,18 @@ export async function showReferralStateAction (referral: string): Promise<void> 
 
   console.log()
   console.log('Deposit SOL');
-  console.log(' -- SOL amount:', MarinadeUtils.lamportsToSol(state.depositSolAmount));
-  console.log(' -- operations:', state.depositSolOperations.toNumber())
+  console.log(' -- SOL amount:', MarinadeUtils.lamportsToSol(referralState.depositSolAmount));
+  console.log(' -- operations:', referralState.depositSolOperations.toNumber())
   console.log()
   console.log('Deposit Stake Account');
-  console.log(' -- SOL amount:', MarinadeUtils.lamportsToSol(state.depositStakeAccountAmount));
-  console.log(' -- operations:', state.depositStakeAccountOperations.toNumber())
+  console.log(' -- SOL amount:', MarinadeUtils.lamportsToSol(referralState.depositStakeAccountAmount));
+  console.log(' -- operations:', referralState.depositStakeAccountOperations.toNumber())
   console.log()
   console.log('Liquid Unstake');
-  console.log(' -- SOL amount:', MarinadeUtils.lamportsToSol(state.liqUnstakeSolAmount));
-  console.log(' --mSOL amount:', MarinadeUtils.lamportsToSol(state.liqUnstakeMsolAmount))
-  console.log(' --mSOL fees  :', MarinadeUtils.lamportsToSol(state.liqUnstakeMsolFees))
-  console.log(' -- operations:', state.liqUnstakeOperations.toNumber())
+  console.log(' -- SOL amount:', MarinadeUtils.lamportsToSol(referralState.liqUnstakeSolAmount));
+  console.log(' --mSOL amount:', MarinadeUtils.lamportsToSol(referralState.liqUnstakeMsolAmount))
+  console.log(' --mSOL fees  :', MarinadeUtils.lamportsToSol(referralState.liqUnstakeMsolFees))
+  console.log(' -- operations:', referralState.liqUnstakeOperations.toNumber())
   // commented because Delayed Unstake is not enabled yet
   // console.log('Delayed Unstake');
   // console.log(' -- SOL amount:', MarinadeUtils.lamportsToSol(state.delayedUnstakeAmount))
