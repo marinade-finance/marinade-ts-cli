@@ -20,11 +20,11 @@ export async function show(options: Object): Promise<void> {
   } = marinadeState
 
   const mSolMintClient = mSolMint.mintClient()
-  const mSolMintBalance = await mSolMint.tokenBalance()
+  const mSolMintSupply = await mSolMint.totalSupply()
 
   const lpMintClient = lpMint.mintClient()
   const lpMintInfo = await lpMintClient.getMintInfo()
-  const lpMintBalance = await lpMint.tokenBalance()
+  const lpMintSupply = await lpMint.totalSupply()
 
   const mSolLegInfo = await mSolMintClient.getAccountInfo(state.liqPool.msolLeg)
   const mSolLegBalance = mSolLegInfo.amount
@@ -32,12 +32,14 @@ export async function show(options: Object): Promise<void> {
   const solLeg = await marinadeState.solLeg() // @todo fetch from Marinade instead?, rm await
   const solLegBalance = new BN(await connection.getBalance(solLeg)).sub(state.rentExemptForTokenAcc)
 
-  const tvlStaked = Math.round(mSolMintBalance * mSolPrice) // @todo move as getter to MarinadeState
-  const totalLiqPoolValue = solLegBalance.add(mSolLegBalance.muln(mSolPrice))
-  const tvlLiquidity = Math.round(MarinadeUtils.lamportsToSol(totalLiqPoolValue))
+  const tvlStaked = Math.round(mSolMintSupply * mSolPrice) // @todo move as getter to MarinadeState
+  const totalLiqPoolValueLamports = solLegBalance.add(mSolLegBalance.muln(mSolPrice))
+  const tvlLiquidity = Math.round(MarinadeUtils.lamportsToSol(totalLiqPoolValueLamports))
 
-  const LPPrice = totalLiqPoolValue.mul(new BN(10 ** lpMintInfo.decimals)).div(lpMintInfo.supply)
-
+  // LPPrice * 1e9 (expressed in lamports)
+  const LAMPORTS_PER_SOL = new BN(1e9)
+  const LPPrice = totalLiqPoolValueLamports.mul(LAMPORTS_PER_SOL).div(lpMintInfo.supply)
+  
   //console.log(state) // Access to raw internal structure is allowed
 
   console.log("Marinade.Finance ProgramId", marinade.config.marinadeFinanceProgramId.toBase58())
@@ -45,7 +47,7 @@ export async function show(options: Object): Promise<void> {
   console.log()
 
   console.log("mSOL mint", mSolMintAddress.toBase58())
-  console.log("mSOL supply", mSolMintBalance)
+  console.log("mSOL supply", mSolMintSupply)
   console.log()
 
   console.log("Treasury mSOL account", treasuryMsolAccount.toBase58())
@@ -59,7 +61,7 @@ export async function show(options: Object): Promise<void> {
 
   console.log("--- mSOL-SOL swap pool")
   console.log("LP Mint", marinadeState.lpMintAddress.toBase58())
-  console.log("  LP supply: ", lpMintBalance)
+  console.log("  LP supply: ", lpMintSupply)
 
   console.log("  SOL leg", solLeg.toBase58())
   console.log("  SOL leg Balance", MarinadeUtils.lamportsToSol(solLegBalance))
@@ -67,14 +69,14 @@ export async function show(options: Object): Promise<void> {
   console.log("  mSOL leg", mSolLeg.toBase58())
   console.log("  mSOL leg Balance", MarinadeUtils.lamportsToSol(mSolLegBalance))
 
-  console.log("  Total Liq pool value (SOL) ", MarinadeUtils.lamportsToSol(totalLiqPoolValue))
+  console.log("  Total Liq pool value (SOL) ", MarinadeUtils.lamportsToSol(totalLiqPoolValueLamports))
   console.log("  mSOL-SOL-LP price (SOL)", MarinadeUtils.lamportsToSol(LPPrice))
 
   console.log("  Liquidity Target: ", MarinadeUtils.lamportsToSol(state.liqPool.lpLiquidityTarget))
   // compute the fee to unstake-now! and get 1 SOL
   console.log(`  Current-fee: ${await marinadeState.unstakeNowFeeBp(MarinadeUtils.solToLamports(1)) / 100}%`)
   console.log(`  Min-Max-Fee: ${state.liqPool.lpMinFee.basisPoints / 100}% to ${state.liqPool.lpMaxFee.basisPoints / 100}%`)
-  const testAmount = 250000
+  const testAmount = 10000
   console.log(`  fee to unstake-now! ${testAmount} SOL: ${await marinadeState.unstakeNowFeeBp(MarinadeUtils.solToLamports(testAmount)) / 100}%`)
   console.log()
 
