@@ -7,7 +7,7 @@ export function getUserRootFolder():string {
 
 export function getProviderUrl():string {
   if (!process.env.ANCHOR_PROVIDER_URL) {
-    process.env.ANCHOR_PROVIDER_URL = 'https://api.devnet.solana.com'
+    process.env.ANCHOR_PROVIDER_URL = 'https://api.mainnet-beta.solana.com'
   }
   return process.env.ANCHOR_PROVIDER_URL
 }
