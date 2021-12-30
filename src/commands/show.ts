@@ -48,16 +48,14 @@ export async function show(options: Object): Promise<void> {
 
   console.log("mSOL mint", mSolMintAddress.toBase58())
   console.log("mSOL supply", mSolMintSupply)
+  console.log("mSol Price", mSolPrice, "SOL")
+  console.log("Accumulated rewards", (mSolMintSupply * (mSolPrice - 1)), "SOL")
   console.log()
 
   console.log("Treasury mSOL account", treasuryMsolAccount.toBase58())
   console.log("Rewards commission", rewardsCommissionPercent, "%")
   console.log("Stake Account Count", state.stakeSystem.stakeList.count)
-  console.log("Min Stake Amounts", MarinadeUtils.lamportsToSol(state.stakeSystem.minStake))
-  console.log()
-
-  console.log("mSol Price", mSolPrice, "SOL")
-  console.log("Accumulated rewards", (mSolMintSupply * (mSolPrice - 1)), "SOL")
+  console.log("Min Stake Amount", MarinadeUtils.lamportsToSol(state.stakeSystem.minStake), "SOL")
   console.log()
 
   console.log("--- mSOL-SOL swap pool")
@@ -70,8 +68,8 @@ export async function show(options: Object): Promise<void> {
   console.log("  mSOL leg", mSolLeg.toBase58())
   console.log("  mSOL leg Balance", MarinadeUtils.lamportsToSol(mSolLegBalance))
 
-  console.log("  Total Liq pool value (SOL) ", MarinadeUtils.lamportsToSol(totalLiqPoolValueLamports))
-  console.log("  mSOL-SOL-LP price (SOL)", MarinadeUtils.lamportsToSol(LPPrice))
+  console.log("  Total Liq pool value", MarinadeUtils.lamportsToSol(totalLiqPoolValueLamports), "SOL")
+  console.log("  mSOL-SOL-LP price", MarinadeUtils.lamportsToSol(LPPrice), "SOL")
 
   console.log("  Liquidity Target: ", MarinadeUtils.lamportsToSol(state.liqPool.lpLiquidityTarget))
   // compute the fee to unstake-now! and get 1 SOL
@@ -82,9 +80,9 @@ export async function show(options: Object): Promise<void> {
   console.log()
 
   console.log("--- TVL")
-  console.log("  Total Staked Value (SOL) ", tvlStaked.toLocaleString())
-  console.log("  Total Liquidity-Pool (SOL) ", tvlLiquidity.toLocaleString())
-  console.log("  TVL (SOL) ", (tvlStaked + tvlLiquidity).toLocaleString())
+  console.log("  Total Staked Value", tvlStaked.toLocaleString(), "SOL")
+  console.log("  Total Liquidity-Pool", tvlLiquidity.toLocaleString(), "SOL")
+  console.log("  TVL", (tvlStaked + tvlLiquidity).toLocaleString(), "SOL")
 
   if ('list' in options) {
     await listValidatorsWithStake(marinadeState);
