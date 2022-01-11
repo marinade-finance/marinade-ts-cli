@@ -56,6 +56,7 @@ export async function show(options: Object): Promise<void> {
   console.log("Rewards commission", rewardsCommissionPercent, "%")
   console.log("Stake Account Count", state.stakeSystem.stakeList.count)
   console.log("Min Stake Amount", MarinadeUtils.lamportsToSol(state.stakeSystem.minStake), "SOL")
+  console.log(`Stake Delta Window: ${state.stakeSystem.slotsForStakeDelta} slots, ${state.stakeSystem.slotsForStakeDelta.toNumber() / 100} minutes`)
   console.log()
 
   console.log("--- mSOL-SOL swap pool")
