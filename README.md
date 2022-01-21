@@ -2,13 +2,8 @@
 Marinade typescript-based client.
 
 ## Quick start
-
 ```
-git clone https://github.com/marinade-finance/marinade-ts-cli.git
-cd marinade-ts-cli
-npm install
-npm run build
-npm link
+npm i -g @marinade.finance/marinade-ts-cli
 marinade --help
 ```
 
@@ -30,6 +25,3 @@ Commands:
   remove-liquidity <amount-sol>                    remove liquidity from the liquidity pool
   help [command]                                   display help for command
 ```
-
-## Changelog
-Version 0.0.1 - add 'balance' instruction

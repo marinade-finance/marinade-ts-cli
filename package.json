@@ -1,8 +1,20 @@
 {
-    "name": "marinade",
-    "version": "1.0.0",
+    "name": "@marinade.finance/marinade-ts-cli",
+    "version": "0.0.1",
     "description": "marinade typescript-based CLI",
-    "bin": "dist/marinade.js",
+    "bin": {
+        "marinade": "./dist/marinade.js"
+    },
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/marinade-finance/marinade-ts-cli.git"
+    },
+    "publishConfig": {
+      "access": "public"
+    },
+    "files": [
+      "dist"
+    ],
     "type": "commonjs",
     "scripts": {
         "build": "npx tsc -b -verbose",
