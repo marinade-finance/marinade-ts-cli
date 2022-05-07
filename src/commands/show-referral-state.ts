@@ -1,13 +1,12 @@
 import { Marinade, MarinadeConfig, MarinadeUtils, web3 } from '@marinade.finance/marinade-ts-sdk'
-import { getNodeJsProvider, getProviderUrl } from '../utils/anchor'
+import { getProvider } from '@project-serum/anchor'
 import { formatDuration } from '../utils/time'
 
-export async function showReferralStateAction (referral: string): Promise<void> {
-  const referralCode = new web3.PublicKey(referral)
-  const provider = getNodeJsProvider()
+export async function showReferralStateAction (referral: string, options:Record<string,any>): Promise<void> {
+  const provider = getProvider()
 
-  console.log('Provider url:', getProviderUrl())
   console.log('Referral account:', referral)
+  const referralCode = new web3.PublicKey(referral)
 
   const marinadeConfig = new MarinadeConfig({ connection: provider.connection, referralCode })
   const marinade = new Marinade(marinadeConfig)

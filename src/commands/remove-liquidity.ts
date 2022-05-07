@@ -1,13 +1,11 @@
 import { Marinade, MarinadeConfig, MarinadeUtils, Wallet } from '@marinade.finance/marinade-ts-sdk'
-import { getConnection, getNodeJsProvider, getProviderUrl } from '../utils/anchor'
+import { getProvider } from '@project-serum/anchor'
 
-export async function removeLiquidityAction (amountSol: string | number): Promise<void> {
+export async function removeLiquidityAction (amountSol: string | number, options:Record<string,any>): Promise<void> {
   const amountLamports = MarinadeUtils.solToLamports(Number(amountSol))
-  console.log('Removing liquidity:', amountSol, 'SOL', amountLamports.toString(), 'lamports')
+  console.log('Removing liquidity:', amountSol, 'LP')
 
-  console.log('Provider url:', getProviderUrl())
-  const provider = getNodeJsProvider()
-  console.log('Using fee payer', provider.wallet.publicKey.toBase58())
+  const provider = getProvider()
 
   const marinadeConfig = new MarinadeConfig({ connection: provider.connection, publicKey: provider.wallet.publicKey })
   const marinade = new Marinade(marinadeConfig)

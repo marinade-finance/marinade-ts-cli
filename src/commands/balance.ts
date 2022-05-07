@@ -1,11 +1,10 @@
 import { Marinade, MarinadeUtils, BN, MarinadeConfig, MarinadeBorsh, MarinadeState, Provider } from '@marinade.finance/marinade-ts-sdk'
 import { lamportsToSol, getAssociatedTokenAccountAddress } from '@marinade.finance/marinade-ts-sdk/dist/src/util'
-import { getNodeJsProvider } from '../utils/anchor'
-
+import { getProvider } from '@project-serum/anchor'
 
 export async function balance(options: Object): Promise<void> {
 
-  const provider = getNodeJsProvider()
+  const provider = getProvider()
 
   console.log(`Main account: ${provider.wallet.publicKey.toBase58()}`)
   console.log(`Note: transactions can take up to a minute to be reflected here`)

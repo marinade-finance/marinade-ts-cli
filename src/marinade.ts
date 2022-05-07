@@ -8,12 +8,24 @@ import { stakeAction } from './commands/deposit'
 import { liquidUnstakeAction } from './commands/liquid-unstake'
 import { depositStakeAccountAction } from './commands/deposit-stake-account'
 import { showReferralStateAction } from './commands/show-referral-state'
+import { setProvider as anchorSetDefaultProvider} from '@project-serum/anchor'
+import { getNodeJsProvider, getProviderUrl } from "./utils/anchor"
 
-async function main (argv: string[], _env: Record<string, unknown>) {
+async function main(argv: string[], _env: Record<string, unknown>) {
 
   program
     .version("0.0.1")
     .allowExcessArguments(false)
+    .option('-u <moniker>', 'override ANCHOR_PROVIDER_URL or m=mainnet, d=devnet, t=testnet', 'm')
+    .hook('preAction', () => {
+      // before any command, set anchor default provider
+      console.log("Provider URL:",getProviderUrl(program.opts()))
+      const provider = getNodeJsProvider(program.opts())
+      // set anchor default provider based on program options (-u)
+      anchorSetDefaultProvider(provider)
+      // show also fee payer/default account
+      console.log('Using fee payer', provider.wallet.publicKey.toBase58())
+    })
 
   program
     .command("show")

@@ -1,10 +1,12 @@
+import { program } from "commander"
 import { Marinade, MarinadeUtils, BN, MarinadeConfig, MarinadeBorsh, MarinadeState } from '@marinade.finance/marinade-ts-sdk'
 import { getConnection } from '../utils/anchor'
+import { getProvider } from '@project-serum/anchor'
 
 export async function show(options: Object): Promise<void> {
 
-  const connection = getConnection()
-  const config = new MarinadeConfig({ connection })
+  const provider = getProvider()
+  const config = new MarinadeConfig({ connection: provider.connection })
   const marinade = new Marinade(config)
   const marinadeState = await marinade.getMarinadeState()
 
@@ -30,7 +32,7 @@ export async function show(options: Object): Promise<void> {
   const mSolLegBalance = mSolLegInfo.amount
 
   const solLeg = await marinadeState.solLeg() // @todo fetch from Marinade instead?, rm await
-  const solLegBalance = new BN(await connection.getBalance(solLeg)).sub(state.rentExemptForTokenAcc)
+  const solLegBalance = new BN(await provider.connection.getBalance(solLeg)).sub(state.rentExemptForTokenAcc)
 
   const tvlStaked = Math.round(mSolMintSupply * mSolPrice) // @todo move as getter to MarinadeState
   const totalLiqPoolValueLamports = solLegBalance.add(mSolLegBalance.muln(mSolPrice))
@@ -54,6 +56,7 @@ export async function show(options: Object): Promise<void> {
 
   console.log("Treasury mSOL account", treasuryMsolAccount.toBase58())
   console.log("Rewards commission", rewardsCommissionPercent, "%")
+  console.log("Liquid-unstake Treasury cut", state.liqPool.treasuryCut, "%")
   console.log("Stake Account Count", state.stakeSystem.stakeList.count)
   console.log("Min Stake Amount", MarinadeUtils.lamportsToSol(state.stakeSystem.minStake), "SOL")
   console.log(`Stake Delta Window: ${state.stakeSystem.slotsForStakeDelta} slots, ${state.stakeSystem.slotsForStakeDelta.toNumber() / 100} minutes`)

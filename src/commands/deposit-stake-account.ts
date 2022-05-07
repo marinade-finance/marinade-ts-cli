@@ -1,18 +1,17 @@
 import { Marinade, MarinadeConfig, Wallet, web3 } from '@marinade.finance/marinade-ts-sdk'
-import { getConnection, getNodeJsProvider, getProviderUrl } from '../utils/anchor'
+import { getProvider } from '@project-serum/anchor'
 
 type Options = Partial<{
   referral: string
 }>
 
-export async function depositStakeAccountAction (stakeAccount: string, { referral }: Options): Promise<void> {
+export async function depositStakeAccountAction (stakeAccount: string, options: Options): Promise<void> {
   const stakeAccountAddress = new web3.PublicKey(stakeAccount)
   console.log('Depositing stake account:', stakeAccountAddress.toBase58())
 
-  console.log('Provider url:', getProviderUrl())
-  const provider = getNodeJsProvider()
-  console.log('Using fee payer', provider.wallet.publicKey.toBase58())
+  const provider = getProvider()
 
+  const { referral } = options;
   if (referral) {
     console.log('Referral account:', referral)
   }
