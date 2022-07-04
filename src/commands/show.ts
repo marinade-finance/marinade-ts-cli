@@ -5,6 +5,9 @@ import { getProvider } from '@project-serum/anchor'
 
 const aligned = (label:string, n: number) => label.slice(0,20).padEnd(20)+":"+n.toLocaleString().padStart(20)
 
+// debug
+// const showBN = (label:string, bn: BN) => console.log(label.slice(0,40).padEnd(20)+":"+ MarinadeUtils.lamportsToSol(bn).toLocaleString().padStart(20))
+
 export async function show(options: Object): Promise<void> {
 
   const provider = getProvider()
@@ -36,11 +39,16 @@ export async function show(options: Object): Promise<void> {
   const solLeg = await marinadeState.solLeg() // @todo fetch from Marinade instead?, rm await
   const solLegBalance = new BN(await provider.connection.getBalance(solLeg)).sub(state.rentExemptForTokenAcc)
 
-  const tvlStaked = Math.round(mSolMintSupply * mSolPrice) // @todo move as getter to MarinadeState
+  const tvlStaking = MarinadeUtils.lamportsToSol(
+    state.validatorSystem.totalActiveBalance
+      .add(state.availableReserveBalance)
+      .add(state.emergencyCoolingDown)
+  )
+  
   const totalLiqPoolValueLamports = solLegBalance.add(mSolLegBalance.muln(mSolPrice))
   const tvlLiquidity = Math.round(MarinadeUtils.lamportsToSol(totalLiqPoolValueLamports))
 
-  const emergencyUnstaking  = Math.round(MarinadeUtils.lamportsToSol(marinadeState.state.emergencyCoolingDown))
+  const emergencyUnstaking  = Math.round(MarinadeUtils.lamportsToSol(state.emergencyCoolingDown))
 
   // LPPrice * 1e9 (expressed in lamports)
   const LAMPORTS_PER_SOL = new BN(1e9)
@@ -85,9 +93,16 @@ export async function show(options: Object): Promise<void> {
   console.log()
 
   console.log("--- TVL")
-  console.log(aligned("Total Staked Value", tvlStaked), "SOL")
-  console.log(aligned("Total Liquidity-Pool", tvlLiquidity), "SOL")
-  console.log(aligned("TVL", tvlStaked + tvlLiquidity), "SOL")
+  // debug
+  // showBN("state.validatorSystem.totalActiveBalance",state.validatorSystem.totalActiveBalance)
+  // showBN("state.availableReserveBalance",state.availableReserveBalance)
+  // showBN("sum",state.validatorSystem.totalActiveBalance.add(state.availableReserveBalance))
+  // showBN("state.emergencyCoolingDown",state.emergencyCoolingDown)
+  // showBN("state.stakeSystem.delayedUnstakeCoolingDown",state.stakeSystem.delayedUnstakeCoolingDown)
+
+  console.log(aligned("TVL Staking", tvlStaking), "SOL")
+  console.log(aligned("TVL Liquidity-Pool", tvlLiquidity), "SOL")
+  console.log(aligned("Total TVL", tvlStaking + tvlLiquidity), "SOL")
 
   if ('list' in options) {
     await listValidatorsWithStake(marinadeState);
