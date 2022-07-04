@@ -3,6 +3,8 @@ import { Marinade, MarinadeUtils, BN, MarinadeConfig, MarinadeBorsh, MarinadeSta
 import { getConnection } from '../utils/anchor'
 import { getProvider } from '@project-serum/anchor'
 
+const aligned = (label:string, n: number) => label.slice(0,20).padEnd(20)+":"+n.toLocaleString().padStart(20)
+
 export async function show(options: Object): Promise<void> {
 
   const provider = getProvider()
@@ -38,6 +40,8 @@ export async function show(options: Object): Promise<void> {
   const totalLiqPoolValueLamports = solLegBalance.add(mSolLegBalance.muln(mSolPrice))
   const tvlLiquidity = Math.round(MarinadeUtils.lamportsToSol(totalLiqPoolValueLamports))
 
+  const emergencyUnstaking  = Math.round(MarinadeUtils.lamportsToSol(marinadeState.state.emergencyCoolingDown))
+
   // LPPrice * 1e9 (expressed in lamports)
   const LAMPORTS_PER_SOL = new BN(1e9)
   const LPPrice = totalLiqPoolValueLamports.mul(LAMPORTS_PER_SOL).div(lpMintInfo.supply)
@@ -60,18 +64,15 @@ export async function show(options: Object): Promise<void> {
   console.log("Stake Account Count", state.stakeSystem.stakeList.count)
   console.log("Min Stake Amount", MarinadeUtils.lamportsToSol(state.stakeSystem.minStake), "SOL")
   console.log(`Stake Delta Window: ${state.stakeSystem.slotsForStakeDelta} slots, ${state.stakeSystem.slotsForStakeDelta.toNumber() / 100} minutes`)
+  console.log("Emergency unstaking:", emergencyUnstaking.toLocaleString(), "SOL")
   console.log()
 
   console.log("--- mSOL-SOL swap pool")
   console.log("LP Mint", marinadeState.lpMintAddress.toBase58())
   console.log("  LP supply: ", lpMintSupply)
 
-  console.log("  SOL leg", solLeg.toBase58())
-  console.log("  SOL leg Balance", MarinadeUtils.lamportsToSol(solLegBalance))
-
-  console.log("  mSOL leg", mSolLeg.toBase58())
-  console.log("  mSOL leg Balance", MarinadeUtils.lamportsToSol(mSolLegBalance))
-
+  console.log("  SOL leg Balance:", MarinadeUtils.lamportsToSol(solLegBalance), "account:",solLeg.toBase58())
+  console.log("  mSOL leg Balance", MarinadeUtils.lamportsToSol(mSolLegBalance),"account:",mSolLeg.toBase58())
   console.log("  Total Liq pool value", MarinadeUtils.lamportsToSol(totalLiqPoolValueLamports), "SOL")
   console.log("  mSOL-SOL-LP price", MarinadeUtils.lamportsToSol(LPPrice), "SOL")
 
@@ -84,9 +85,9 @@ export async function show(options: Object): Promise<void> {
   console.log()
 
   console.log("--- TVL")
-  console.log("  Total Staked Value", tvlStaked.toLocaleString(), "SOL")
-  console.log("  Total Liquidity-Pool", tvlLiquidity.toLocaleString(), "SOL")
-  console.log("  TVL", (tvlStaked + tvlLiquidity).toLocaleString(), "SOL")
+  console.log(aligned("Total Staked Value", tvlStaked), "SOL")
+  console.log(aligned("Total Liquidity-Pool", tvlLiquidity), "SOL")
+  console.log(aligned("TVL", tvlStaked + tvlLiquidity), "SOL")
 
   if ('list' in options) {
     await listValidatorsWithStake(marinadeState);
