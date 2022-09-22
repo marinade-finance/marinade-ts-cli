@@ -16,18 +16,14 @@ export async function showReferralStateAction (referral: string, options:Record<
   console.log('---')
   console.log('Partner:', referralState.partnerName)
   console.log('Partner Main Account:', referralState.partnerAccount.toBase58())
-  console.log('Partner mSOL Token Account:', referralState.tokenPartnerAccount.toBase58())
+  console.log('Partner mSOL Token Account:', referralState.msolTokenPartnerAccount.toBase58())
+  if (referralState.validatorVoteKey) {
+    console.log()
+    console.log('-- STAKE-AS-COLLATERAL Partner--');
+    console.log('validatorVoteKey:', referralState.validatorVoteKey.toBase58())
+    console.log('keep self stake:', referralState.keepSelfStakePct, "%")
+  }
   if (referralState.pause) console.log('--PAUSED--');
-
-  const lastTransferTimeTimestamp = referralState.lastTransferTime.toNumber()
-  const lastTransferTime = new Date(lastTransferTimeTimestamp * 1e3)
-  // commented because auto-transfers are not enabled yet
-  // console.log('---')
-  // console.log('Transfer duration:', formatDuration(state.transferDuration), `(${state.transferDuration})`)
-  // console.log('Last Transfer Time:', lastTransferTime, `(${lastTransferTimeTimestamp})`)
-  // console.log('Max Net Stake:', MarinadeUtils.lamportsToSol(state.maxNetStake))
-  // console.log('Base fee:', state.baseFee, 'Max fee:', state.maxFee)
-  // console.log('---')
 
   console.log()
   console.log('Deposit SOL');

@@ -17,7 +17,10 @@ export async function depositStakeAccountAction (stakeAccount: string, options: 
   }
   const referralCode = referral ? new web3.PublicKey(referral) : null
 
-  const marinadeConfig = new MarinadeConfig({ connection: provider.connection, publicKey:provider.wallet.publicKey, referralCode })
+  const marinadeConfig = new MarinadeConfig({ 
+    connection: provider.connection, 
+    publicKey:provider.wallet.publicKey, 
+    referralCode })
   const marinade = new Marinade(marinadeConfig)
 
   const { transaction } = await marinade.depositStakeAccount(stakeAccountAddress)

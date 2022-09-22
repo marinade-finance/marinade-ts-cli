@@ -1,6 +1,6 @@
 {
     "name": "@marinade.finance/marinade-ts-cli",
-    "version": "0.1.1",
+    "version": "4.0.0",
     "description": "marinade typescript-based CLI",
     "bin": {
         "marinade": "./dist/marinade.js"
@@ -29,7 +29,6 @@
     "author": "lucio_tato",
     "license": "ISC",
     "dependencies": {
-        "@marinade.finance/marinade-ts-sdk": "^2",
         "@project-serum/anchor": "^0.18.2",
         "@solana/spl-token": "^0.1.8",
         "borsh": "^0.6.0",
