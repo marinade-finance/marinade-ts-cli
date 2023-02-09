@@ -57,7 +57,8 @@ export async function show(options: Object): Promise<void> {
   //console.log(state) // Access to raw internal structure is allowed
 
   console.log("Marinade.Finance ProgramId", marinade.config.marinadeFinanceProgramId.toBase58())
-  console.log("Marinade.Finance State", marinade.config.marinadeStateAddress.toBase58())
+  console.log("Marinade.Finance State acc", marinade.config.marinadeStateAddress.toBase58())
+  console.log("Marinade.Finance admin auth", state.adminAuthority.toBase58())
   console.log()
 
   console.log("mSOL mint", mSolMintAddress.toBase58())
@@ -119,7 +120,7 @@ async function listValidatorsWithStake(marinadeState: MarinadeState) {
   console.log(`  Stake list account: ${state.stakeSystem.stakeList.account} with ${state.stakeSystem.stakeList.count}/${stakeCapacity} stakes`)
   console.log("-----------------")
   console.log("-- Validators ---")
-  console.log(`  Total staked: ${MarinadeUtils.lamportsToSol(state.validatorSystem.totalActiveBalance)} SOL`)
+  console.log(`  Total staked: ${MarinadeUtils.lamportsToSol(state.validatorSystem.totalActiveBalance)} SOL  (Note:4~5% from total TVL is usually rebalancing)`)
   console.log(`  List account: ${state.validatorSystem.validatorList.account} with ${state.validatorSystem.validatorList.count}/${validatorCapacity} validators`)
   console.log("-------------------------------------------------------------")
 
