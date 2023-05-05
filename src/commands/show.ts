@@ -26,15 +26,12 @@ export async function show(options: Object): Promise<void> {
     rewardsCommissionPercent,
   } = marinadeState
 
-  const mSolMintClient = mSolMint.mintClient()
   const mSolMintSupply = await mSolMint.totalSupply()
 
-  const lpMintClient = lpMint.mintClient()
-  const lpMintInfo = await lpMintClient.getMintInfo()
   const lpMintSupply = await lpMint.totalSupply()
 
-  const mSolLegInfo = await mSolMintClient.getAccountInfo(state.liqPool.msolLeg)
-  const mSolLegBalance = mSolLegInfo.amount
+  const { value: { amount } } = await provider.connection.getTokenAccountBalance(state.liqPool.msolLeg)
+  const mSolLegBalance = new BN(amount)
 
   const solLeg = await marinadeState.solLeg() // @todo fetch from Marinade instead?, rm await
   const solLegBalance = new BN(await provider.connection.getBalance(solLeg)).sub(state.rentExemptForTokenAcc)
@@ -44,7 +41,7 @@ export async function show(options: Object): Promise<void> {
       .add(state.availableReserveBalance)
       .add(state.emergencyCoolingDown)
   )
-  
+
   const totalLiqPoolValueLamports = solLegBalance.add(mSolLegBalance.muln(mSolPrice))
   const tvlLiquidity = Math.round(MarinadeUtils.lamportsToSol(totalLiqPoolValueLamports))
 
@@ -52,7 +49,7 @@ export async function show(options: Object): Promise<void> {
 
   // LPPrice * 1e9 (expressed in lamports)
   const LAMPORTS_PER_SOL = new BN(1e9)
-  const LPPrice = totalLiqPoolValueLamports.mul(LAMPORTS_PER_SOL).div(lpMintInfo.supply)
+  const LPPrice = totalLiqPoolValueLamports.mul(LAMPORTS_PER_SOL).divn(lpMintSupply)
 
   //console.log(state) // Access to raw internal structure is allowed
 
@@ -74,6 +71,12 @@ export async function show(options: Object): Promise<void> {
   console.log("Min Stake Amount", MarinadeUtils.lamportsToSol(state.stakeSystem.minStake), "SOL")
   console.log(`Stake Delta Window: ${state.stakeSystem.slotsForStakeDelta} slots, ${state.stakeSystem.slotsForStakeDelta.toNumber() / 100} minutes`)
   console.log("Emergency unstaking:", emergencyUnstaking.toLocaleString(), "SOL")
+  console.log()
+
+  console.log("Staking SOL cap", MarinadeUtils.lamportsToSol(state.stakingSolCap))
+  console.log("Validator list item size", state.validatorSystem.validatorList.itemSize)
+  console.log("Stake list item size", state.stakeSystem.stakeList.itemSize)
+  console.log("Min deposit", MarinadeUtils.lamportsToSol(state.minDeposit))
   console.log()
 
   console.log("--- mSOL-SOL swap pool")

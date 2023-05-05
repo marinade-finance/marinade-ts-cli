@@ -17,6 +17,7 @@
     ],
     "type": "commonjs",
     "scripts": {
+        "marinade": "node ./dist/marinade.js",
         "build": "npx tsc -b -verbose",
         "lint": "npx eslint src"
     },
@@ -29,6 +30,7 @@
     "author": "lucio_tato",
     "license": "ISC",
     "dependencies": {
+        "@marinade.finance/marinade-ts-sdk": "^4.0.6",
         "@project-serum/anchor": "^0.18.2",
         "@solana/spl-token": "^0.1.8",
         "borsh": "^0.6.0",
