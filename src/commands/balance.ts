@@ -14,14 +14,8 @@ export async function balance(options: Object): Promise<void> {
   const marinadeState = await marinade.getMarinadeState()
 
   const {
-    state,
     lpMint,
-    mSolMint,
     mSolMintAddress,
-    mSolPrice,
-    mSolLeg, // @todo fetch from Marinade instead for MarinadeState? This should be configurable https://docs.marinade.finance/developers/contract-addresses
-    treasuryMsolAccount,
-    rewardsCommissionPercent,
   } = marinadeState
 
 
@@ -29,13 +23,13 @@ export async function balance(options: Object): Promise<void> {
   console.log(`SOL Balance: ${lamportsToSol(balanceLamports)}`)
 
   const userMSolATA = await getAssociatedTokenAccountAddress(mSolMintAddress, provider.wallet.publicKey)
-  const mSolMintClient = mSolMint.mintClient()
-  const mSolATAInfo = await mSolMintClient.getAccountInfo(userMSolATA)
-  console.log(`mSOL Balance: ${lamportsToSol(mSolATAInfo.amount)}`)
+  const { value: { amount :amountMSOL } } = await provider.connection.getTokenAccountBalance(userMSolATA)
+  const mSolATABalance = new BN(amountMSOL)
+  console.log(`mSOL Balance: ${lamportsToSol(mSolATABalance)}`)
 
   const userLpATA = await getAssociatedTokenAccountAddress(lpMint.address, provider.wallet.publicKey)
-  const lpMintClient = lpMint.mintClient()
-  const lpATAInfo = await lpMintClient.getAccountInfo(userLpATA)
-  console.log(`mSOL-SOL-LP Balance: ${lamportsToSol(lpATAInfo.amount)}`)
+  const { value: { amount: amountLP } } = await provider.connection.getTokenAccountBalance(userLpATA)
+  const userLpATABalance = new BN(amountLP)
+  console.log(`mSOL-SOL-LP Balance: ${lamportsToSol(userLpATABalance)}`)
 
 }
