@@ -45,7 +45,7 @@ export async function orderUnstake({
     ticketAccountKeypair,
   } = await marinade.orderUnstake(amountLamports)
   logger.info(
-    'Using associated msol account: %s',
+    'Using associated mSOL account: %s',
     associatedMSolTokenAccountAddress.toBase58()
   )
 
@@ -59,7 +59,7 @@ export async function orderUnstake({
     printOnly,
   })
   logger.info(
-    'Succcesfully ordered unstake %d mSOLs (signed by %s). Ticket: %s',
+    'Successfully ordered unstake %d mSOLs (signed by %s). Ticket: %s',
     amountMsol,
     walletSigner.publicKey.toBase58(),
     ticketAccountKeypair.publicKey.toBase58()

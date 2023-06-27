@@ -68,9 +68,9 @@ describe('Deposit using CLI', () => {
       ]) as any
     ).toHaveMatchingSpawnOutput({
       code: 0,
-      // stderr: '', ommitting this check because of the github actions error (https://github.com/trufflesuite/ganache/issues/1080)
+      // stderr: '', omitting this check because of the github actions error (https://github.com/trufflesuite/ganache/issues/1080)
       //             bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)
-      stdout: /Succcesfully deposited/,
+      stdout: /Successfully deposited/,
     })
   })
 })

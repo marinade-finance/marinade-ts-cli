@@ -63,7 +63,7 @@ export async function removeLiquidity({
     printOnly,
   })
   logger.info(
-    'Succcesfully removed liquidity of %d LPs, signed by %s',
+    'Successfully removed liquidity of %d LPs, signed by %s',
     amountSol,
     walletSigner.publicKey.toBase58()
   )
