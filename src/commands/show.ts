@@ -6,7 +6,7 @@ import {
   MarinadeState,
 } from '@marinade.finance/marinade-ts-sdk'
 import { Command } from 'commander'
-import { useContext } from '../context'
+import { getContext } from '../context'
 import { BN } from 'bn.js'
 
 export function installShow(program: Command) {
@@ -22,7 +22,7 @@ export function installShow(program: Command) {
 }
 
 async function show({ withList }: { withList: boolean }) {
-  const { connection, logger } = useContext()
+  const { connection, logger } = getContext()
 
   const marinadeConfig = new MarinadeConfig({
     connection,

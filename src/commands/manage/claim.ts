@@ -2,7 +2,7 @@ import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
 import { parsePubkey } from '../../utils/cliParser'
 import { Command } from 'commander'
 import { PublicKey } from '@solana/web3.js'
-import { useContext } from '../../context'
+import { getContext } from '../../context'
 import { executeTx } from '../../utils/transactions'
 
 export function installClaim(program: Command) {
@@ -18,7 +18,7 @@ export function installClaim(program: Command) {
 }
 
 export async function claim({ ticket }: { ticket: PublicKey }): Promise<void> {
-  const { connection, logger, walletSigner, simulate, printOnly } = useContext()
+  const { connection, logger, walletSigner, simulate, printOnly } = getContext()
 
   logger.info('Claiming unstake ticket %s', ticket.toString())
 

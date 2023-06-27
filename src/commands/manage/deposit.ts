@@ -6,7 +6,7 @@ import {
 import { parsePubkey } from '../../utils/cliParser'
 import { Command } from 'commander'
 import { PublicKey } from '@solana/web3.js'
-import { useContext } from '../../context'
+import { getContext } from '../../context'
 import { executeTx } from '../../utils/transactions'
 
 export function installDeposit(program: Command) {
@@ -55,7 +55,7 @@ export function installDeposit(program: Command) {
 export async function deposit({
   amountSol,
   referralCode,
-  owner = useContext().walletSigner.publicKey,
+  owner = getContext().walletSigner.publicKey,
   validatorVoteAddress,
 }: {
   amountSol: number
@@ -63,7 +63,7 @@ export async function deposit({
   owner?: PublicKey
   validatorVoteAddress?: PublicKey
 }): Promise<void> {
-  const { connection, logger, walletSigner, simulate, printOnly } = useContext()
+  const { connection, logger, walletSigner, simulate, printOnly } = getContext()
 
   const amountLamports = MarinadeUtils.solToLamports(amountSol)
   logger.info(

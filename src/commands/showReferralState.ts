@@ -6,7 +6,7 @@ import {
 import { Command } from 'commander'
 import { PublicKey } from '@solana/web3.js'
 import { parsePubkey } from '../utils/cliParser'
-import { useContext } from '../context'
+import { getContext } from '../context'
 
 export function installShowReferralState(program: Command) {
   program
@@ -27,7 +27,7 @@ export async function showReferralState({
 }: {
   referralCode: PublicKey
 }) {
-  const { connection, logger } = useContext()
+  const { connection, logger } = getContext()
   logger.debug('Referral account:', referralCode.toBase58())
 
   const marinadeConfig = new MarinadeConfig({

@@ -4,7 +4,7 @@ import {
   MarinadeUtils,
 } from '@marinade.finance/marinade-ts-sdk'
 import { Command } from 'commander'
-import { useContext } from '../../context'
+import { getContext } from '../../context'
 import { executeTx } from '../../utils/transactions'
 
 export function installAddLiquidity(program: Command) {
@@ -24,7 +24,7 @@ export async function addLiquidity({
 }: {
   amountSol: number
 }): Promise<void> {
-  const { logger, connection, walletSigner, simulate, printOnly } = useContext()
+  const { logger, connection, walletSigner, simulate, printOnly } = getContext()
 
   const amountLamports = MarinadeUtils.solToLamports(amountSol)
   logger.info(
