@@ -1,8 +1,29 @@
 {
     "cSpell.words": [
+        "9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd",
+        "amount-msol",
+        "amountMsol",
+        "Blockhash",
+        "borsh",
+        "commitlint",
+        "devnet",
+        "GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV",
         "HOMEPATH",
+        "Keypair",
+        "Lamports",
+        "ledgerhq",
+        "localnet",
+        "MR2LqxoSbw831bNy68utpu5n4YqBH3AzDmddkgk9LQv",
+        "MsolAmount",
+        "MsolFees",
         "muln",
-        "MR2LqxoSbw831bNy68utpu5n4YqBH3AzDmddkgk9LQv"
+        "noevents",
+        "pino",
+        "solana",
+        "SYSVAR",
+        "typescript-estree",
+        "unstaked",
+        "unstaking"
     ],
     "editor.formatOnSave": false
 }

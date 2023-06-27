@@ -58,7 +58,7 @@ export async function liquidUnstake({
   const { associatedMSolTokenAccountAddress, transaction } =
     await marinade.liquidUnstake(amountLamports)
   logger.info(
-    'Using associated msol account: %s',
+    'Using associated mSOL account: %s',
     associatedMSolTokenAccountAddress.toBase58()
   )
 
@@ -72,7 +72,7 @@ export async function liquidUnstake({
     printOnly,
   })
   logger.info(
-    'Succcesfully liquid unstaked %d mSOLs, signed by %s (referral code: %s)',
+    'Successfully liquid unstaked %d mSOLs, signed by %s (referral code: %s)',
     amountMsol,
     walletSigner.publicKey.toBase58(),
     referralCode?.toBase58() ?? 'none'

@@ -62,9 +62,9 @@ describe('Liquid unstake using CLI', () => {
       ]) as any
     ).toHaveMatchingSpawnOutput({
       code: 0,
-      // stderr: '', ommitting this check because of the github actions error:
+      // stderr: '', omitting this check because of the github actions error:
       //             bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)
-      stdout: /Succcesfully liquid unstaked/,
+      stdout: /Successfully liquid unstaked/,
     })
   })
 })

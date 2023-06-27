@@ -39,5 +39,5 @@ export async function claim({ ticket }: { ticket: PublicKey }): Promise<void> {
     simulate,
     printOnly,
   })
-  logger.info('Succcesfully claimed ticket %s', ticket.toBase58())
+  logger.info('Successfully claimed ticket %s', ticket.toBase58())
 }

@@ -85,7 +85,7 @@ export async function deposit({
       mintToOwnerAddress: owner,
     })
   logger.info(
-    'Using associated msol account: %s',
+    'Using associated mSOL account: %s',
     associatedMSolTokenAccountAddress.toBase58()
   )
 
@@ -99,7 +99,7 @@ export async function deposit({
     printOnly,
   })
   logger.info(
-    'Succcesfully deposited %d SOLs from %s for mSOL mint owner %s (validator vote address: %s, refferal code: %s)',
+    'Successfully deposited %d SOLs from %s for mSOL mint owner %s (validator vote address: %s, referral code: %s)',
     amountSol,
     walletSigner.publicKey.toBase58(),
     owner.toBase58(),

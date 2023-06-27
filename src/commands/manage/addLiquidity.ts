@@ -57,7 +57,7 @@ export async function addLiquidity({
     printOnly,
   })
   logger.info(
-    'Succcesfully added liquidity of %d SOLs from %s',
+    'Successfully added liquidity of %d SOLs from %s',
     amountSol,
     walletSigner.publicKey.toBase58()
   )

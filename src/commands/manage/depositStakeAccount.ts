@@ -78,7 +78,7 @@ export async function depositStakeAccount({
     printOnly,
   })
   logger.info(
-    'Succcesfully deposited stake account %s from wallet key %s (validator vote address: %s, refferal code: %s)',
+    'Successfully deposited stake account %s from wallet key %s (validator vote address: %s, referral code: %s)',
     stakeAccount.toBase58(),
     walletSigner.publicKey.toBase58(),
     validatorVoteAddress?.toBase58() || 'none',

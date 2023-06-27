@@ -63,7 +63,7 @@ describe('Order unstake and claim using CLI', () => {
       ]) as any
     ).toHaveMatchingSpawnOutput({
       code: 0,
-      stdout: /Succcesfully ordered unstake/,
+      stdout: /Successfully ordered unstake/,
     })
 
     // Waiting for the ticket to be ready; max time is now hardcoded
@@ -114,7 +114,7 @@ describe('Order unstake and claim using CLI', () => {
       ]) as any
     ).toHaveMatchingSpawnOutput({
       code: 0,
-      stdout: /Succcesfully claimed ticket/,
+      stdout: /Successfully claimed ticket/,
     })
   })
 })
