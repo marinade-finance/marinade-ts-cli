@@ -32,6 +32,9 @@ Commands:
   deposit [options] <amount-sol>                   deposit SOL
   liquid-unstake [options] <amount-msol>           Unstake mSOL using liquidity pool
   deposit-stake-account [options] <stake-account>  deposit stake account
+  claim <ticket>                                   Claim ordered unstake ticket
+  order-unstake <amount-msol>                      Order unstake to get a ticket that can be claimed later
+  show-tickets [options]                           Show delayed unstake tickets for a beneficiary (initialized by order-unstake)
   help [command]                                   display help for command
 ```
 
