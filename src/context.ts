@@ -112,6 +112,6 @@ export const setContext = ({
   context.command = command
 }
 
-export const useContext = (): Context => {
+export const getContext = (): Context => {
   return context as Context
 }

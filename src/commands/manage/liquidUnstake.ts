@@ -6,7 +6,7 @@ import {
 import { parsePubkey } from '../../utils/cliParser'
 import { Command } from 'commander'
 import { PublicKey } from '@solana/web3.js'
-import { useContext } from '../../context'
+import { getContext } from '../../context'
 import { executeTx } from '../../utils/transactions'
 
 export function installLiquidUnstake(program: Command) {
@@ -39,7 +39,7 @@ export async function liquidUnstake({
   amountMsol: number
   referralCode?: PublicKey
 }): Promise<void> {
-  const { connection, logger, walletSigner, simulate, printOnly } = useContext()
+  const { connection, logger, walletSigner, simulate, printOnly } = getContext()
 
   const amountLamports = MarinadeUtils.solToLamports(amountMsol)
   logger.info(

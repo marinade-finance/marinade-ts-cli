@@ -7,7 +7,7 @@ import { Command } from 'commander'
 import { BN } from 'bn.js'
 import { parsePubkey } from '../utils/cliParser'
 import { PublicKey } from '@solana/web3.js'
-import { useContext } from '../context'
+import { getContext } from '../context'
 
 export function installShowBalance(program: Command) {
   program
@@ -27,12 +27,12 @@ export function installShowBalance(program: Command) {
 }
 
 export async function showBalance({
-  accountPubkey = useContext().walletSigner.publicKey,
+  accountPubkey = getContext().walletSigner.publicKey,
 }: {
   accountPubkey?: PublicKey
   marinadeStateAddress?: PublicKey
 }) {
-  const { connection, logger } = useContext()
+  const { connection, logger } = getContext()
 
   logger.info(
     'Main account: %s (%s)',

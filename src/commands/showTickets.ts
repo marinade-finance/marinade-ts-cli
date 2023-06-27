@@ -4,7 +4,7 @@ import {
   MarinadeUtils,
 } from '@marinade.finance/marinade-ts-sdk'
 import { Command } from 'commander'
-import { useContext } from '../context'
+import { getContext } from '../context'
 import { parsePubkey } from '../utils/cliParser'
 import { PublicKey } from '@solana/web3.js'
 
@@ -27,11 +27,11 @@ export function installShowTickets(program: Command) {
 }
 
 async function showTickets({
-  beneficiary = useContext().walletSigner.publicKey,
+  beneficiary = getContext().walletSigner.publicKey,
 }: {
   beneficiary?: PublicKey
 }) {
-  const { connection } = useContext()
+  const { connection } = getContext()
 
   const marinadeConfig = new MarinadeConfig({
     connection,

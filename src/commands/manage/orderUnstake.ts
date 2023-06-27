@@ -4,7 +4,7 @@ import {
   MarinadeUtils,
 } from '@marinade.finance/marinade-ts-sdk'
 import { Command } from 'commander'
-import { useContext } from '../../context'
+import { getContext } from '../../context'
 import { executeTx } from '../../utils/transactions'
 
 export function installOrderUnstake(program: Command) {
@@ -24,7 +24,7 @@ export async function orderUnstake({
 }: {
   amountMsol: number
 }): Promise<void> {
-  const { connection, logger, walletSigner, simulate, printOnly } = useContext()
+  const { connection, logger, walletSigner, simulate, printOnly } = getContext()
 
   const amountLamports = MarinadeUtils.solToLamports(amountMsol)
   logger.info(

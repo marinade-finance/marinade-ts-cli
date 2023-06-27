@@ -1,5 +1,5 @@
 import { format } from 'util'
-import { useContext } from '../context'
+import { getContext } from '../context'
 import { Transaction, VersionedTransaction } from '@solana/web3.js'
 
 export class CliCommandError extends Error {
@@ -22,7 +22,7 @@ export class CliCommandError extends Error {
     logs?: string[]
     transaction?: Transaction | VersionedTransaction
   }) {
-    const { command } = useContext()
+    const { command } = getContext()
     let errorMessage
     if (valueName) {
       errorMessage = format('%s[%s=%s]: %s', command, valueName, value, msg)

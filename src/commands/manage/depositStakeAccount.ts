@@ -1,7 +1,7 @@
 import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
 import { Command } from 'commander'
 import { parsePubkey } from '../../utils/cliParser'
-import { useContext } from '../../context'
+import { getContext } from '../../context'
 import { PublicKey } from '@solana/web3.js'
 import { executeTx } from '../../utils/transactions'
 
@@ -49,7 +49,7 @@ export async function depositStakeAccount({
   referralCode?: PublicKey
   validatorVoteAddress?: PublicKey
 }): Promise<void> {
-  const { connection, walletSigner, logger, simulate, printOnly } = useContext()
+  const { connection, walletSigner, logger, simulate, printOnly } = getContext()
 
   logger.info(
     'Depositing stake account: %s from wallet key %s',
