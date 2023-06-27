@@ -31,7 +31,7 @@ export const STAKE_ACCOUNT: Keypair = Keypair.fromSecretKey(
   ])
 )
 // 2APsntHoKXCeHWfxZ49ADwc5XrdB8GGmxK34jVXRYZyV
-export const MARINADE_STATE_ADMIN = Keypair.fromSecretKey(
+export const TEST_MARINADE_STATE_ADMIN = Keypair.fromSecretKey(
   new Uint8Array([
     88, 46, 254, 11, 76, 182, 135, 63, 92, 56, 112, 173, 43, 58, 65, 74, 13, 97,
     203, 36, 231, 178, 221, 92, 234, 200, 208, 114, 32, 230, 251, 217, 17, 67,
@@ -133,7 +133,7 @@ export default async (): Promise<void> => {
   const marinadeState = await marinade.getMarinadeState()
   if (
     !marinadeState.state.validatorSystem.managerAuthority.equals(
-      MARINADE_STATE_ADMIN.publicKey
+      TEST_MARINADE_STATE_ADMIN.publicKey
     )
   ) {
     throw new Error(
@@ -157,7 +157,7 @@ export default async (): Promise<void> => {
       validatorVote: votePubkey,
     })
     const addTx = new Transaction().add(addIx)
-    await PROVIDER.sendAndConfirm(addTx, [MARINADE_STATE_ADMIN])
+    await PROVIDER.sendAndConfirm(addTx, [TEST_MARINADE_STATE_ADMIN])
   }
 }
 
