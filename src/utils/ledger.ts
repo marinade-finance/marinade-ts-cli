@@ -1,27 +1,34 @@
+import { Wallet } from '@coral-xyz/anchor/dist/cjs/provider'
 import Solana from '@ledgerhq/hw-app-solana'
 import TransportNodeHid, {
   getDevices,
 } from '@ledgerhq/hw-transport-node-hid-noevents'
-import { MessageV0, PublicKey, Message } from '@solana/web3.js'
+import {
+  MessageV0,
+  PublicKey,
+  Message,
+  Transaction,
+  VersionedTransaction,
+} from '@solana/web3.js'
 
 export const CLI_LEDGER_URL_PREFIX = 'usb://ledger'
 export const SOLANA_LEDGER_BIP44_BASE_PATH = "44'/501'/"
 export const SOLANA_LEDGER_BIP44_BASE_REGEXP = /^44[']{0,1}\/501[']{0,1}\//
 export const DEFAULT_DERIVATION_PATH = SOLANA_LEDGER_BIP44_BASE_PATH + "0'/0'"
 
-export class SolanaLedger {
+export class LedgerWallet implements Wallet {
   /**
    * "Constructor" of SolanaLedger class.
    * From ledger url in format of usb://ledger[/<pubkey>[?key=<number>]
    * creates wrapper class around Solana ledger device from '@ledgerhq/hw-app-solana' package.
    */
-  static async instance(ledgerUrl = '0'): Promise<SolanaLedger> {
+  static async instance(ledgerUrl = '0'): Promise<LedgerWallet> {
     const { pubkey, derivedPath } = parseLedgerUrl(ledgerUrl)
 
-    const solanaApi = await SolanaLedger.findByPubkey(pubkey, derivedPath)
-    const publicKey = await SolanaLedger.getPublicKey(solanaApi, derivedPath)
+    const solanaApi = await LedgerWallet.findByPubkey(pubkey, derivedPath)
+    const publicKey = await LedgerWallet.getPublicKey(solanaApi, derivedPath)
 
-    return new SolanaLedger(solanaApi, derivedPath, publicKey)
+    return new LedgerWallet(solanaApi, derivedPath, publicKey)
   }
 
   private constructor(
@@ -29,6 +36,27 @@ export class SolanaLedger {
     public readonly derivedPath: string,
     public readonly publicKey: PublicKey
   ) {}
+
+  public async signTransaction<T extends Transaction | VersionedTransaction>(
+    tx: T
+  ): Promise<T> {
+    let message: Message | MessageV0
+    if (tx instanceof Transaction) {
+      message = tx.compileMessage()
+    } else {
+      message = tx.message
+    }
+    const signature = await this.signMessage(message)
+    tx.addSignature(this.publicKey, signature)
+    return tx
+  }
+
+  public async signAllTransactions<
+    T extends Transaction | VersionedTransaction
+  >(txs: T[]): Promise<T[]> {
+    const signedTxs = await Promise.all(txs.map(tx => this.signTransaction(tx)))
+    return signedTxs
+  }
 
   private static async getPublicKey(
     solanaApi: Solana,
@@ -57,7 +85,7 @@ export class SolanaLedger {
       for (const device of ledgerDevices) {
         transport = await TransportNodeHid.open(device.path)
         const solanaApi = new Solana(transport)
-        const ledgerPubkey = await SolanaLedger.getPublicKey(
+        const ledgerPubkey = await LedgerWallet.getPublicKey(
           solanaApi,
           derivedPath
         )
@@ -85,7 +113,7 @@ export class SolanaLedger {
    * )
    * ```
    */
-  public async signMessage(message: MessageV0 | Message): Promise<Buffer> {
+  private async signMessage(message: MessageV0 | Message): Promise<Buffer> {
     const { signature } = await this.solanaApi.signTransaction(
       this.derivedPath,
       Buffer.from(message.serialize())
@@ -165,4 +193,13 @@ export function parseLedgerUrl(ledgerUrl: string): {
   }
 
   return { pubkey, derivedPath }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function instanceOfWallet(object: any): object is Wallet {
+  return (
+    'signTransaction' in object &&
+    'signAllTransactions' in object &&
+    'publicKey' in object
+  )
 }

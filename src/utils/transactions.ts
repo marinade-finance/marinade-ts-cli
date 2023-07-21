@@ -1,6 +1,5 @@
 import { serializeInstructionToBase64 } from '@solana/spl-governance'
-import { Wallet } from '@coral-xyz/anchor'
-import { SolanaLedger } from './ledger'
+import { Wallet } from '@coral-xyz/anchor/dist/cjs/provider'
 import {
   Connection,
   Transaction,
@@ -9,6 +8,7 @@ import {
   SendTransactionError,
   Keypair,
 } from '@solana/web3.js'
+import { instanceOfWallet } from './ledger'
 import { Logger } from 'pino'
 import { CliCommandError } from './error'
 
@@ -23,7 +23,7 @@ export async function executeTx({
 }: {
   connection: Connection
   transaction: Transaction
-  signers: (SolanaLedger | Wallet | Keypair)[]
+  signers: (Wallet | Keypair)[]
   errMessage: string
   simulate?: boolean
   printOnly?: boolean
@@ -49,13 +49,8 @@ export async function executeTx({
   transaction.feePayer = transaction.feePayer ?? signers[0].publicKey
 
   for (const signer of signers) {
-    if (signer instanceof SolanaLedger) {
-      const message = transaction.compileMessage()
-      const ledgerSignature = await signer.signMessage(message)
-      transaction.addSignature(signer.publicKey, ledgerSignature)
-    } else if (signer instanceof Wallet) {
-      // NOTE: Anchor NodeWallet does partial signing by this call
-      await signer.signTransaction(transaction)
+    if (instanceOfWallet(signer)) {
+      await signer.signTransaction(transaction) // partial signing by this call
     } else {
       transaction.partialSign(signer)
     }

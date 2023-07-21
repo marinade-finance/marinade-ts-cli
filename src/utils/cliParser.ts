@@ -1,9 +1,9 @@
-import { Wallet } from '@coral-xyz/anchor'
+import { Wallet } from '@coral-xyz/anchor/dist/cjs/provider'
 import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet'
 import { Keypair, PublicKey } from '@solana/web3.js'
 import expandTilde from 'expand-tilde'
 import { readFile } from 'fs/promises'
-import { CLI_LEDGER_URL_PREFIX, SolanaLedger } from './ledger'
+import { CLI_LEDGER_URL_PREFIX, LedgerWallet } from './ledger'
 import {
   LockedDeviceError,
   TransportError,
@@ -23,7 +23,7 @@ export async function parsePubkey(pubkeyOrPath: string): Promise<PublicKey> {
 export async function parsePubkeyOrSigner(
   pubkeyOrPath: string,
   logger: Logger
-): Promise<PublicKey | Wallet | SolanaLedger> {
+): Promise<PublicKey | Wallet> {
   try {
     return new PublicKey(pubkeyOrPath)
   } catch (err) {
@@ -37,13 +37,13 @@ export async function parsePubkeyOrSigner(
 export async function parseSigner(
   pathOrUrl: string,
   logger: Logger
-): Promise<Wallet | SolanaLedger> {
+): Promise<Wallet> {
   pathOrUrl = pathOrUrl.trim()
 
   // trying ledger (https://docs.solana.com/wallet-guide/hardware-wallets/ledger)
   if (pathOrUrl.startsWith(CLI_LEDGER_URL_PREFIX)) {
     try {
-      const solanaLedger = await SolanaLedger.instance(pathOrUrl)
+      const solanaLedger = await LedgerWallet.instance(pathOrUrl)
       logger.debug(
         'Successfully connected to Ledger device of key %s',
         solanaLedger.publicKey.toBase58()

@@ -1,12 +1,11 @@
 import { Commitment, Connection, clusterApiUrl, Cluster } from '@solana/web3.js'
 import { Logger } from 'pino'
-import { SolanaLedger } from './utils/ledger'
-import { Wallet } from '@coral-xyz/anchor'
+import { Wallet } from '@coral-xyz/anchor/dist/cjs/provider'
 import { MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
 
 export interface Context {
   connection: Connection
-  walletSigner: SolanaLedger | Wallet
+  walletSigner: Wallet
   logger: Logger
   skipPreflight: boolean
   simulate: boolean
@@ -17,7 +16,7 @@ export interface Context {
 
 const context: {
   connection: Connection | null
-  walletSigner: SolanaLedger | Wallet | null
+  walletSigner: Wallet | null
   logger: Logger | null
   skipPreflight: boolean
   simulate: boolean
@@ -92,7 +91,7 @@ export const setContext = ({
   command,
 }: {
   url: string
-  walletSigner: SolanaLedger | Wallet
+  walletSigner: Wallet
   simulate: boolean
   printOnly: boolean
   skipPreflight: boolean
