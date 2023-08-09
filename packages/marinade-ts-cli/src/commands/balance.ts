@@ -15,8 +15,8 @@ export function installShowBalance(program: Command) {
     .command('balance')
     .description('Show account balance')
     .argument(
-      '<account-pubkey>',
-      'Account to show balance for (default: keypair wallet pubkey)',
+      '[account-pubkey]',
+      'Account to show balance for (default: wallet pubkey)',
       parsePubkey
     )
     .action(async (accountPubkey: Promise<PublicKey>) => {
@@ -53,19 +53,33 @@ export async function showBalance({
     mSolMintAddress,
     accountPubkey
   )
-  const {
-    value: { amount: amountMSOL },
-  } = await connection.getTokenAccountBalance(userMSolATA)
-  const mSolATABalance = new BN(amountMSOL)
-  console.log(`mSOL Balance: ${lamportsToSol(mSolATABalance)}`)
+  try {
+    const {
+      value: { amount: amountMSOL },
+    } = await connection.getTokenAccountBalance(userMSolATA)
+    const mSolATABalance = new BN(amountMSOL)
+    console.log(`mSOL Balance: ${lamportsToSol(mSolATABalance)}`)
+  } catch (e) {
+    logger.error(
+      `MSOL ATA of the account ${accountPubkey.toBase58()} does not exist`,
+      e
+    )
+  }
 
-  const userLpATA = await getAssociatedTokenAccountAddress(
-    lpMint.address,
-    accountPubkey
-  )
-  const {
-    value: { amount: amountLP },
-  } = await connection.getTokenAccountBalance(userLpATA)
-  const userLpATABalance = new BN(amountLP)
-  console.log(`mSOL-SOL-LP Balance: ${lamportsToSol(userLpATABalance)}`)
+  try {
+    const userLpATA = await getAssociatedTokenAccountAddress(
+      lpMint.address,
+      accountPubkey
+    )
+    const {
+      value: { amount: amountLP },
+    } = await connection.getTokenAccountBalance(userLpATA)
+    const userLpATABalance = new BN(amountLP)
+    console.log(`mSOL-SOL-LP Balance: ${lamportsToSol(userLpATABalance)}`)
+  } catch (e) {
+    logger.error(
+      `LP ATA of the account ${accountPubkey.toBase58()} does not exist`,
+      e
+    )
+  }
 }

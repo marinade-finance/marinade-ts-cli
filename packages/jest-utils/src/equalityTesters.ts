@@ -4,11 +4,11 @@ import BN from 'bn.js'
 
 // Use to global configuration of Jest
 /*
-* / * * @type {import('ts-jest').JestConfigWithTsJest} * /
-* module.exports = {
-*   setupFilesAfterEnv: ['<rootDir>/setup/equalityTesters.ts'],
-* }
-*/
+ * / * * @type {import('ts-jest').JestConfigWithTsJest} * /
+ * module.exports = {
+ *   setupFilesAfterEnv: ['<rootDir>/setup/equalityTesters.ts'],
+ * }
+ */
 
 /**
  * Equality testers for jest to compare BN and PublicKey.

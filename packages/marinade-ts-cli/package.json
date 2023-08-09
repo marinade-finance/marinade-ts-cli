@@ -25,7 +25,9 @@
         "solana",
         "marinade.finance",
         "blockchain",
-        "staking"
+        "staking",
+        "msol",
+        "mnde"
     ],
     "dependencies": {
         "@coral-xyz/anchor": "0.28",
