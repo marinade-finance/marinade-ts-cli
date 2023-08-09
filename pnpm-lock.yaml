@@ -29,6 +29,9 @@ importers:
       '@typescript-eslint/typescript-estree':
         specifier: ^5.59.1
         version: 5.59.1(typescript@5.0.4)
+      bigint-buffer:
+        specifier: ^1.1.5
+        version: 1.1.5
       gts:
         specifier: ^5.0.0
         version: 5.0.0(typescript@5.0.4)
