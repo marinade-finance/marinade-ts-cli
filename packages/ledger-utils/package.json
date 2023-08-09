@@ -1,0 +1,44 @@
+{
+    "name": "@marinade.finance/ledger-utils",
+    "version": "1.0.0",
+    "description": "Utility functions for interacting with the Ledger from CLI",
+    "repository": {
+      "type": "git",
+      "url": "git@github.com:marinade-finance/marinade-ts-cli.git"
+    },
+    "publishConfig": {
+      "access": "public"
+    },
+    "scripts": {
+      "test": "echo \"Error: no test specified, go to project root\" && exit 1"
+    },
+    "keywords": [
+      "solana",
+      "marinade.finance",
+      "blockchain",
+      "ledger",
+      "cli"
+    ],
+    "author": "Marinade Finance",
+    "license": "ISC",
+    "main": "src/index",
+    "files": [
+      "src"
+    ],
+    "devDependencies": {
+      "pino": "^8.15.0",
+        "@ledgerhq/errors": "^6.13.1",
+        "@ledgerhq/hw-app-solana": "^7.0.12",
+        "@ledgerhq/hw-transport-node-hid-noevents": "^6.27.18",
+        "@solana/web3.js": "^1.78.3",
+        "@marinade.finance/cli-common": "workspace: *"
+    },
+    "peerDependencies": {
+      "pino": "^8.15.0",
+        "@ledgerhq/errors": "^6.13.1",
+        "@ledgerhq/hw-app-solana": "^7.0.12",
+        "@ledgerhq/hw-transport-node-hid-noevents": "^6.27.18",
+        "@solana/web3.js": "^1.78.3",
+        "@marinade.finance/cli-common": "workspace: *"
+    }
+  }

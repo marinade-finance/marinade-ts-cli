@@ -1,0 +1,53 @@
+{
+    "name": "@marinade.finance/marinade-ts-cli",
+    "version": "5.1.0",
+    "description": "Marinade typescript-based CLI",
+    "license": "ISC",
+    "author": "Marinade.Finance",
+    "bin": {
+        "marinade": "./src/index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/marinade-finance/marinade-ts-cli.git"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "main": "src/index",
+    "files": [
+        "src"
+    ],
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+      },
+    "keywords": [
+        "solana",
+        "marinade.finance",
+        "blockchain",
+        "staking"
+    ],
+    "dependencies": {
+        "@coral-xyz/anchor": "0.28",
+        "@ledgerhq/errors": "^6.13.1",
+        "@ledgerhq/hw-app-solana": "^7.0.12",
+        "@ledgerhq/hw-transport-node-hid-noevents": "^6.27.18",
+        "@marinade.finance/marinade-ts-sdk": "^5.0.3",
+        "@solana/web3.js": "^1.78.3",
+        "@solana/spl-governance": "^0.3.28",
+        "@solana/spl-token": "^0.3.8",
+        "bn.js": "^5.2.1",
+        "borsh": "^0.7.0",
+        "bs58": "^4.0.1",
+        "commander": "^11.0.0",
+        "expand-tilde": "^2.0.2",
+        "pino": "^8.15.0",
+        "pino-pretty": "^10.2.0",
+        "@marinade.finance/cli-common": "workspace:*",
+        "@marinade.finance/ledger-utils": "workspace:*"
+    },
+    "devDependencies": {
+        "@marinade.finance/solana-test-utils":"^0.0.89",
+        "@types/bn.js": "^5.1.1"
+    }
+}

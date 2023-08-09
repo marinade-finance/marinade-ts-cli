@@ -5,7 +5,12 @@
 
 module.exports = {
   preset: 'ts-jest',
+  testEnvironment: 'node',
   testTimeout: 90000,
-  globalSetup: '<rootDir>/test/setup/globalSetup.ts',
-  setupFilesAfterEnv: ['<rootDir>/test/setup/equalityTesters.ts'],
+  detectOpenHandles: true,
+  modulePathIgnorePatterns: ['<rootDir>/dist/'],
+  testPathIgnorePatterns: ['__tests__/.*.skip.ts', '__tests__/setup/*'],
+  globalSetup:
+    '<rootDir>/packages/marinade-ts-cli/__tests__/setup/globalSetup.ts',
+  setupFilesAfterEnv: ['<rootDir>/packages/jest-utils/src/equalityTesters.ts'],
 }

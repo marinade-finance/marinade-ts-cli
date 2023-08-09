@@ -50,3 +50,10 @@ pnpm cli --help
 # to test Solana CLI tools and Anchor in version 0.28.0 is required
 pnpm test
 ```
+
+To get the latest version from npm and run it
+
+```bash
+npm i @marinade.finance/marinade-ts-cli
+npx @marinade.finance/marinade-ts-cli
+```
