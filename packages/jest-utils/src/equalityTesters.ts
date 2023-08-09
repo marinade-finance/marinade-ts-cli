@@ -2,6 +2,18 @@ import { expect } from '@jest/globals'
 import { PublicKey } from '@solana/web3.js'
 import BN from 'bn.js'
 
+// Use to global configuration of Jest
+
+/*
+ * / * * @type {import('ts-jest').JestConfigWithTsJest} * /
+ * module.exports = {
+ *   preset: 'ts-jest',
+ *   testTimeout: 90000,
+ *   globalSetup: '<rootDir>/test/setup/globalSetup.ts',
+ *   setupFilesAfterEnv: ['<rootDir>/test/setup/equalityTesters.ts'],
+ * }
+ */
+
 /**
  * Equality testers for jest to compare BN and PublicKey.
  */

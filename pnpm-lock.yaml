@@ -69,6 +69,21 @@ importers:
         specifier: ^8.15.0
         version: 8.15.0
 
+  packages/jest-utils:
+    devDependencies:
+      '@jest/globals':
+        specifier: ^29.5.0
+        version: 29.5.0
+      '@solana/web3.js':
+        specifier: ^1.78.3
+        version: 1.78.3
+      '@types/bn.js':
+        specifier: ^5.1.1
+        version: 5.1.1
+      bn.js:
+        specifier: ^5.2.1
+        version: 5.2.1
+
   packages/ledger-utils:
     devDependencies:
       '@ledgerhq/errors':

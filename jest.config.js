@@ -6,6 +6,6 @@
 module.exports = {
   preset: 'ts-jest',
   testTimeout: 90000,
-  globalSetup: '<rootDir>/test/setup/globalSetup.ts',
-  setupFilesAfterEnv: ['<rootDir>/test/setup/equalityTesters.ts'],
+  globalSetup: '<rootDir>/packages/marinade-ts-cli/__tests__/setup/globalSetup.ts',
+  setupFilesAfterEnv: ['<rootDir>/packages/jest-utils/src/equalityTesters.ts'],
 }
