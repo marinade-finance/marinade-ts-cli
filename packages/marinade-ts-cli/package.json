@@ -1,6 +1,6 @@
 {
     "name": "@marinade.finance/marinade-ts-cli",
-    "version": "5.1.0",
+    "version": "5.1.1",
     "description": "Marinade typescript-based CLI",
     "license": "ISC",
     "author": "Marinade.Finance",
