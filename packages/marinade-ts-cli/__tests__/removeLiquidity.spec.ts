@@ -1,8 +1,6 @@
 import { BN } from 'bn.js'
-import {
-  createTempFileKeypair,
-  shellMatchers,
-} from '@marinade.finance/solana-test-utils'
+import { shellMatchers } from '@marinade.finance/jest-utils'
+import { createTempFileKeypair } from '@marinade.finance/cli-common'
 import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import { CONNECTION, PROVIDER, transfer } from './setup/globalSetup'
 import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'

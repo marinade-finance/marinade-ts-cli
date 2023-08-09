@@ -1,4 +1,4 @@
-import { shellMatchers } from '@marinade.finance/solana-test-utils'
+import { shellMatchers } from '@marinade.finance/jest-utils'
 import {
   CONNECTION,
   getSolanaTestValidatorVoteAccountPubkey,

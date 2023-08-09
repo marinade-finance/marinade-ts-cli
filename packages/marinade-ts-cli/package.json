@@ -49,7 +49,7 @@
         "@marinade.finance/ledger-utils": "1.0.0"
     },
     "devDependencies": {
-        "@marinade.finance/solana-test-utils":"^0.0.89",
-        "@types/bn.js": "^5.1.1"
+        "@types/bn.js": "^5.1.1",
+        "@marinade.finance/jest-utils": "1.0.0"
     }
 }
