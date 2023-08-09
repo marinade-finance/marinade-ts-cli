@@ -11,7 +11,7 @@
         "test": "anchor test",
         "_test": "jest $FILE",
         "test:no-anchor": "jest --globalSetup='' $FILE",
-        "publish-all": "pnpm build && pnpm publish dist/packages/cli-common && pnpm publish dist/packages/ledger-utils &&  pnpm publish dist/packages/marinade-ts-cli"
+        "publish-all": "pnpm build && pnpm publish dist/packages/cli-common && pnpm publish dist/packages/jest-utils && pnpm publish dist/packages/ledger-utils &&  pnpm publish dist/packages/marinade-ts-cli"
     },
     "devDependencies": {
         "@jest/globals": "^29.5.0",
