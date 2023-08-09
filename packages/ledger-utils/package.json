@@ -31,7 +31,7 @@
         "@ledgerhq/hw-app-solana": "^7.0.12",
         "@ledgerhq/hw-transport-node-hid-noevents": "^6.27.18",
         "@solana/web3.js": "^1.78.3",
-        "@marinade.finance/cli-common": "workspace: *"
+        "@marinade.finance/cli-common": "1.0.0"
     },
     "peerDependencies": {
       "pino": "^8.15.0",
@@ -39,6 +39,6 @@
         "@ledgerhq/hw-app-solana": "^7.0.12",
         "@ledgerhq/hw-transport-node-hid-noevents": "^6.27.18",
         "@solana/web3.js": "^1.78.3",
-        "@marinade.finance/cli-common": "workspace: *"
+        "@marinade.finance/cli-common": "1.0.0"
     }
   }

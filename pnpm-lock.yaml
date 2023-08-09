@@ -99,7 +99,7 @@ importers:
         specifier: ^6.27.18
         version: 6.27.18
       '@marinade.finance/cli-common':
-        specifier: 'workspace: *'
+        specifier: 1.0.0
         version: link:../cli-common
       '@solana/web3.js':
         specifier: ^1.78.3
@@ -123,10 +123,10 @@ importers:
         specifier: ^6.27.18
         version: 6.27.18
       '@marinade.finance/cli-common':
-        specifier: workspace:*
+        specifier: 1.0.0
         version: link:../cli-common
       '@marinade.finance/ledger-utils':
-        specifier: workspace:*
+        specifier: 1.0.0
         version: link:../ledger-utils
       '@marinade.finance/marinade-ts-sdk':
         specifier: ^5.0.3

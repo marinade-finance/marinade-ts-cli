@@ -45,8 +45,8 @@
         "expand-tilde": "^2.0.2",
         "pino": "^8.15.0",
         "pino-pretty": "^10.2.0",
-        "@marinade.finance/cli-common": "workspace:*",
-        "@marinade.finance/ledger-utils": "workspace:*"
+        "@marinade.finance/cli-common": "1.0.0",
+        "@marinade.finance/ledger-utils": "1.0.0"
     },
     "devDependencies": {
         "@marinade.finance/solana-test-utils":"^0.0.89",
