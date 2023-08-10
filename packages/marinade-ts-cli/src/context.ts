@@ -1,7 +1,7 @@
 import { Connection } from '@solana/web3.js'
-import { Wallet } from '@coral-xyz/anchor/dist/cjs/provider'
+import { Wallet as WalletInterface } from '@coral-xyz/anchor/dist/cjs/provider'
+import { Wallet } from '@coral-xyz/anchor'
 import { MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
-import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet'
 import {
   Context,
   getClusterUrl,
@@ -28,7 +28,7 @@ export class MarinadeCLIContext extends Context {
     marinadeDefaults,
   }: {
     connection: Connection
-    wallet: Wallet
+    wallet: WalletInterface
     logger: Logger
     skipPreflight: boolean
     simulate: boolean
@@ -53,7 +53,7 @@ export function setMarinadeCLIContext({
   command,
 }: {
   url: string
-  walletSigner: Wallet
+  walletSigner: WalletInterface
   simulate: boolean
   printOnly: boolean
   skipPreflight: boolean
@@ -86,11 +86,11 @@ export function getMarinadeCliContext(): MarinadeCLIContext {
 export async function parseSigner(
   pathOrUrl: string,
   logger: Logger
-): Promise<Wallet> {
+): Promise<WalletInterface> {
   const wallet = await parseLedgerWallet(pathOrUrl, logger)
   if (wallet) {
     return wallet
   }
   const keypair = await parseKeypair(pathOrUrl)
-  return new NodeWallet(keypair)
+  return new Wallet(keypair)
 }
