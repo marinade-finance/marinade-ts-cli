@@ -1,6 +1,6 @@
 {
     "name": "@marinade.finance/cli-common",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "CLI tooling",
     "repository": {
       "type": "git",
