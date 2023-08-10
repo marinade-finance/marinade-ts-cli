@@ -57,3 +57,14 @@ To get the latest version from npm and run it
 npm i @marinade.finance/marinade-ts-cli
 npx @marinade.finance/marinade-ts-cli
 ```
+
+### Repository structure
+
+The repository is split to few separate projects that can be reused
+by other CLI tooling and is composited into the resulted marinade user CLI
+`@marinade.finance/marinade-ts-cli`.
+
+* [`cli-common`](./packages/cli-common/) — consists of utilities when building a CLI app
+* [`jest-utils`](./packages/jest-utils/) — jest equality tester and typings for a matcher for CLI
+* [`ledger-utils`](./packages/ledger-utils/) — utilities when using ledger TypeScript library in CLI
+* [`marinade-ts-cli`](./packages/marinade-ts-cli/) — the CLI for Marinade.Finance
