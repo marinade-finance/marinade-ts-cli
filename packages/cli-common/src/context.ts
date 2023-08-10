@@ -1,5 +1,6 @@
 import { Logger } from 'pino'
 import { Wallet } from './wallet'
+import { Transaction, VersionedTransaction, PublicKey } from '@solana/web3.js'
 
 let context: Context | undefined
 
@@ -28,14 +29,14 @@ export abstract class Context {
   readonly commandName: string
 
   constructor({
-    wallet,
+    wallet = new NullWallet(),
     logger,
     skipPreflight,
     simulate,
     printOnly,
     commandName,
   }: {
-    wallet: Wallet
+    wallet?: Wallet
     logger: Logger
     skipPreflight: boolean
     simulate: boolean
@@ -48,5 +49,21 @@ export abstract class Context {
     this.skipPreflight = skipPreflight
     this.simulate = simulate
     this.printOnly = printOnly
+  }
+}
+
+export class NullWallet implements Wallet {
+  readonly publicKey: PublicKey = PublicKey.default
+
+  async signTransaction<T extends Transaction | VersionedTransaction>(
+    tx: T
+  ): Promise<T> {
+    return tx
+  }
+
+  async signAllTransactions<T extends Transaction | VersionedTransaction>(
+    txs: T[]
+  ): Promise<T[]> {
+    return txs
   }
 }
