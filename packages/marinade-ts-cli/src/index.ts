@@ -4,31 +4,15 @@
 import { Command } from 'commander'
 import { parseSigner, setMarinadeCLIContext } from './context'
 import { installCommands } from './commands'
-import { pino, Logger } from 'pino'
+import { Logger } from 'pino'
+import { configureLogger } from '@marinade.finance/cli-common'
 
 const DEFAULT_KEYPAIR_PATH = '~/.config/solana/id.json'
-
-const pinoAdditionalOptions = process.env.NODE_ENV?.startsWith('prod')
-  ? {
-      singleLine: true,
-      errorLikeObjectKeys: [],
-    }
-  : {}
-const logger: Logger = pino({
-  transport: {
-    target: 'pino-pretty',
-    options: {
-      translateTime: 'UTC:yyyy-mm-dd HH:MM:ss.l o',
-      ...pinoAdditionalOptions,
-    },
-  },
-  level: 'info',
-})
+const logger: Logger = configureLogger()
 
 const program = new Command('marinade')
-
 program
-  .version('5.1.0')
+  .version('5.1.2')
   .allowExcessArguments(false)
   .option(
     '-u, --url <url-or-moniker>',
