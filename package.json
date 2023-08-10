@@ -4,14 +4,18 @@
     "author": "Marinade.Finance",
     "scripts": {
         "build": "npx tsc -b -verbose",
-        "marinade": "node ./dist/packages/marinade-ts-cli/src//index.js",
+        "marinade": "pnpm cli",
         "cli": "ts-node ./packages/marinade-ts-cli/src/index.ts",
         "lint:fix": "gts fix",
         "lint": "gts lint",
         "test": "anchor test",
         "_test": "jest $FILE",
         "test:no-anchor": "jest --globalSetup='' $FILE",
-        "publish-all": "pnpm build && pnpm publish dist/packages/cli-common && pnpm publish dist/packages/jest-utils && pnpm publish dist/packages/ledger-utils &&  pnpm publish dist/packages/marinade-ts-cli"
+        "publish:cli-common": "pnpm build && pnpm publish dist/packages/cli-common",
+        "publish:jest-utils": "pnpm build && pnpm publish dist/packages/jest-utils",
+        "publish:ledger-utils": "pnpm publish dist/packages/ledger-utils",
+        "publish:marinade-ts-cli": "pnpm publish dist/packages/marinade-ts-cli",
+        "publish:all" : "pnpm lint && pnpm publish:cli-common && pnpm publish:jest-utils && pnpm publish:ledger-utils && pnpm publish:marinade-ts-cli"
     },
     "devDependencies": {
         "@jest/globals": "^29.5.0",
