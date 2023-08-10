@@ -13,9 +13,10 @@
         "test:no-anchor": "jest --globalSetup='' $FILE",
         "publish:cli-common": "pnpm build && pnpm publish dist/packages/cli-common",
         "publish:jest-utils": "pnpm build && pnpm publish dist/packages/jest-utils",
-        "publish:ledger-utils": "pnpm publish dist/packages/ledger-utils",
-        "publish:marinade-ts-cli": "pnpm publish dist/packages/marinade-ts-cli",
-        "publish:all" : "pnpm lint && pnpm publish:cli-common && pnpm publish:jest-utils && pnpm publish:ledger-utils && pnpm publish:marinade-ts-cli"
+        "publish:ledger-utils": "pnpm build && pnpm publish dist/packages/ledger-utils",
+        "publish:marinade-ts-cli": "pnpm build && pnpm publish dist/packages/marinade-ts-cli",
+        "publish:spl-gov-utils": "pnpm build && pnpm publish dist/packages/spl-gov-utils",
+        "publish:all" : "pnpm lint && pnpm publish:cli-common && pnpm publish:jest-utils && pnpm publish:ledger-utils && pnpm publish:marinade-ts-cli && pnpm publish:spl-gov-utils"
     },
     "devDependencies": {
         "@jest/globals": "^29.5.0",

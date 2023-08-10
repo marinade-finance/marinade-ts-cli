@@ -5,6 +5,7 @@
         "amountMsol",
         "Blockhash",
         "borsh",
+        "Clawback",
         "commitlint",
         "devnet",
         "divn",
@@ -15,6 +16,7 @@
         "ledgerhq",
         "localnet",
         "mnde",
+        "MNDEFzGvMt87ueuHvVU9VcTqsAP5b3fTGPsHuuPA5ey",
         "MR2LqxoSbw831bNy68utpu5n4YqBH3AzDmddkgk9LQv",
         "Msol",
         "MsolAmount",
@@ -30,7 +32,8 @@
         "typescript-estree",
         "unstake",
         "unstaked",
-        "unstaking"
+        "unstaking",
+        "VoteMBhDCqGLRgYpp9o7DGyq81KNmwjXQRAHStjtJsS"
     ],
     "editor.formatOnSave": false
 }

@@ -1,0 +1,40 @@
+{
+    "name": "@marinade.finance/spl-gov-utils",
+    "version": "1.0.0",
+    "description": "SPL Governance Utilities",
+    "repository": {
+      "type": "git",
+      "url": "git@github.com:marinade-finance/marinade-ts-cli.git"
+    },
+    "publishConfig": {
+      "access": "public"
+    },
+    "scripts": {
+      "test": "echo \"Error: no test specified, go to project root\" && exit 1"
+    },
+    "keywords": [
+      "solana",
+      "marinade.finance",
+      "blockchain",
+      "cli",
+      "spl-governance",
+      "governance"
+    ],
+    "author": "Marinade Finance",
+    "license": "ISC",
+    "main": "src/index",
+    "files": [
+      "src"
+    ],
+    "devDependencies": {
+        "@solana/web3.js": "^1.78.3",
+        "@coral-xyz/anchor": "0.28"
+    },
+    "peerDependencies": {
+        "@solana/web3.js": "^1.78.3",
+        "@coral-xyz/anchor": "0.28"
+    },
+    "dependencies": {
+      "solana-spl-token-modern": "npm:@solana/spl-token@^0.3.8"
+    }
+  }

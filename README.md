@@ -67,4 +67,5 @@ by other CLI tooling and is composited into the resulted marinade user CLI
 * [`cli-common`](./packages/cli-common/) — consists of utilities when building a CLI app
 * [`jest-utils`](./packages/jest-utils/) — jest equality tester and typings for a matcher for CLI
 * [`ledger-utils`](./packages/ledger-utils/) — utilities when using ledger TypeScript library in CLI
+* [`spl-gov-utils`](./packages/spl-gov-utils/) — utilities when working with SPL Governance
 * [`marinade-ts-cli`](./packages/marinade-ts-cli/) — the CLI for Marinade.Finance
