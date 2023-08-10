@@ -13,6 +13,7 @@ export class CliCommandError extends Error {
   readonly transaction?: Transaction | VersionedTransaction
 
   constructor({
+    commandName,
     valueName,
     value,
     msg,
@@ -20,6 +21,7 @@ export class CliCommandError extends Error {
     logs,
     transaction,
   }: {
+    commandName?: string
     valueName?: string
     value?: any // eslint-disable-line @typescript-eslint/no-explicit-any
     msg: string
@@ -27,7 +29,10 @@ export class CliCommandError extends Error {
     logs?: string[]
     transaction?: Transaction | VersionedTransaction
   }) {
-    const { commandName } = getContext()
+    if (commandName === undefined) {
+      // eslint-disable-next-line @typescript-eslint/no-extra-semi
+      ;({ commandName } = getContext())
+    }
     let errorMessage: string
     if (valueName) {
       errorMessage = format('%s[%s=%s]: %s', commandName, valueName, value, msg)

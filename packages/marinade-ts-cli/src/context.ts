@@ -1,5 +1,5 @@
 import { Connection } from '@solana/web3.js'
-import { Wallet as WalletInterface } from '@coral-xyz/anchor/dist/cjs/provider'
+import { Wallet as AnchorWalletInterface } from '@coral-xyz/anchor/dist/cjs/provider'
 import { Wallet } from '@coral-xyz/anchor'
 import { MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
 import {
@@ -28,7 +28,7 @@ export class MarinadeCLIContext extends Context {
     marinadeDefaults,
   }: {
     connection: Connection
-    wallet: WalletInterface
+    wallet: AnchorWalletInterface
     logger: Logger
     skipPreflight: boolean
     simulate: boolean
@@ -53,7 +53,7 @@ export function setMarinadeCLIContext({
   command,
 }: {
   url: string
-  walletSigner: WalletInterface
+  walletSigner: AnchorWalletInterface
   simulate: boolean
   printOnly: boolean
   skipPreflight: boolean
@@ -86,7 +86,7 @@ export function getMarinadeCliContext(): MarinadeCLIContext {
 export async function parseSigner(
   pathOrUrl: string,
   logger: Logger
-): Promise<WalletInterface> {
+): Promise<AnchorWalletInterface> {
   const wallet = await parseLedgerWallet(pathOrUrl, logger)
   if (wallet) {
     return wallet
