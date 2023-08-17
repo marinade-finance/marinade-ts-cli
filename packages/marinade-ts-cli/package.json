@@ -20,7 +20,7 @@
     ],
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
-      },
+    },
     "keywords": [
         "solana",
         "marinade.finance",
@@ -38,6 +38,7 @@
         "@solana/web3.js": "^1.78.4",
         "@solana/spl-governance": "^0.3.28",
         "@solana/spl-token": "^0.3.8",
+        "@solana/web3.js": "^1.78.3",
         "bn.js": "^5.2.1",
         "borsh": "^0.7.0",
         "bs58": "^4.0.1",
@@ -50,6 +51,7 @@
         "@marinade.finance/ledger-utils": "^2.0.17"
     },
     "devDependencies": {
-        "@marinade.finance/jest-utils": "^2.0.17"
+        "@marinade.finance/jest-utils": "^2.0.17",
+        "@types/bn.js": "^5.1.1"
     }
 }
