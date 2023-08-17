@@ -2,7 +2,7 @@ import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
 import {
   lamportsToSol,
   getAssociatedTokenAccountAddress,
-} from '@marinade.finance/marinade-ts-sdk/dist/src/util'
+} from '@marinade.finance/marinade-ts-sdk/util'
 import { Command } from 'commander'
 import { BN } from 'bn.js'
 import { parsePubkey } from '@marinade.finance/cli-common'
@@ -45,8 +45,8 @@ export async function showBalance({
   const marinadeState = await marinade.getMarinadeState()
 
   const { lpMint, mSolMintAddress } = marinadeState
-
-  const balanceLamports = new BN(await connection.getBalance(accountPubkey))
+  const balance = await connection.getBalance(accountPubkey)
+  const balanceLamports = new BN(balance.toString())
   console.log(`SOL Balance: ${lamportsToSol(balanceLamports)}`)
 
   const userMSolATA = await getAssociatedTokenAccountAddress(
