@@ -18,6 +18,7 @@ import {
 import { writeFileSync } from 'fs'
 import path from 'path'
 import { tmpdir } from 'os'
+import { Wallet } from '@coral-xyz/anchor/dist/cjs/provider'
 
 // eslint-disable-next-line node/no-extraneous-require
 require('ts-node/register')
@@ -30,6 +31,30 @@ export const STAKE_ACCOUNT: Keypair = Keypair.fromSecretKey(
     58, 194, 166, 138, 20, 154, 53, 107, 169, 158, 49, 96, 130, 207, 101, 203,
     106, 176, 103, 94, 13, 170, 98, 66, 69, 124, 209, 44, 76, 190, 136,
   ])
+)
+// EHNgTdy16497UC6Eq4pri9WicTwzPEDSj3U4Ge6nMVfr
+export const STAKE_ACCOUNT_TO_WITHDRAW: Keypair = Keypair.fromSecretKey(
+  new Uint8Array([
+    146, 213, 168, 194, 197, 182, 98, 74, 198, 138, 199, 171, 114, 229, 74, 71,
+    248, 98, 187, 168, 237, 65, 224, 211, 214, 171, 205, 10, 22, 95, 103, 128,
+    197, 89, 188, 173, 45, 161, 99, 206, 234, 23, 24, 32, 235, 19, 255, 72, 224,
+    137, 72, 42, 71, 129, 22, 126, 255, 66, 205, 84, 246, 238, 233, 141,
+  ])
+)
+// 46RP4bjtjzDWRZvCYfGJCLdZ1XxD8ZwQkEQqXUd4qde6
+export const STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY: Keypair =
+  Keypair.fromSecretKey(
+    new Uint8Array([
+      155, 63, 169, 159, 142, 101, 63, 32, 219, 108, 176, 170, 16, 109, 35, 49,
+      35, 79, 61, 142, 198, 150, 91, 226, 119, 173, 38, 68, 247, 43, 221, 108,
+      45, 246, 136, 36, 148, 255, 253, 159, 67, 36, 224, 144, 151, 228, 139,
+      242, 110, 177, 170, 210, 59, 130, 106, 153, 101, 15, 250, 68, 32, 158, 64,
+      103,
+    ])
+  )
+export const STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY_PATH = writeKeypairToFile(
+  'stake-account-to-withdraw-keypair.json',
+  STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY
 )
 // 2APsntHoKXCeHWfxZ49ADwc5XrdB8GGmxK34jVXRYZyV
 export const TEST_MARINADE_STATE_ADMIN = Keypair.fromSecretKey(
@@ -49,18 +74,17 @@ export const SDK_USER = Keypair.fromSecretKey(
     131, 129, 21, 8, 221, 100, 249, 221, 177, 114, 143, 231, 102, 250,
   ])
 )
-// write the uint8 keypair array to a file
-export const SDK_USER_PATH = path.join(tmpdir(), 'skd-user-keypair.json')
-const jsonKeypair = Buffer.from(SDK_USER.secretKey).toJSON()
-writeFileSync(SDK_USER_PATH, '[' + jsonKeypair.data.toString() + ']')
+export const SDK_USER_PATH = writeKeypairToFile(
+  'skd-user-keypair.json',
+  SDK_USER
+)
 
-SDK_USER.secretKey
 export const REFERRAL_CODE = new PublicKey(
   '2Q7u7ndBhSJpTNpDzkjvRyRvuzRLZSovkNRQ5SEUb64g'
 )
-const VOTE_ACCOUNT_PRECREATED = new PublicKey(
-  '2YnuNkxgJFUR6rJDGRh3cgc17bjtYUWqCVc6Bc7JRpp4'
-)
+// const VOTE_ACCOUNT_PRECREATED = new PublicKey(
+//   '2YnuNkxgJFUR6rJDGRh3cgc17bjtYUWqCVc6Bc7JRpp4'
+// )
 
 export const CONNECTION_COMMITMENT = 'confirmed'
 export const PROVIDER_URL = 'http://localhost:8899'
@@ -83,46 +107,35 @@ export default async (): Promise<void> => {
   const votePubkey = await getSolanaTestValidatorVoteAccountPubkey()
 
   // --- CREATING STAKE ACCOUNT and DELEGATE ---
-  // create a stake account that will be used later in all tests
-  const tx = new Transaction()
-  const ixStakeAccount = StakeProgram.createAccount({
-    authorized: {
-      staker: PROVIDER.wallet.publicKey,
-      withdrawer: PROVIDER.wallet.publicKey,
-    },
-    fromPubkey: PROVIDER.wallet.publicKey,
-    lamports: 2 * LAMPORTS_PER_SOL,
-    stakePubkey: STAKE_ACCOUNT.publicKey,
-  })
-  tx.add(ixStakeAccount)
-  /// delegating stake account to the vote account
-  const ixDelegate = StakeProgram.delegate({
-    authorizedPubkey: PROVIDER.wallet.publicKey,
-    stakePubkey: STAKE_ACCOUNT.publicKey,
-    votePubkey: VOTE_ACCOUNT_PRECREATED,
-  })
-  tx.add(ixDelegate)
-  await PROVIDER.sendAndConfirm(tx, [STAKE_ACCOUNT])
-
-  const stakeBalance = await CONNECTION.getBalance(STAKE_ACCOUNT.publicKey)
-  await CONNECTION.getAccountInfo(STAKE_ACCOUNT.publicKey)
-  if (!stakeBalance) {
-    throw new Error('Jest global setup error: no stake account balance')
-  }
+  await createAndDelegateStake(STAKE_ACCOUNT, votePubkey)
+  await createAndDelegateStake(
+    STAKE_ACCOUNT_TO_WITHDRAW,
+    votePubkey,
+    STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY,
+    333 * LAMPORTS_PER_SOL
+  )
 
   // --- WAITING FOR STAKE ACCOUNT to be READY ---
+  const stakeAccounts = [
+    STAKE_ACCOUNT.publicKey,
+    STAKE_ACCOUNT_TO_WITHDRAW.publicKey,
+  ]
   const startTime = Date.now()
   console.log(
-    `Waiting for stake account ${STAKE_ACCOUNT.publicKey.toBase58()} to be activated`
+    `Waiting for stake accounts ${stakeAccounts
+      .map(sa => sa.toBase58())
+      .join(', ')} to be activated`
   )
-  await waitForStakeAccountActivation({
-    stakeAccount: STAKE_ACCOUNT.publicKey,
-    provider: PROVIDER,
-  })
+  for (const stakeAccountToWait of stakeAccounts) {
+    await waitForStakeAccountActivation({
+      stakeAccount: stakeAccountToWait,
+      provider: PROVIDER,
+    })
+  }
   console.log(
-    `Stake account ${STAKE_ACCOUNT.publicKey.toBase58()} is activated after ${
-      (Date.now() - startTime) / 1000
-    } s`
+    `Stake account(s) ${stakeAccounts.map(sa =>
+      sa.toBase58()
+    )} are activated after ${(Date.now() - startTime) / 1000} s`
   )
 
   // --- ADDING solana-test-validator under MARINADE ---
@@ -299,6 +312,52 @@ export async function getSolanaTestValidatorVoteAccountPubkey(): Promise<PublicK
   return solanaTestValidatorVotePubkey
 }
 
+async function createAndDelegateStake(
+  stakeAccountKeypair: Keypair,
+  votePubkey: PublicKey,
+  authority: Keypair | Wallet = PROVIDER.wallet,
+  lamports: number = 42 * LAMPORTS_PER_SOL
+) {
+  // create a stake account that will be used later in all tests
+  const tx = new Transaction()
+  const ixStakeAccount = StakeProgram.createAccount({
+    authorized: {
+      staker: authority.publicKey,
+      withdrawer: authority.publicKey,
+    },
+    fromPubkey: PROVIDER.wallet.publicKey,
+    lamports,
+    stakePubkey: stakeAccountKeypair.publicKey,
+  })
+  tx.add(ixStakeAccount)
+  /// delegating stake account to the vote account
+  const ixDelegate = StakeProgram.delegate({
+    authorizedPubkey: authority.publicKey,
+    stakePubkey: stakeAccountKeypair.publicKey,
+    votePubkey,
+  })
+  tx.add(ixDelegate)
+  const { blockhash: recentBlockhash } = await CONNECTION.getLatestBlockhash()
+  tx.recentBlockhash = recentBlockhash
+  tx.feePayer = PROVIDER.wallet.publicKey
+  if (authority instanceof Keypair) {
+    tx.partialSign(authority)
+  } else {
+    authority.signTransaction(tx)
+  }
+  await PROVIDER.sendAndConfirm(tx, [stakeAccountKeypair])
+
+  const stakeBalance = await CONNECTION.getBalance(
+    stakeAccountKeypair.publicKey
+  )
+  await CONNECTION.getAccountInfo(stakeAccountKeypair.publicKey)
+  if (!stakeBalance) {
+    throw new Error(
+      `Jest setup error: no balance of stake account ${stakeAccountKeypair.publicKey.toBase58()}`
+    )
+  }
+}
+
 export async function transfer({
   amountSol = 100,
   from = SDK_USER,
@@ -319,4 +378,12 @@ export async function transfer({
     })
   )
   await provider.sendAndConfirm(tx, [from])
+}
+
+// write the uint8 keypair array to a file
+function writeKeypairToFile(fileName: string, keypair: Keypair): string {
+  const fullPath = path.join(tmpdir(), fileName)
+  const jsonKeypair = Buffer.from(keypair.secretKey).toJSON()
+  writeFileSync(fullPath, '[' + jsonKeypair.data.toString() + ']')
+  return fullPath
 }

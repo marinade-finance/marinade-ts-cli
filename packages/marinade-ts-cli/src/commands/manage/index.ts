@@ -6,6 +6,7 @@ import { installLiquidUnstake } from './liquidUnstake'
 import { installDepositStakeAccount } from './depositStakeAccount'
 import { installClaim } from './claim'
 import { installOrderUnstake } from './orderUnstake'
+import { installWithdrawStakeAccount } from './withdrawStakeAccount'
 
 export function installManage(program: Command) {
   installAddLiquidity(program)
@@ -15,4 +16,5 @@ export function installManage(program: Command) {
   installDepositStakeAccount(program)
   installClaim(program)
   installOrderUnstake(program)
+  installWithdrawStakeAccount(program)
 }
