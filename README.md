@@ -24,16 +24,17 @@ Options:
   -h, --help                                       display help for command
 
 Commands:
-  balance <account-pubkey>                         Show account balance
+  balance [account-pubkey]                         Show account balance
   show-referral-state <referral-code>              Show Marinade referral partner's state
   show [options]                                   Show marinade state
   add-liquidity <amount-sol>                       Provide liquidity to the liquidity pool
   remove-liquidity <amount-sol>                    Remove liquidity from the liquidity pool
-  deposit [options] <amount-sol>                   deposit SOL
+  deposit [options] <amount-sol>                   Deposit SOL
   liquid-unstake [options] <amount-msol>           Unstake mSOL using liquidity pool
-  deposit-stake-account [options] <stake-account>  deposit stake account
+  deposit-stake-account [options] <stake-account>  Deposit stake account
   claim <ticket>                                   Claim ordered unstake ticket
   order-unstake <amount-msol>                      Order unstake to get a ticket that can be claimed later
+  withdraw-stake-account [options] <amount-msol>   Withdraw stake account
   show-tickets [options]                           Show delayed unstake tickets for a beneficiary (initialized by order-unstake)
   help [command]                                   display help for command
 ```

@@ -8,7 +8,7 @@ import { getMarinadeCliContext } from '../../context'
 export function installWithdrawStakeAccount(program: Command) {
   program
     .command('withdraw-stake-account')
-    .description('withdraw stake account')
+    .description('Withdraw stake account')
     .argument('<amount-msol>', 'MSOL amount to withdraw', parseFloat)
     .requiredOption(
       '-s, --stake-account <stake-account-address>',

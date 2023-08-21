@@ -8,7 +8,7 @@ import { getMarinadeCliContext } from '../../context'
 export function installDepositStakeAccount(program: Command) {
   program
     .command('deposit-stake-account')
-    .description('deposit stake account')
+    .description('Deposit stake account')
     .argument('<stake-account>', 'Stake account to deposit', parsePubkey)
     .option(
       '-r, --referral <referral-code>',
