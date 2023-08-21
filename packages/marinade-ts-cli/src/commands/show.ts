@@ -185,7 +185,9 @@ async function show({ withList }: { withList: boolean }) {
     `  Delayed Unstake Fee: ${state.delayedUnstakeFee.bpCents / 10000}%`
   )
   console.log(
-    `  Withdraw Stake Account Fee: ${state.withdrawStakeAccountFee.bpCents / 10000}%`,
+    `  Withdraw Stake Account Fee: ${
+      state.withdrawStakeAccountFee.bpCents / 10000
+    }%`,
     state.withdrawStakeAccountEnabled ? 'enabled' : 'disabled'
   )
   console.log()
@@ -224,9 +226,8 @@ async function show({ withList }: { withList: boolean }) {
   console.log(aligned('Total TVL', tvlStaking + tvlLiquidity), 'SOL')
 
   console.log('--- Pause')
-  console.log('Pause authority', state.pauseAuthority.toBase58())
   console.log('Is Paused', state.paused)
-
+  console.log('Pause authority', state.pauseAuthority.toBase58())
 
   if (withList) {
     await listValidatorsWithStake(marinadeState)
