@@ -2,7 +2,7 @@ import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
 import {
   lamportsToSol,
   getAssociatedTokenAccountAddress,
-} from '@marinade.finance/marinade-ts-sdk/util'
+} from '@marinade.finance/marinade-ts-sdk/dist/src/util'
 import { Command } from 'commander'
 import { BN } from 'bn.js'
 import { parsePubkey } from '@marinade.finance/cli-common'

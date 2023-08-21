@@ -10,7 +10,7 @@ import { readFile } from 'fs/promises'
 
 export async function parsePubkey(pubkeyOrPath: string): Promise<PublicKey> {
   try {
-    return new PublicKey(pubkeyOrPath)
+    return await parsePubkeyWithPath(pubkeyOrPath)
   } catch (err) {
     try {
       const keypair = await parseKeypair(pubkeyOrPath)
@@ -50,6 +50,18 @@ export async function parseKeypair(pathOrPrivKey: string): Promise<Keypair> {
 
 export async function parseFile(path: string): Promise<string> {
   return await readFile(expandTilde(path), 'utf-8')
+}
+
+async function parsePubkeyWithPath(pubkeyOrPath: string): Promise<PublicKey> {
+  try {
+    return new PublicKey(pubkeyOrPath)
+  } catch (err) {
+    return new PublicKey(
+      new Uint8Array(
+        JSON.parse(await readFile(expandTilde(pubkeyOrPath), 'utf-8'))
+      )
+    )
+  }
 }
 
 export function getClusterUrl(url: string): string {
