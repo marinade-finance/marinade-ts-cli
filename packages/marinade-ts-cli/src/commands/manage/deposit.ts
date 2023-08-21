@@ -12,7 +12,7 @@ import { getMarinadeCliContext } from '../../context'
 export function installDeposit(program: Command) {
   program
     .command('deposit')
-    .description('deposit SOL')
+    .description('Deposit SOL')
     .argument('<amount-sol>', 'SOL amount to deposit', parseFloat)
     .option(
       '-r, --referral <referral-code>',
