@@ -35,7 +35,7 @@
         "@ledgerhq/hw-app-solana": "^7.0.12",
         "@ledgerhq/hw-transport-node-hid-noevents": "^6.27.18",
         "@marinade.finance/marinade-ts-sdk": "^5.0.3",
-        "@solana/web3.js": "^1.78.3",
+        "@solana/web3.js": "^1.78.4",
         "@solana/spl-governance": "^0.3.28",
         "@solana/spl-token": "^0.3.8",
         "bn.js": "^5.2.1",
@@ -45,7 +45,7 @@
         "expand-tilde": "^2.0.2",
         "pino": "^8.15.0",
         "pino-pretty": "^10.2.0",
-        "@marinade.finance/cli-common": "^1.0.3",
+        "@marinade.finance/cli-common": "^1.0.4",
         "@marinade.finance/ledger-utils": "^1.0.0"
     },
     "devDependencies": {

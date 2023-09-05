@@ -27,11 +27,11 @@
       "src"
     ],
     "devDependencies": {
-        "@solana/web3.js": "^1.78.3",
+        "@solana/web3.js": "^1.78.4",
         "@coral-xyz/anchor": "0.28"
     },
     "peerDependencies": {
-        "@solana/web3.js": "^1.78.3",
+        "@solana/web3.js": "^1.78.4",
         "@coral-xyz/anchor": "0.28"
     },
     "dependencies": {
