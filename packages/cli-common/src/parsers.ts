@@ -21,6 +21,7 @@ export async function parsePubkeyOrKeypair(
   pubkeyOrPath: string
 ): Promise<PublicKey | Keypair> {
   try {
+    // TODO: reading public key from file is not supported
     return new PublicKey(pubkeyOrPath)
   } catch (err) {
     return await parseKeypair(pubkeyOrPath)
@@ -29,8 +30,12 @@ export async function parsePubkeyOrKeypair(
 
 export async function parseKeypair(path: string): Promise<Keypair> {
   return Keypair.fromSecretKey(
-    new Uint8Array(JSON.parse(await readFile(expandTilde(path), 'utf-8')))
+    new Uint8Array(JSON.parse(await parseFile(path)))
   )
+}
+
+export async function parseFile(path: string): Promise<string> {
+  return await readFile(expandTilde(path), 'utf-8')
 }
 
 export function getClusterUrl(url: string): string {
