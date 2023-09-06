@@ -5,6 +5,7 @@ import {
   SimulatedTransactionResponse,
   SendTransactionError,
   Keypair,
+  Signer,
 } from '@solana/web3.js'
 import { Logger } from 'pino'
 import { CliCommandError } from './error'
@@ -22,7 +23,7 @@ export async function executeTx({
 }: {
   connection: Connection
   transaction: Transaction
-  signers: (Wallet | Keypair)[]
+  signers: (Wallet | Keypair | Signer)[]
   errMessage: string
   simulate?: boolean
   printOnly?: boolean
