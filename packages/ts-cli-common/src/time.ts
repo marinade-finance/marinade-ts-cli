@@ -1,4 +1,4 @@
-export const formatDuration = (seconds: number) => {
+export function formatDuration(seconds: number): string {
   const units = [
     { unit: 's', mod: 60, pad: 2 },
     { unit: 'm', mod: 60, pad: 2 },

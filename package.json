@@ -12,6 +12,7 @@
         "_test": "jest $FILE",
         "test:no-anchor": "jest --globalSetup='' $FILE",
         "publish:cli-common": "pnpm build && pnpm publish dist/packages/cli-common",
+        "publish:ts-cli-common": "pnpm build && pnpm publish dist/packages/ts-cli-common",
         "publish:jest-utils": "pnpm build && pnpm publish dist/packages/jest-utils",
         "publish:ledger-utils": "pnpm build && pnpm publish dist/packages/ledger-utils",
         "publish:marinade-ts-cli": "pnpm build && pnpm publish dist/packages/marinade-ts-cli",
