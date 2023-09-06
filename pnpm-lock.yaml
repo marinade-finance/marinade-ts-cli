@@ -63,8 +63,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       borsh:
-        specifier: ^0.3.1
-        version: 0.3.1
+        specifier: ^0.7.0
+        version: 0.7.0
       expand-tilde:
         specifier: ^2.0.2
         version: 2.0.2
@@ -147,8 +147,8 @@ importers:
         specifier: ^5.2.1
         version: 5.2.1
       borsh:
-        specifier: ^0.3.1
-        version: 0.3.1
+        specifier: ^0.7.0
+        version: 0.7.0
       bs58:
         specifier: ^4.0.1
         version: 4.0.1
@@ -1251,6 +1251,7 @@ packages:
     resolution: {integrity: sha512-pqr857jrp2kPuO9uRjZ3PwnJTjoQy+fcdxvBTvHm6dkmEL9q+hDD/2j/0ELOBPtPnS8LjCX0gI9nbl8lVkadpg==}
     dependencies:
       '@types/node': 16.0.0
+    dev: false
 
   /@types/bn.js@5.1.1:
     resolution: {integrity: sha512-qNrYbZqMx0uJAfKnKclPh+dTwK33KfLHYqtyODwd5HnXOjnkhc4qgn3BrK6RWyGZm5+sIFE7Q7Vz6QQtJB7w7g==}
@@ -2124,6 +2125,7 @@ packages:
       bn.js: 5.2.1
       bs58: 4.0.1
       text-encoding-utf-8: 1.0.2
+    dev: false
 
   /borsh@0.7.0:
     resolution: {integrity: sha512-CLCsZGIBCFnPtkNnieW/a8wmreDmfUtjU2m9yHrzPXIlNbqVs0AQrSatSG6vdNYUqdc83tkQi2eHfF98ubzQLA==}
