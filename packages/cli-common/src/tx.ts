@@ -15,7 +15,7 @@ import { serializeInstructionToBase64 } from './txToBase64'
 export async function executeTx({
   connection,
   transaction,
-  signers,
+  signers = [],
   errMessage,
   simulate = false,
   printOnly = false,
@@ -23,7 +23,7 @@ export async function executeTx({
 }: {
   connection: Connection
   transaction: Transaction
-  signers: (Wallet | Keypair | Signer)[]
+  signers?: (Wallet | Keypair | Signer)[]
   errMessage: string
   simulate?: boolean
   printOnly?: boolean
