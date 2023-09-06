@@ -59,6 +59,10 @@ export class CliCommandError extends Error {
     return this.message + causeMessage
   }
 
+  static fromMsg(msg: string): CliCommandError {
+    return new CliCommandError({ msg })
+  }
+
   get [Symbol.toStringTag]() {
     return 'CliCommandError'
   }
