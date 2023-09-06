@@ -102,7 +102,7 @@ importers:
         specifier: ^6.27.18
         version: 6.27.18
       '@marinade.finance/cli-common':
-        specifier: ^1.0.6
+        specifier: ^1.0.7
         version: link:../cli-common
       '@solana/web3.js':
         specifier: ^1.78.4
@@ -126,7 +126,7 @@ importers:
         specifier: ^6.27.18
         version: 6.27.18
       '@marinade.finance/cli-common':
-        specifier: ^1.0.6
+        specifier: ^1.0.7
         version: link:../cli-common
       '@marinade.finance/ledger-utils':
         specifier: ^1.0.0
