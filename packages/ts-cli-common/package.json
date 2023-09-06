@@ -1,5 +1,5 @@
 {
-    "name": "@marinade.finance/ts-common",
+    "name": "@marinade.finance/ts-cli-common",
     "version": "1.0.0",
     "description": "TS common utilities",
     "repository": {
