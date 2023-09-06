@@ -1,5 +1,6 @@
 import { TransactionInstruction, PublicKey } from '@solana/web3.js'
 import { serialize } from 'borsh'
+import { extendBorsh } from './borsh'
 
 // the serialization processing is adapted from SPL Governance SDK Oyster 0.3.28
 // see https://github.com/solana-labs/oyster/blob/6a23631ad30fb7761107b8316479c14519217560/packages/governance-sdk/src/governance/serialisation.ts#L247
@@ -41,6 +42,7 @@ export class InstructionData {
 export const serializeInstructionToBase64 = (
   instruction: TransactionInstruction
 ) => {
+  extendBorsh()
   const data = createInstructionData(instruction)
 
   return Buffer.from(serialize(createSchema(), data)).toString('base64')

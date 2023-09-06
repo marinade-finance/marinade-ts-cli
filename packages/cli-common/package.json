@@ -29,12 +29,14 @@
         "@solana/web3.js": "^1.78.4",
         "borsh": "^0.7.0",
         "@types/expand-tilde": "^2.0.0",
-        "expand-tilde": "^2.0.2"
+        "expand-tilde": "^2.0.2",
+        "bs58": "^5.0.0"
     },
     "peerDependencies": {
         "pino": "^8.15.0",
         "@solana/web3.js": "^1.78.4",
         "borsh": "^0.7.0",
-        "expand-tilde": "^2.0.2"
+        "expand-tilde": "^2.0.2",
+        "bs58": "^5.0.0"
     }
   }
