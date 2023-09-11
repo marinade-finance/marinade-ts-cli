@@ -45,7 +45,7 @@
         "expand-tilde": "^2.0.2",
         "pino": "^8.15.0",
         "pino-pretty": "^10.2.0",
-        "@marinade.finance/cli-common": "^1.0.9",
+        "@marinade.finance/cli-common": "^1.0.10",
         "@marinade.finance/ledger-utils": "^1.0.0"
     },
     "devDependencies": {
