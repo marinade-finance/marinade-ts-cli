@@ -28,10 +28,19 @@ export async function parsePubkeyOrKeypair(
   }
 }
 
-export async function parseKeypair(path: string): Promise<Keypair> {
-  return Keypair.fromSecretKey(
-    new Uint8Array(JSON.parse(await parseFile(path)))
-  )
+export async function parseKeypair(pathOrPrivKey: string): Promise<Keypair> {
+  // try if keypair is unit8array
+  try {
+    const privateKey = new Uint8Array(JSON.parse(pathOrPrivKey))
+    if (privateKey.length !== 64) {
+      throw new Error('Invalid private key, expecting 64 bytes')
+    }
+    return Keypair.fromSecretKey(privateKey)
+  } catch (err) {
+    return Keypair.fromSecretKey(
+      new Uint8Array(JSON.parse(await parseFile(pathOrPrivKey)))
+    )
+  }
 }
 
 export async function parseFile(path: string): Promise<string> {
