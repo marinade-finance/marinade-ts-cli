@@ -189,8 +189,8 @@ importers:
         specifier: ^2.0.17
         version: link:../lib/ledger-utils
       '@marinade.finance/marinade-ts-sdk':
-        specifier: ^5.0.5
-        version: 5.0.5(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0)
+        specifier: ^5.0.6-alpha
+        version: 5.0.6-alpha(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0)
       '@marinade.finance/web3js-common':
         specifier: ^2.0.17
         version: link:../lib/web3js-common
@@ -228,6 +228,12 @@ importers:
       '@marinade.finance/jest-utils':
         specifier: ^2.0.17
         version: link:../lib/jest-utils
+      '@solana/spl-token-3.x':
+        specifier: npm:@solana/spl-token@^0.3.8
+        version: /@solana/spl-token@0.3.8(@solana/web3.js@1.78.4)
+      '@types/bn.js':
+        specifier: ^5.1.1
+        version: 5.1.1
 
 packages:
 
@@ -738,7 +744,7 @@ packages:
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
       '@jest/types': 29.5.0
-      '@types/node': 18.15.10
+      '@types/node': 18.18.6
       chalk: 4.1.2
       jest-message-util: 29.5.0
       jest-util: 29.5.0
@@ -820,7 +826,7 @@ packages:
     dependencies:
       '@jest/types': 29.5.0
       '@sinonjs/fake-timers': 10.3.0
-      '@types/node': 18.15.10
+      '@types/node': 18.18.6
       jest-message-util: 29.5.0
       jest-mock: 29.5.0
       jest-util: 29.5.0
@@ -853,7 +859,7 @@ packages:
       '@jest/transform': 29.5.0
       '@jest/types': 29.5.0
       '@jridgewell/trace-mapping': 0.3.18
-      '@types/node': 18.15.10
+      '@types/node': 18.18.6
       chalk: 4.1.2
       collect-v8-coverage: 1.0.1
       exit: 0.1.2
@@ -1049,8 +1055,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@marinade.finance/marinade-ts-sdk@5.0.5(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0):
-    resolution: {integrity: sha512-9dMdR7/Qfr1Dl4nyLQG+fue+XHxRTWaWH7Lujjz2AxwEvM8uSEET3up86ldQMGARANtvtNDxvfA5s6fdB8Bl9A==}
+  /@marinade.finance/marinade-ts-sdk@5.0.6-alpha(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0):
+    resolution: {integrity: sha512-q3FBgCk3d5NZbQgLhc+lmcvtNkaXeUvPJtIkiw2XFd8NdYhB+EST+O+ZlakE80ighwD/7XL9hwrSAPb2VMw2VA==}
     engines: {anchor: '>=0.28.0', node: '>=16.0.0'}
     dependencies:
       '@coral-xyz/anchor': 0.28.0
@@ -1162,7 +1168,6 @@ packages:
       - bufferutil
       - encoding
       - utf-8-validate
-    dev: false
 
   /@solana/buffer-layout@4.0.1:
     resolution: {integrity: sha512-E1ImOIAD1tBZFRdjeM4/pzTiTApC0AOBGwyAMS4fwIodCWArzJ3DWdoh8cKxeFM2fElkxBh2Aqts1BPC373rHA==}
@@ -1242,7 +1247,6 @@ packages:
       - bufferutil
       - encoding
       - utf-8-validate
-    dev: false
 
   /@solana/spl-token@0.3.8(@solana/web3.js@1.78.5):
     resolution: {integrity: sha512-ogwGDcunP9Lkj+9CODOWMiVJEdRtqHAtX2rWF62KxnnSWtMZtV9rDhTrZFshiyJmxDnRL/1nKE1yJHg4jjs3gg==}
@@ -1282,7 +1286,6 @@ packages:
       - bufferutil
       - encoding
       - utf-8-validate
-    dev: false
 
   /@solana/web3.js@1.78.5:
     resolution: {integrity: sha512-2ZHsDNqkKdglJQrIvJ3p2DmgS3cGnary3VJyqt9C1SPrpAtLYzcElr3xyXJOznyQTU/8AMw+GoF11lFoKbicKg==}
@@ -1361,7 +1364,7 @@ packages:
   /@types/bn.js@5.1.1:
     resolution: {integrity: sha512-qNrYbZqMx0uJAfKnKclPh+dTwK33KfLHYqtyODwd5HnXOjnkhc4qgn3BrK6RWyGZm5+sIFE7Q7Vz6QQtJB7w7g==}
     dependencies:
-      '@types/node': 18.15.10
+      '@types/node': 18.18.6
     dev: true
 
   /@types/connect@3.4.35:
@@ -1376,7 +1379,7 @@ packages:
   /@types/graceful-fs@4.1.6:
     resolution: {integrity: sha512-Sig0SNORX9fdW+bQuTEovKj3uHcUL6LQKbCrrqb1X7J6/ReAbhCXRAhc+SMejhLELFj2QcyuxmUooZ4bt5ReSw==}
     dependencies:
-      '@types/node': 18.15.10
+      '@types/node': 18.18.6
     dev: true
 
   /@types/istanbul-lib-coverage@2.0.4:
@@ -2206,7 +2209,6 @@ packages:
 
   /bignumber.js@9.1.1:
     resolution: {integrity: sha512-pHm4LsMJ6lzgNGVfZHjMoO8sdoRhOzOH4MLmY65Jg70bpxCKu5iOHNJyfF6OyvYw7t8Fpf35RuzUyqnQsj8Vig==}
-    dev: false
 
   /bindings@1.5.0:
     resolution: {integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==}
@@ -4732,7 +4734,7 @@ packages:
       '@jest/expect': 29.5.0
       '@jest/test-result': 29.5.0
       '@jest/types': 29.5.0
-      '@types/node': 18.15.10
+      '@types/node': 18.18.6
       chalk: 4.1.2
       co: 4.6.0
       dedent: 0.7.0
@@ -4965,7 +4967,7 @@ packages:
       '@jest/environment': 29.5.0
       '@jest/fake-timers': 29.5.0
       '@jest/types': 29.5.0
-      '@types/node': 18.15.10
+      '@types/node': 18.18.6
       jest-mock: 29.5.0
       jest-util: 29.5.0
     dev: true
@@ -5000,7 +5002,7 @@ packages:
     dependencies:
       '@jest/types': 29.5.0
       '@types/graceful-fs': 4.1.6
-      '@types/node': 18.15.10
+      '@types/node': 18.18.6
       anymatch: 3.1.3
       fb-watchman: 2.0.2
       graceful-fs: 4.2.11
@@ -5194,7 +5196,7 @@ packages:
       '@jest/test-result': 29.5.0
       '@jest/transform': 29.5.0
       '@jest/types': 29.5.0
-      '@types/node': 18.15.10
+      '@types/node': 18.18.6
       chalk: 4.1.2
       emittery: 0.13.1
       graceful-fs: 4.2.11
@@ -5256,7 +5258,7 @@ packages:
       '@jest/test-result': 29.5.0
       '@jest/transform': 29.5.0
       '@jest/types': 29.5.0
-      '@types/node': 18.15.10
+      '@types/node': 18.18.6
       chalk: 4.1.2
       cjs-module-lexer: 1.2.3
       collect-v8-coverage: 1.0.1
@@ -5395,7 +5397,7 @@ packages:
     dependencies:
       '@jest/test-result': 29.5.0
       '@jest/types': 29.5.0
-      '@types/node': 18.15.10
+      '@types/node': 18.18.6
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       emittery: 0.13.1
@@ -5413,7 +5415,7 @@ packages:
     resolution: {integrity: sha512-NcrQnevGoSp4b5kg+akIpthoAFHxPBcb5P6mYPY0fUNT+sSvmtu6jlkEle3anczUKIKEbMxFimk9oTP/tpIPgA==}
     engines: {node: ^14.15.0 || ^16.10.0 || >=18.0.0}
     dependencies:
-      '@types/node': 18.15.10
+      '@types/node': 18.18.6
       jest-util: 29.5.0
       merge-stream: 2.0.0
       supports-color: 8.1.1
