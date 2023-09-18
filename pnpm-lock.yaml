@@ -57,11 +57,14 @@ importers:
   packages/cli-common:
     devDependencies:
       '@solana/web3.js':
-        specifier: ^1.78.4
-        version: 1.78.4
+        specifier: ^1.78.5
+        version: 1.78.5
       '@types/expand-tilde':
         specifier: ^2.0.0
         version: 2.0.0
+      bn.js:
+        specifier: ^5.2.1
+        version: 5.2.1
       borsh:
         specifier: ^0.7.0
         version: 0.7.0
@@ -72,8 +75,11 @@ importers:
         specifier: ^2.0.2
         version: 2.0.2
       pino:
-        specifier: ^8.15.0
-        version: 8.15.0
+        specifier: ^8.15.1
+        version: 8.15.1
+      yaml:
+        specifier: ^2.3.2
+        version: 2.3.2
 
   packages/jest-utils:
     devDependencies:
@@ -548,8 +554,8 @@ packages:
     resolution: {integrity: sha512-+P/vPdORawvg3A9Wj02iquxb4T0C5m4P6aZBVYysKl4Amk+r6aMPZkUhilBkD6E4Nuxnoajv3CFykUfkGE0n5g==}
     engines: {node: '>=11'}
     dependencies:
-      '@coral-xyz/borsh': 0.27.0(@solana/web3.js@1.78.4)
-      '@solana/web3.js': 1.78.4
+      '@coral-xyz/borsh': 0.27.0(@solana/web3.js@1.78.5)
+      '@solana/web3.js': 1.78.5
       base64-js: 1.5.1
       bn.js: 5.2.1
       bs58: 4.0.1
@@ -573,8 +579,8 @@ packages:
     resolution: {integrity: sha512-kQ02Hv2ZqxtWP30WN1d4xxT4QqlOXYDxmEd3k/bbneqhV3X5QMO4LAtoUFs7otxyivOgoqam5Il5qx81FuI4vw==}
     engines: {node: '>=11'}
     dependencies:
-      '@coral-xyz/borsh': 0.28.0(@solana/web3.js@1.78.4)
-      '@solana/web3.js': 1.78.4
+      '@coral-xyz/borsh': 0.28.0(@solana/web3.js@1.78.5)
+      '@solana/web3.js': 1.78.5
       base64-js: 1.5.1
       bn.js: 5.2.1
       bs58: 4.0.1
@@ -593,24 +599,24 @@ packages:
       - encoding
       - utf-8-validate
 
-  /@coral-xyz/borsh@0.27.0(@solana/web3.js@1.78.4):
+  /@coral-xyz/borsh@0.27.0(@solana/web3.js@1.78.5):
     resolution: {integrity: sha512-tJKzhLukghTWPLy+n8K8iJKgBq1yLT/AxaNd10yJrX8mI56ao5+OFAKAqW/h0i79KCvb4BK0VGO5ECmmolFz9A==}
     engines: {node: '>=10'}
     peerDependencies:
       '@solana/web3.js': ^1.68.0
     dependencies:
-      '@solana/web3.js': 1.78.4
+      '@solana/web3.js': 1.78.5
       bn.js: 5.2.1
       buffer-layout: 1.2.2
     dev: false
 
-  /@coral-xyz/borsh@0.28.0(@solana/web3.js@1.78.4):
+  /@coral-xyz/borsh@0.28.0(@solana/web3.js@1.78.5):
     resolution: {integrity: sha512-/u1VTzw7XooK7rqeD7JLUSwOyRSesPUk0U37BV9zK0axJc1q0nRbKFGFLYCQ16OtdOJTTwGfGp11Lx9B45bRCQ==}
     engines: {node: '>=10'}
     peerDependencies:
       '@solana/web3.js': ^1.68.0
     dependencies:
-      '@solana/web3.js': 1.78.4
+      '@solana/web3.js': 1.78.5
       bn.js: 5.2.1
       buffer-layout: 1.2.2
 
@@ -1071,13 +1077,13 @@ packages:
       tslib: 2.6.1
     dev: true
 
-  /@project-serum/borsh@0.2.5(@solana/web3.js@1.78.4):
+  /@project-serum/borsh@0.2.5(@solana/web3.js@1.78.5):
     resolution: {integrity: sha512-UmeUkUoKdQ7rhx6Leve1SssMR/Ghv8qrEiyywyxSWg7ooV7StdpPBhciiy5eB3T0qU1BXvdRNC8TdrkxK7WC5Q==}
     engines: {node: '>=10'}
     peerDependencies:
       '@solana/web3.js': ^1.2.0
     dependencies:
-      '@solana/web3.js': 1.78.4
+      '@solana/web3.js': 1.78.5
       bn.js: 5.2.1
       buffer-layout: 1.2.2
     dev: false
@@ -1103,7 +1109,7 @@ packages:
     engines: {node: '>= 10'}
     dependencies:
       '@solana/buffer-layout': 4.0.1
-      '@solana/web3.js': 1.78.4
+      '@solana/web3.js': 1.78.5
       bigint-buffer: 1.1.5
       bignumber.js: 9.1.1
     transitivePeerDependencies:
@@ -1121,7 +1127,7 @@ packages:
   /@solana/spl-governance@0.3.28:
     resolution: {integrity: sha512-CUi1hMvzId2rAtMFTlxMwOy0EmFeT0VcmiC+iQnDhRBuM8LLLvRrbTYBWZo3xIvtPQW9HfhVBoL7P/XNFIqYVQ==}
     dependencies:
-      '@solana/web3.js': 1.78.4
+      '@solana/web3.js': 1.78.5
       axios: 1.4.0
       bignumber.js: 9.1.1
       bn.js: 5.2.1
@@ -1138,10 +1144,10 @@ packages:
   /@solana/spl-stake-pool@0.6.5:
     resolution: {integrity: sha512-gAYjX4LlRem3Bje1csZOOBStX8wAH8b8tu4sublUTIoJxLMdEbXqnwc8RJ2lAsmFkjxxomEM9Hk65F8jcvv15A==}
     dependencies:
-      '@project-serum/borsh': 0.2.5(@solana/web3.js@1.78.4)
+      '@project-serum/borsh': 0.2.5(@solana/web3.js@1.78.5)
       '@solana/buffer-layout': 4.0.1
       '@solana/spl-token': 0.1.8
-      '@solana/web3.js': 1.78.4
+      '@solana/web3.js': 1.78.5
       bn.js: 5.2.1
       buffer: 6.0.3
     transitivePeerDependencies:
@@ -1155,7 +1161,7 @@ packages:
     engines: {node: '>= 10'}
     dependencies:
       '@babel/runtime': 7.22.10
-      '@solana/web3.js': 1.78.4
+      '@solana/web3.js': 1.78.5
       bn.js: 5.2.1
       buffer: 6.0.3
       buffer-layout: 1.2.2
@@ -1184,6 +1190,29 @@ packages:
 
   /@solana/web3.js@1.78.4:
     resolution: {integrity: sha512-up5VG1dK+GPhykmuMIozJZBbVqpm77vbOG6/r5dS7NBGZonwHfTLdBbsYc3rjmaQ4DpCXUa3tUc4RZHRORvZrw==}
+    dependencies:
+      '@babel/runtime': 7.22.10
+      '@noble/curves': 1.1.0
+      '@noble/hashes': 1.3.1
+      '@solana/buffer-layout': 4.0.1
+      agentkeepalive: 4.5.0
+      bigint-buffer: 1.1.5
+      bn.js: 5.2.1
+      borsh: 0.7.0
+      bs58: 4.0.1
+      buffer: 6.0.3
+      fast-stable-stringify: 1.0.0
+      jayson: 4.1.0
+      node-fetch: 2.6.12
+      rpc-websockets: 7.5.1
+      superstruct: 0.14.2
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+
+  /@solana/web3.js@1.78.5:
+    resolution: {integrity: sha512-2ZHsDNqkKdglJQrIvJ3p2DmgS3cGnary3VJyqt9C1SPrpAtLYzcElr3xyXJOznyQTU/8AMw+GoF11lFoKbicKg==}
     dependencies:
       '@babel/runtime': 7.22.10
       '@noble/curves': 1.1.0
@@ -6442,6 +6471,13 @@ packages:
       readable-stream: 4.4.2
       split2: 4.2.0
 
+  /pino-abstract-transport@1.1.0:
+    resolution: {integrity: sha512-lsleG3/2a/JIWUtf9Q5gUNErBqwIu1tUKTT3dUzaf5DySw9ra1wcqKjJjLX1VTY64Wk1eEOYsVGSaGfCK85ekA==}
+    dependencies:
+      readable-stream: 4.4.2
+      split2: 4.2.0
+    dev: true
+
   /pino-pretty@10.2.0:
     resolution: {integrity: sha512-tRvpyEmGtc2D+Lr3FulIZ+R1baggQ4S3xD2Ar93KixFEDx6SEAUP3W5aYuEw1C73d6ROrNcB2IXLteW8itlwhA==}
     hasBin: true
@@ -6480,6 +6516,23 @@ packages:
       safe-stable-stringify: 2.4.3
       sonic-boom: 3.3.0
       thread-stream: 2.3.0
+
+  /pino@8.15.1:
+    resolution: {integrity: sha512-Cp4QzUQrvWCRJaQ8Lzv0mJzXVk4z2jlq8JNKMGaixC2Pz5L4l2p95TkuRvYbrEbe85NQsDKrAd4zalf7Ml6WiA==}
+    hasBin: true
+    dependencies:
+      atomic-sleep: 1.0.0
+      fast-redact: 3.3.0
+      on-exit-leak-free: 2.1.0
+      pino-abstract-transport: 1.1.0
+      pino-std-serializers: 6.2.2
+      process-warning: 2.2.0
+      quick-format-unescaped: 4.0.4
+      real-require: 0.2.0
+      safe-stable-stringify: 2.4.3
+      sonic-boom: 3.3.0
+      thread-stream: 2.3.0
+    dev: true
 
   /pirates@4.0.6:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
@@ -8252,6 +8305,11 @@ packages:
 
   /yaml@2.3.1:
     resolution: {integrity: sha512-2eHWfjaoXgTBC2jNM1LRef62VQa0umtvRiDSk6HSzW7RvS5YtkabJrwYLLEKWBc8a5U2PTSCs+dJjUTJdlHsWQ==}
+    engines: {node: '>= 14'}
+    dev: true
+
+  /yaml@2.3.2:
+    resolution: {integrity: sha512-N/lyzTPaJasoDmfV7YTrYCI0G/3ivm/9wdG0aHuheKowWQwGTsK0Eoiw6utmzAnI6pkJa0DUVygvp3spqqEKXg==}
     engines: {node: '>= 14'}
     dev: true
 

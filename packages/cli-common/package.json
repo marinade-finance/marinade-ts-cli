@@ -25,18 +25,25 @@
       "src"
     ],
     "devDependencies": {
-        "pino": "^8.15.0",
-        "@solana/web3.js": "^1.78.4",
+        "pino": "^8.15.1",
+        "@solana/web3.js": "^1.78.5",
         "borsh": "^0.7.0",
         "@types/expand-tilde": "^2.0.0",
         "expand-tilde": "^2.0.2",
-        "bs58": "^5.0.0"
+        "bs58": "^5.0.0",
+        "bn.js": "^5.2.1",
+        "yaml": "^2.3.2"
     },
     "peerDependencies": {
-        "pino": "^8.15.0",
-        "@solana/web3.js": "^1.78.4",
+        "pino": "^8.15.1",
+        "@solana/web3.js": "^1.78.5",
         "borsh": "^0.7.0",
         "expand-tilde": "^2.0.2",
-        "bs58": "^5.0.0"
+        "bs58": "^5.0.0",
+        "bn.js": "^5.2.1",
+        "yaml": "^2.3.2"
+    },
+    "engines": {
+      "node": ">=16.0.0"
     }
   }
