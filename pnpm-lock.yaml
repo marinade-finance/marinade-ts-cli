@@ -144,8 +144,8 @@ importers:
         specifier: ^1.0.0
         version: link:../ledger-utils
       '@marinade.finance/marinade-ts-sdk':
-        specifier: ^5.0.4
-        version: 5.0.4(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0)
+        specifier: ^5.0.5
+        version: 5.0.5(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0)
       '@solana/spl-governance':
         specifier: ^0.3.28
         version: 0.3.28
@@ -1019,12 +1019,13 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@marinade.finance/marinade-ts-sdk@5.0.4(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0):
-    resolution: {integrity: sha512-Yc7E6IkXAjHLjnBrIZhCqv+1+7kAPnUMYPHfv7XH1/ksr5T9TJzPUp+MzjzGV3waxujyEzJ8LIj5JvR7/HqL1A==}
+  /@marinade.finance/marinade-ts-sdk@5.0.5(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0):
+    resolution: {integrity: sha512-9dMdR7/Qfr1Dl4nyLQG+fue+XHxRTWaWH7Lujjz2AxwEvM8uSEET3up86ldQMGARANtvtNDxvfA5s6fdB8Bl9A==}
     engines: {anchor: '>=0.28.0', node: '>=16.0.0'}
     dependencies:
       '@coral-xyz/anchor': 0.28.0
       '@marinade.finance/directed-stake-sdk': 0.0.4(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0)
+      '@marinade.finance/native-staking-sdk': 1.0.0
       '@solana/spl-stake-pool': 0.6.5
       '@solana/spl-token-3.x': /@solana/spl-token@0.3.8(@solana/web3.js@1.78.4)
       borsh: 0.7.0
@@ -1035,6 +1036,18 @@ packages:
       - bufferutil
       - encoding
       - jsbi
+      - utf-8-validate
+    dev: false
+
+  /@marinade.finance/native-staking-sdk@1.0.0:
+    resolution: {integrity: sha512-Cj2dy3SH9LAgcFBpGEgRHyF/nK+L7SfNIHkGqAZYRDVgn/h7u8bqKNkYqKXgCWbA5WwPmJzugWWm1DxEt7LyPQ==}
+    dependencies:
+      '@solana/spl-memo': 0.2.3(@solana/web3.js@1.78.5)
+      '@solana/web3.js': 1.78.5
+      bn.js: 5.2.1
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
       - utf-8-validate
     dev: false
 
@@ -1142,6 +1155,16 @@ packages:
       - debug
       - encoding
       - utf-8-validate
+    dev: false
+
+  /@solana/spl-memo@0.2.3(@solana/web3.js@1.78.5):
+    resolution: {integrity: sha512-CNsKSsl85ebuVoeGq1LDYi5M/PMs1Pxv2/UsyTgS6b30qrYqZOXha5ouZzgGKtJtZ3C3dxfOAEw6caJPN1N63w==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@solana/web3.js': ^1.20.0
+    dependencies:
+      '@solana/web3.js': 1.78.5
+      buffer: 6.0.3
     dev: false
 
   /@solana/spl-stake-pool@0.6.5:

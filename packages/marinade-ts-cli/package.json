@@ -34,7 +34,7 @@
         "@ledgerhq/errors": "^6.13.1",
         "@ledgerhq/hw-app-solana": "^7.0.12",
         "@ledgerhq/hw-transport-node-hid-noevents": "^6.27.18",
-        "@marinade.finance/marinade-ts-sdk": "^5.0.4",
+        "@marinade.finance/marinade-ts-sdk": "^5.0.5",
         "@solana/web3.js": "^1.78.4",
         "@solana/spl-governance": "^0.3.28",
         "@solana/spl-token": "^0.3.8",
