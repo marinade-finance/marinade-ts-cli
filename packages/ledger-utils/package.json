@@ -26,7 +26,7 @@
       "src"
     ],
     "devDependencies": {
-      "pino": "^8.15.0",
+      "pino": "^8.15.1",
         "@ledgerhq/errors": "^6.13.1",
         "@ledgerhq/hw-app-solana": "^7.0.12",
         "@ledgerhq/hw-transport-node-hid-noevents": "^6.27.18",
@@ -34,7 +34,7 @@
         "@marinade.finance/cli-common": "^1.0.10"
     },
     "peerDependencies": {
-      "pino": "^8.15.0",
+      "pino": "^8.15.1",
         "@ledgerhq/errors": "^6.13.1",
         "@ledgerhq/hw-app-solana": "^7.0.12",
         "@ledgerhq/hw-transport-node-hid-noevents": "^6.27.18",

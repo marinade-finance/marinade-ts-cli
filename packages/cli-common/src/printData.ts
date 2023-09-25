@@ -42,17 +42,30 @@ function reformat(value: any): any {
   if (value === null) {
     result = null
   } else if (value instanceof BN) {
-    result = value.toString()
+    try {
+      return value.toNumber()
+    } catch (e) {
+      return value.toString()
+    }
   } else if (value instanceof BigInt || typeof value === 'bigint') {
     result = value.toString()
   } else if (isPublicKey(value)) {
     if (value.equals(PublicKey.default)) {
-      result = null
+      result = null // system program is used as null key
     } else {
       result = value.toBase58()
     }
   } else if (value instanceof Keypair) {
     result = value.publicKey.toBase58()
+  } else if (
+    // considering the value is an array used for space reserve for the account
+    typeof value === 'object' &&
+    value?.key !== undefined &&
+    typeof value.key === 'string' &&
+    (value.key as string).startsWith('reserved') &&
+    (Array.isArray(value) || value instanceof Uint8Array)
+  ) {
+    return [value.length]
   } else if (Array.isArray(value)) {
     result = value.map(v => reformat(v))
   } else if (typeof value === 'object') {
