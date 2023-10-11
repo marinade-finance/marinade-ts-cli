@@ -1,8 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function chunkArray(array: any[], chunkSize: number): any[][] {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const chunkedArray: any[] = []
-  for (let i = 0; i < array.length; i += chunkSize)
-    chunkedArray.push(array.slice(i, i + chunkSize))
-  return chunkedArray
+export function chunkArray<T>(array: T[], size: number): T[][] {
+  return [...new Array(Math.ceil(array.length / size)).keys()].map((_, index) =>
+    array.slice(index * size, (index + 1) * size)
+  );
+}
+
+export async function batchFetch<A, T>(
+  addresses: Array<A>,
+  fetchBatch: (chunk: Array<A>) => Promise<Array<T>>,
+  chunkSize: number = 100 // limit for web3 client getMultipleAccounts fetch
+): Promise<Array<T>> {
+  const results: Array<Array<T>> = await Promise.all(chunkArray(addresses, chunkSize).map((chunk) => fetchBatch(chunk)));
+  return results.reduce((acc, curr) => acc.concat(...curr), new Array<T>());
 }
