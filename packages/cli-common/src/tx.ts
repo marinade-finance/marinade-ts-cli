@@ -27,7 +27,7 @@ export async function executeTx({
   errMessage: string
   simulate?: boolean
   printOnly?: boolean
-  logger: Logger
+  logger?: Logger
 }): Promise<
   VersionedTransactionResponse | SimulatedTransactionResponse | undefined
 > {
@@ -61,9 +61,9 @@ export async function executeTx({
 
   try {
     if (simulate) {
-      logger.warn('[[Simulation mode]]')
+      logWarn(logger, '[[Simulation mode]]')
       result = (await connection.simulateTransaction(transaction)).value
-      logger.debug(result)
+      logDebug(logger, result)
       if (result.err) {
         throw new SendTransactionError(
           result.err as string,
@@ -86,18 +86,32 @@ export async function executeTx({
         )
       }
       let txSearchConnection = connection
+      let timeout = 0
       if (connection.commitment === 'processed') {
         txSearchConnection = new Connection(connection.rpcEndpoint, {
           commitment: 'confirmed',
         })
+        // TODO: this could be parametrized, max supported version too
+        // if commitment was 'processed' for sending we await for 'confirmed'
+        timeout = 1000 * 15 // 15 seconds
       }
-      const txRes = await txSearchConnection.getTransaction(txSig)
+
+      let txRes: VersionedTransactionResponse | null =
+        await txSearchConnection.getTransaction(txSig, {
+          maxSupportedTransactionVersion: 0,
+        })
+      const startTime = Date.now()
+      while (txRes === null && Date.now() - startTime < timeout) {
+        txRes = await txSearchConnection.getTransaction(txSig, {
+          maxSupportedTransactionVersion: 0,
+        })
+      }
       if (txRes === null) {
         throw new Error(`Transaction ${txSig} not found`)
       }
       result = txRes
-      logger.debug('Transaction signature: %s', txSig)
-      logger.debug(txRes.meta?.logMessages)
+      logDebug(logger, 'Transaction signature: ' + txSig)
+      logDebug(logger, txRes.meta?.logMessages)
     }
   } catch (e) {
     throw new CliCommandError({
@@ -106,10 +120,44 @@ export async function executeTx({
       logs: (e as SendTransactionError).logs
         ? (e as SendTransactionError).logs
         : undefined,
-      transaction: logger.isLevelEnabled('debug') ? transaction : undefined,
+      transaction:
+        !logger || logger.isLevelEnabled('debug') ? transaction : undefined,
     })
   }
   return result
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function logWarn(logger: Logger | undefined, data: any) {
+  if (logger) {
+    logger.warn(data)
+  } else {
+    console.log(data)
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function logDebug(logger: Logger | undefined, data: any) {
+  if (logger) {
+    logger.debug(data)
+  } else {
+    console.debug(data)
+  }
+}
+
+export async function executeTxSimple(
+  connection: Connection,
+  transaction: Transaction,
+  signers?: (Wallet | Keypair | Signer)[]
+): Promise<
+  VersionedTransactionResponse | SimulatedTransactionResponse | undefined
+> {
+  return await executeTx({
+    connection,
+    transaction,
+    signers,
+    errMessage: 'Error executing transaction',
+  })
 }
 
 /**
