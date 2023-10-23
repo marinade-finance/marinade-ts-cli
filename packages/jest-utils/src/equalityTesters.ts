@@ -15,6 +15,18 @@ import BN from 'bn.js'
  */
 expect.addEqualityTesters([
   (a, b) => {
+    if (a instanceof BN && typeof b === 'number') {
+      return a.toNumber() === b
+    }
+    return undefined
+  },
+  (a, b) => {
+    if (typeof a === 'number' && b instanceof BN) {
+      return a === b.toNumber()
+    }
+    return undefined
+  },
+  (a, b) => {
     if (a instanceof BN) {
       return a.eq(b as BN)
     }
