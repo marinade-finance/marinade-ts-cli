@@ -54,6 +54,18 @@ importers:
         specifier: 5.0.4
         version: 5.0.4
 
+  packages/anchor-common:
+    devDependencies:
+      '@coral-xyz/anchor':
+        specifier: ^0.28.0
+        version: 0.28.0
+      '@solana/web3.js':
+        specifier: ^1.78.5
+        version: 1.78.5
+      bn.js:
+        specifier: ^5.2.1
+        version: 5.2.1
+
   packages/cli-common:
     devDependencies:
       '@solana/web3.js':
