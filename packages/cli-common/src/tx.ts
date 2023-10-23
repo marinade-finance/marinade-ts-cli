@@ -103,7 +103,9 @@ export async function executeTx({
     throw new CliCommandError({
       msg: errMessage,
       cause: e as Error,
-      logs: e instanceof SendTransactionError ? e.logs : undefined,
+      logs: (e as SendTransactionError).logs
+        ? (e as SendTransactionError).logs
+        : undefined,
       transaction: logger.isLevelEnabled('debug') ? transaction : undefined,
     })
   }
