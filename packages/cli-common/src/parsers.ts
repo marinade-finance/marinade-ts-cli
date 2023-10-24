@@ -12,8 +12,14 @@ export async function parsePubkey(pubkeyOrPath: string): Promise<PublicKey> {
   try {
     return new PublicKey(pubkeyOrPath)
   } catch (err) {
-    const keypair = await parseKeypair(pubkeyOrPath)
-    return keypair.publicKey
+    try {
+      const keypair = await parseKeypair(pubkeyOrPath)
+      return keypair.publicKey
+    } catch (err2) {
+      return new PublicKey(
+        new Uint8Array(JSON.parse(await parseFile(pubkeyOrPath)))
+      )
+    }
   }
 }
 
@@ -21,10 +27,9 @@ export async function parsePubkeyOrKeypair(
   pubkeyOrPath: string
 ): Promise<PublicKey | Keypair> {
   try {
-    // TODO: reading public key from file is not supported
-    return new PublicKey(pubkeyOrPath)
-  } catch (err) {
     return await parseKeypair(pubkeyOrPath)
+  } catch (err) {
+    return await parsePubkey(pubkeyOrPath)
   }
 }
 
