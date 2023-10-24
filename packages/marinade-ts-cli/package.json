@@ -46,10 +46,10 @@
         "pino": "^8.15.1",
         "pino-pretty": "^10.2.0",
         "@marinade.finance/cli-common": "^1.1.0",
-        "@marinade.finance/ledger-utils": "^1.0.0"
+        "@marinade.finance/ledger-utils": "^1.1.0"
     },
     "devDependencies": {
         "@types/bn.js": "^5.1.1",
-        "@marinade.finance/jest-utils": "^1.0.1"
+        "@marinade.finance/jest-utils": "^1.1.0"
     }
 }

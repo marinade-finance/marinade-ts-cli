@@ -18,7 +18,7 @@
         "publish:marinade-ts-cli": "pnpm build && pnpm publish dist/packages/marinade-ts-cli",
         "publish:anchor-common": "pnpm build && pnpm publish dist/packages/anchor-common",
         "publish:spl-gov-utils": "pnpm build && pnpm publish dist/packages/spl-gov-utils",
-        "publish:all" : "pnpm lint && pnpm publish:cli-common && pnpm publish:jest-utils && pnpm publish:ledger-utils && pnpm publish:anchor-common && pnpm publish:marinade-ts-cli && pnpm publish:spl-gov-utils"
+        "publish:all" : "pnpm lint && pnpm publish:cli-common && pnpm publish:ts-cli-common && pnpm publish:jest-utils && pnpm publish:ledger-utils && pnpm publish:marinade-ts-cli && pnpm publish:anchor-common && pnpm publish:spl-gov-utils"
     },
     "devDependencies": {
         "@jest/globals": "^29.5.0",
