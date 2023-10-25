@@ -11,10 +11,16 @@ import {
   BlockhashWithExpiryBlockHeight,
   PublicKey,
 } from '@solana/web3.js'
-import { Logger } from 'pino'
-import { CliCommandError } from './error'
 import { Wallet, instanceOfWallet } from './wallet'
 import { serializeInstructionToBase64 } from './txToBase64'
+import { ExecutionError } from './error'
+
+type LoggerStandIn = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  debug: (data: any) => void
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  warn: (data: any) => void
+}
 
 export async function executeTx({
   connection,
@@ -31,7 +37,7 @@ export async function executeTx({
   errMessage: string
   simulate?: boolean
   printOnly?: boolean
-  logger?: Logger
+  logger?: LoggerStandIn
 }): Promise<
   VersionedTransactionResponse | SimulatedTransactionResponse | undefined
 > {
@@ -119,14 +125,13 @@ export async function executeTx({
       logDebug(logger, txRes.meta?.logMessages)
     }
   } catch (e) {
-    throw new CliCommandError({
+    throw new ExecutionError({
       msg: errMessage,
       cause: e as Error,
       logs: (e as SendTransactionError).logs
         ? (e as SendTransactionError).logs
         : undefined,
-      transaction:
-        !logger || logger.isLevelEnabled('debug') ? transaction : undefined,
+      transaction,
     })
   }
   return result
@@ -228,7 +233,7 @@ export async function splitAndExecuteTx({
   feePayer?: PublicKey
   simulate?: boolean
   printOnly?: boolean
-  logger?: Logger
+  logger?: LoggerStandIn
 }): Promise<
   VersionedTransactionResponse[] | SimulatedTransactionResponse[] | []
 > {
@@ -380,7 +385,7 @@ export function debugStr(transaction: Transaction): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function logWarn(logger: Logger | undefined, data: any) {
+export function logWarn(logger: LoggerStandIn | undefined, data: any) {
   if (logger) {
     logger.warn(data)
   } else {
@@ -389,7 +394,7 @@ export function logWarn(logger: Logger | undefined, data: any) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function logDebug(logger: Logger | undefined, data: any) {
+export function logDebug(logger: LoggerStandIn | undefined, data: any) {
   if (logger) {
     logger.debug(data)
   } else {

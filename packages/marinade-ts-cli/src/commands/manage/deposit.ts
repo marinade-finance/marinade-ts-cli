@@ -6,7 +6,7 @@ import {
 import { parsePubkey } from '@marinade.finance/cli-common'
 import { Command } from 'commander'
 import { PublicKey } from '@solana/web3.js'
-import { executeTx } from '@marinade.finance/cli-common'
+import { executeTx } from '@marinade.finance/web3js-common'
 import { getMarinadeCliContext } from '../../context'
 
 export function installDeposit(program: Command) {

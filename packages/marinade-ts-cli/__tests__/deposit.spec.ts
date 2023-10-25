@@ -1,5 +1,5 @@
 import { shellMatchers } from '@marinade.finance/jest-utils'
-import { createTempFileKeypair } from '@marinade.finance/cli-common'
+import { createTempFileKeypair } from '@marinade.finance/web3js-common'
 import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import {
   CONNECTION,

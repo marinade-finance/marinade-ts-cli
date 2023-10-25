@@ -4,7 +4,7 @@ import {
   MarinadeUtils,
 } from '@marinade.finance/marinade-ts-sdk'
 import { Command } from 'commander'
-import { executeTx } from '@marinade.finance/cli-common'
+import { executeTx } from '@marinade.finance/web3js-common'
 import { getMarinadeCliContext } from '../../context'
 
 export function installRemoveLiquidity(program: Command) {

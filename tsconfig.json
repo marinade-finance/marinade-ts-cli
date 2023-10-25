@@ -9,5 +9,5 @@
     "sourceMap": true,
     "experimentalDecorators": true
   },
-  "include": ["packages/*/package.json", "packages/*/src/**/*.ts"]
+  "include": ["packages/**/package.json", "packages/**/src/**/*.ts"]
 }

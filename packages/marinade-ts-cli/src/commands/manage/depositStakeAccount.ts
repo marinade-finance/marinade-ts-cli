@@ -2,7 +2,7 @@ import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
 import { Command } from 'commander'
 import { parsePubkey } from '@marinade.finance/cli-common'
 import { PublicKey } from '@solana/web3.js'
-import { executeTx } from '@marinade.finance/cli-common'
+import { executeTx } from '@marinade.finance/web3js-common'
 import { getMarinadeCliContext } from '../../context'
 
 export function installDepositStakeAccount(program: Command) {

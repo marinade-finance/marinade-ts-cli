@@ -1,0 +1,41 @@
+{
+  "name": "@marinade.finance/web3js-common",
+  "version": "2.0.0",
+  "description": "Web3 JS reusable utilities",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:marinade-finance/marinade-ts-cli.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified, go to project root\" && exit 1"
+  },
+  "keywords": [
+    "solana",
+    "marinade.finance",
+    "blockchain"
+  ],
+  "author": "Marinade Finance",
+  "license": "ISC",
+  "main": "src/index",
+  "files": [
+    "src"
+  ],
+  "devDependencies": {
+    "@solana/web3.js": "^1.78.5",
+    "bn.js": "^5.2.1",
+    "borsh": "^0.7.0",
+    "bs58": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@solana/web3.js": "^1.78.5",
+    "bn.js": "^5.2.1",
+    "borsh": "^0.7.0",
+    "bs58": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

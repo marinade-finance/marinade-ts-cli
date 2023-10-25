@@ -11,14 +11,15 @@
         "test": "anchor test",
         "_test": "jest $FILE",
         "test:no-anchor": "jest --globalSetup='' $FILE",
-        "publish:cli-common": "pnpm build && pnpm publish dist/packages/cli-common",
-        "publish:ts-cli-common": "pnpm build && pnpm publish dist/packages/ts-cli-common",
-        "publish:jest-utils": "pnpm build && pnpm publish dist/packages/jest-utils",
-        "publish:anchor-common": "pnpm build && pnpm publish dist/packages/anchor-common",
-        "publish:spl-gov-utils": "pnpm build && pnpm publish dist/packages/spl-gov-utils",
-        "publish:ledger-utils": "pnpm build && pnpm publish dist/packages/ledger-utils",
+        "publish:ts-common": "pnpm build && pnpm publish dist/packages/lib/ts-common",
+        "publish:web3js-common": "pnpm build && pnpm publish dist/packages/lib/web3js-common",
+        "publish:cli-common": "pnpm build && pnpm publish dist/packages/lib/cli-common",
+        "publish:anchor-common": "pnpm build && pnpm publish dist/packages/lib/anchor-common",
+        "publish:jest-utils": "pnpm build && pnpm publish dist/packages/lib/jest-utils",
+        "publish:spl-gov-utils": "pnpm build && pnpm publish dist/packages/lib/spl-gov-utils",
+        "publish:ledger-utils": "pnpm build && pnpm publish dist/packages/lib/ledger-utils",
         "publish:marinade-ts-cli": "pnpm build && pnpm publish dist/packages/marinade-ts-cli",
-        "publish:all" : "pnpm lint && pnpm publish:cli-common && pnpm publish:ts-cli-common && pnpm publish:jest-utils && pnpm publish:anchor-common && pnpm publish:spl-gov-utils && pnpm publish:ledger-utils && pnpm publish:marinade-ts-cli"
+        "publish:all" : "pnpm lint && pnpm publish:ts-common && pnpm publish:web3js-common && pnpm publish:cli-common && pnpm publish:anchor-common && pnpm publish:jest-utils && pnpm publish:spl-gov-utils && pnpm publish:ledger-utils && pnpm publish:marinade-ts-cli"
     },
     "devDependencies": {
         "@jest/globals": "^29.5.0",

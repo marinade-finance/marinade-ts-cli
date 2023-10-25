@@ -1,5 +1,5 @@
 import { Logger } from 'pino'
-import { Wallet } from './wallet'
+import { Wallet } from '@marinade.finance/web3js-common'
 import { Transaction, VersionedTransaction, PublicKey } from '@solana/web3.js'
 
 let context: Context | undefined
