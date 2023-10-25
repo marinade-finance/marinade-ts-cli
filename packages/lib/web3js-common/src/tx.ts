@@ -104,7 +104,7 @@ export async function executeTx({
         })
         // TODO: this could be parametrized, max supported version too
         // if commitment was 'processed' for sending we await for 'confirmed'
-        timeout = 1000 * 15 // 15 seconds
+        timeout = 1000 * 7 // 7 seconds
       }
 
       let txRes: VersionedTransactionResponse | null =
