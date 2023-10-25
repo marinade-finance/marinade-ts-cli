@@ -47,7 +47,7 @@ export async function executeTx({
     | undefined = undefined
 
   if (printOnly) {
-    console.log('Instructions:')
+    console.log('Instructions (SPL Gov base64):')
     for (const ix of transaction.instructions) {
       console.log('  ' + serializeInstructionToBase64(ix))
     }
@@ -157,7 +157,7 @@ export async function executeTxSimple(
  *
  * @returns true if the input is a SimulatedTransactionResponse, false if it is a TransactionResponse, throws an error if it is undefined
  */
-function isSimulatedTransactionResponse(
+export function isSimulatedTransactionResponse(
   response:
     | TransactionResponse
     | VersionedTransactionResponse
@@ -209,7 +209,7 @@ async function getTransaction(
   })
 }
 
-export const TRANSACTION_SAFE_SIZE = 1280 - 40 - 8
+export const TRANSACTION_SAFE_SIZE = 1280 - 40 - 8 - 1 // 1231
 
 /**
  * Split tx into multiple transactions if it exceeds the transaction size limit.
@@ -386,7 +386,7 @@ export function debugStr(transaction: Transaction): string {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function logWarn(logger: LoggerStandIn | undefined, data: any) {
-  if (logger) {
+  if (logger !== undefined) {
     logger.warn(data)
   } else {
     console.log(data)
@@ -395,7 +395,7 @@ export function logWarn(logger: LoggerStandIn | undefined, data: any) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function logDebug(logger: LoggerStandIn | undefined, data: any) {
-  if (logger) {
+  if (logger !== undefined) {
     logger.debug(data)
   } else {
     console.debug(data)
