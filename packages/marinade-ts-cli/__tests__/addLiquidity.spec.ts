@@ -1,5 +1,5 @@
 import { shellMatchers } from '@marinade.finance/jest-utils'
-import { createTempFileKeypair } from '@marinade.finance/cli-common'
+import { createTempFileKeypair } from '@marinade.finance/web3js-common'
 import { Keypair } from '@solana/web3.js'
 import { CONNECTION, transfer } from './setup/globalSetup'
 
