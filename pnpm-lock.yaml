@@ -72,7 +72,7 @@ importers:
   packages/lib/cli-common:
     devDependencies:
       '@marinade.finance/web3js-common':
-        specifier: ^1.1.0
+        specifier: ^2.0.0
         version: link:../web3js-common
       '@solana/web3.js':
         specifier: ^1.78.5
@@ -177,8 +177,8 @@ importers:
         specifier: ^6.27.18
         version: 6.27.18
       '@marinade.finance/cli-common':
-        specifier: ^1.1.0
-        version: 1.1.0(@solana/web3.js@1.78.4)(bn.js@5.2.1)(borsh@0.7.0)(bs58@4.0.1)(expand-tilde@2.0.2)(pino@8.15.1)(yaml@2.3.2)
+        specifier: ^2.0.1
+        version: link:../lib/cli-common
       '@marinade.finance/ledger-utils':
         specifier: ^1.1.0
         version: link:../lib/ledger-utils
@@ -186,7 +186,7 @@ importers:
         specifier: ^5.0.5
         version: 5.0.5(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0)
       '@marinade.finance/web3js-common':
-        specifier: ^1.1.0
+        specifier: ^2.0.0
         version: link:../lib/web3js-common
       '@solana/spl-governance':
         specifier: ^0.3.28
@@ -1023,27 +1023,6 @@ packages:
 
   /@ledgerhq/logs@6.10.1:
     resolution: {integrity: sha512-z+ILK8Q3y+nfUl43ctCPuR4Y2bIxk/ooCQFwZxhtci1EhAtMDzMAx2W25qx8G1PPL9UUOdnUax19+F0OjXoj4w==}
-
-  /@marinade.finance/cli-common@1.1.0(@solana/web3.js@1.78.4)(bn.js@5.2.1)(borsh@0.7.0)(bs58@4.0.1)(expand-tilde@2.0.2)(pino@8.15.1)(yaml@2.3.2):
-    resolution: {integrity: sha512-ZGgGNGC4gxthl9lJ6MiSjDh+jyVnIOln4cStlZeSVneQ46IhQKHTZwQgpHLxWQbI3cWaPy4FwWe7bvXUIylH3g==}
-    engines: {node: '>=16.0.0'}
-    peerDependencies:
-      '@solana/web3.js': ^1.78.5
-      bn.js: ^5.2.1
-      borsh: ^0.7.0
-      bs58: ^5.0.0
-      expand-tilde: ^2.0.2
-      pino: ^8.15.1
-      yaml: ^2.3.2
-    dependencies:
-      '@solana/web3.js': 1.78.4
-      bn.js: 5.2.1
-      borsh: 0.7.0
-      bs58: 4.0.1
-      expand-tilde: 2.0.2
-      pino: 8.15.1
-      yaml: 2.3.2
-    dev: false
 
   /@marinade.finance/directed-stake-sdk@0.0.4(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0):
     resolution: {integrity: sha512-5WTBDRg8hbCHS54wUUhPUuXj9JiQE3Bc1+nmDI3JivQPHu7VsDaPB3w1SHRh0bfARnZQg9oKg8s6jVwNiScCsQ==}
@@ -8386,6 +8365,7 @@ packages:
   /yaml@2.3.2:
     resolution: {integrity: sha512-N/lyzTPaJasoDmfV7YTrYCI0G/3ivm/9wdG0aHuheKowWQwGTsK0Eoiw6utmzAnI6pkJa0DUVygvp3spqqEKXg==}
     engines: {node: '>= 14'}
+    dev: true
 
   /yargs-parser@20.2.9:
     resolution: {integrity: sha512-y11nGElTIV+CT3Zv9t7VKl+Q3hTQoT9a1Qzezhhl6Rp21gJ/IVTW7Z3y9EWXhuUBC2Shnf+DX0antecpAwSP8w==}
