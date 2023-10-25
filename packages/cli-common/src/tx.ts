@@ -6,6 +6,10 @@ import {
   SendTransactionError,
   Keypair,
   Signer,
+  TransactionInstruction,
+  TransactionResponse,
+  BlockhashWithExpiryBlockHeight,
+  PublicKey,
 } from '@solana/web3.js'
 import { Logger } from 'pino'
 import { CliCommandError } from './error'
@@ -53,7 +57,8 @@ export async function executeTx({
 
   for (const signer of signers) {
     if (instanceOfWallet(signer)) {
-      await signer.signTransaction(transaction) // partial signing by this call
+      // partial signing by this call
+      await signer.signTransaction(transaction)
     } else {
       transaction.partialSign(signer)
     }
@@ -127,24 +132,6 @@ export async function executeTx({
   return result
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function logWarn(logger: Logger | undefined, data: any) {
-  if (logger) {
-    logger.warn(data)
-  } else {
-    console.log(data)
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function logDebug(logger: Logger | undefined, data: any) {
-  if (logger) {
-    logger.debug(data)
-  } else {
-    console.debug(data)
-  }
-}
-
 export async function executeTxSimple(
   connection: Connection,
   transaction: Transaction,
@@ -158,6 +145,211 @@ export async function executeTxSimple(
     signers,
     errMessage: 'Error executing transaction',
   })
+}
+
+/**
+ * Type guard for TransactionResponse and SimulatedTransactionResponse. It does not accept `undefined` as a valid input.
+ *
+ * @returns true if the input is a SimulatedTransactionResponse, false if it is a TransactionResponse, throws an error if it is undefined
+ */
+function isSimulatedTransactionResponse(
+  response:
+    | TransactionResponse
+    | VersionedTransactionResponse
+    | SimulatedTransactionResponse
+    | undefined
+): response is SimulatedTransactionResponse {
+  if (response === undefined) {
+    throw new Error(
+      'internal error: response is undefined, this is not expected for the type guard function'
+    )
+  }
+  return (
+    (response as SimulatedTransactionResponse).err !== undefined &&
+    (response as SimulatedTransactionResponse).logs !== undefined &&
+    (response as SimulatedTransactionResponse).accounts !== undefined &&
+    (response as SimulatedTransactionResponse).unitsConsumed !== undefined &&
+    (response as SimulatedTransactionResponse).returnData !== undefined
+  )
+}
+
+/**
+ * @returns signers that are required for the provided instructions
+ */
+export function filterSignersForInstruction(
+  instructions: TransactionInstruction[],
+  signers: (Wallet | Keypair | Signer)[],
+  feePayer?: PublicKey
+): (Wallet | Keypair | Signer)[] {
+  const signersRequired = instructions.flatMap(ix =>
+    ix.keys.filter(k => k.isSigner).map(k => k.pubkey)
+  )
+  if (feePayer !== undefined) {
+    signersRequired.push(feePayer)
+  }
+  return signers.filter(s => signersRequired.find(rs => rs.equals(s.publicKey)))
+}
+
+async function getTransaction(
+  feePayer: PublicKey,
+  bh: Readonly<{
+    blockhash: string
+    lastValidBlockHeight: number
+  }>
+): Promise<Transaction> {
+  return new Transaction({
+    feePayer,
+    blockhash: bh.blockhash,
+    lastValidBlockHeight: bh.lastValidBlockHeight,
+  })
+}
+
+export const TRANSACTION_SAFE_SIZE = 1280 - 40 - 8
+
+/**
+ * Split tx into multiple transactions if it exceeds the transaction size limit.
+ * TODO: this is a bit hacky, we should use a better approach to split the tx
+ *       and support VersionedTransactions
+ */
+export async function splitAndExecuteTx({
+  connection,
+  transaction,
+  errMessage,
+  signers = [],
+  feePayer,
+  simulate = false,
+  printOnly = false,
+  logger,
+}: {
+  connection: Connection
+  transaction: Transaction
+  errMessage: string
+  signers?: (Wallet | Keypair | Signer)[]
+  feePayer?: PublicKey
+  simulate?: boolean
+  printOnly?: boolean
+  logger?: Logger
+}): Promise<
+  VersionedTransactionResponse[] | SimulatedTransactionResponse[] | []
+> {
+  const result:
+    | VersionedTransactionResponse[]
+    | SimulatedTransactionResponse[]
+    | [] = []
+
+  // only to print in base64
+  if (!simulate && printOnly) {
+    await executeTx({
+      connection,
+      transaction,
+      errMessage,
+      signers,
+      logger,
+      simulate,
+      printOnly,
+    })
+  } else {
+    feePayer = feePayer || transaction.feePayer
+    if (feePayer === undefined) {
+      throw new Error(
+        'splitAndExecuteTx: transaction fee payer has to be defined, either in transaction or argument'
+      )
+    }
+    const feePayerDefined: PublicKey = feePayer
+    const feePayerSigner = signers.find(s =>
+      s.publicKey.equals(feePayerDefined)
+    )
+    if (feePayerSigner === undefined) {
+      throw new Error(
+        'splitAndExecuteTx: transaction fee payer ' +
+          feePayerDefined.toBase58() +
+          ' has to be defined amongst signers'
+      )
+    }
+
+    const transactions: Transaction[] = []
+
+    let blockhash: BlockhashWithExpiryBlockHeight
+    if (
+      transaction.recentBlockhash === undefined ||
+      transaction.lastValidBlockHeight === undefined
+    ) {
+      blockhash = await connection.getLatestBlockhash()
+    } else {
+      blockhash = {
+        blockhash: transaction.recentBlockhash,
+        lastValidBlockHeight: transaction.lastValidBlockHeight,
+      }
+    }
+    let lastValidTransaction = await getTransaction(feePayerDefined, blockhash)
+    let checkingTransaction = await getTransaction(feePayerDefined, blockhash)
+    for (const ix of transaction.instructions) {
+      checkingTransaction.add(ix)
+      const filteredSigners = filterSignersForInstruction(
+        checkingTransaction.instructions,
+        signers,
+        feePayerDefined
+      )
+      const signaturesSize = filteredSigners.length * 64
+      const txSize = checkingTransaction.serialize({
+        verifySignatures: false,
+        requireAllSignatures: false,
+      }).byteLength
+
+      if (txSize + signaturesSize > TRANSACTION_SAFE_SIZE) {
+        // size was elapsed, need to split
+        transactions.push(lastValidTransaction)
+        // nulling data of the checking transaction
+        checkingTransaction = await getTransaction(feePayerDefined, blockhash)
+      }
+      lastValidTransaction = checkingTransaction
+    }
+    if (lastValidTransaction.instructions.length !== 0) {
+      transactions.push(lastValidTransaction)
+    }
+
+    // sign all transactions with fee payer
+    if (instanceOfWallet(feePayerSigner)) {
+      // partial signing by this call
+      await feePayerSigner.signAllTransactions(transactions)
+    } else {
+      for (const transaction of transactions) {
+        transaction.partialSign(feePayerSigner)
+      }
+    }
+
+    let executionCounter = 0
+    for (const transaction of transactions) {
+      const txSigners: (Signer | Wallet)[] = filterSignersForInstruction(
+        transaction.instructions,
+        signers
+      ).filter(s => !s.publicKey.equals(feePayerDefined))
+      const executeResult = await executeTx({
+        connection,
+        transaction,
+        errMessage,
+        signers: txSigners,
+        logger,
+      })
+
+      executionCounter++
+      logDebug(
+        logger,
+        `Transaction ${executionCounter}/${transactions.length} ` +
+          `(${transaction.instructions.length} instructions) executed`
+      )
+
+      if (isSimulatedTransactionResponse(executeResult)) {
+        // eslint-disable-next-line @typescript-eslint/no-extra-semi
+        ;(result as SimulatedTransactionResponse[]).push(executeResult)
+      } else if (executeResult !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-extra-semi
+        ;(result as VersionedTransactionResponse[]).push(executeResult)
+      }
+    }
+  }
+
+  return result
 }
 
 /**
@@ -185,4 +377,22 @@ export function debugStr(transaction: Transaction): string {
     '=> Signers',
     transaction.signatures.map(sg => sg.publicKey.toString()).join('\n'),
   ].join('\n')
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function logWarn(logger: Logger | undefined, data: any) {
+  if (logger) {
+    logger.warn(data)
+  } else {
+    console.log(data)
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function logDebug(logger: Logger | undefined, data: any) {
+  if (logger) {
+    logger.debug(data)
+  } else {
+    console.debug(data)
+  }
 }

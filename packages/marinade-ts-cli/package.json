@@ -49,7 +49,6 @@
         "@marinade.finance/ledger-utils": "^1.1.0"
     },
     "devDependencies": {
-        "@types/bn.js": "^5.1.1",
         "@marinade.finance/jest-utils": "^1.1.0"
     }
 }
