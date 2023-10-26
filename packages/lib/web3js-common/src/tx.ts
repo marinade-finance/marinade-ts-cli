@@ -10,6 +10,7 @@ import {
   TransactionResponse,
   BlockhashWithExpiryBlockHeight,
   PublicKey,
+  ComputeBudgetProgram,
 } from '@solana/web3.js'
 import { Wallet, instanceOfWallet } from './wallet'
 import { serializeInstructionToBase64 } from './txToBase64'
@@ -57,9 +58,15 @@ export async function executeTx({
   }
 
   const currentBlockhash = await connection.getLatestBlockhash()
-  transaction.lastValidBlockHeight = currentBlockhash.lastValidBlockHeight
-  transaction.recentBlockhash = currentBlockhash.blockhash
-  transaction.feePayer = transaction.feePayer ?? signers[0].publicKey
+  if (
+    transaction.recentBlockhash === undefined ||
+    transaction.recentBlockhash === undefined ||
+    transaction.feePayer === undefined
+  ) {
+    transaction.lastValidBlockHeight = currentBlockhash.lastValidBlockHeight
+    transaction.recentBlockhash = currentBlockhash.blockhash
+    transaction.feePayer = transaction.feePayer ?? signers[0].publicKey
+  }
 
   for (const signer of signers) {
     if (instanceOfWallet(signer)) {
@@ -211,6 +218,19 @@ async function getTransaction(
 
 export const TRANSACTION_SAFE_SIZE = 1280 - 40 - 8 - 1 // 1231
 
+async function addComputeBudgetIx(
+  exceedBudget: boolean | undefined,
+  tx: Transaction
+) {
+  if (exceedBudget) {
+    tx.add(
+      ComputeBudgetProgram.setComputeUnitLimit({
+        units: 1_000_000,
+      })
+    )
+  }
+}
+
 /**
  * Split tx into multiple transactions if it exceeds the transaction size limit.
  * TODO: this is a bit hacky, we should use a better approach to split the tx
@@ -225,6 +245,7 @@ export async function splitAndExecuteTx({
   simulate = false,
   printOnly = false,
   logger,
+  exceedBudget = false,
 }: {
   connection: Connection
   transaction: Transaction
@@ -234,6 +255,7 @@ export async function splitAndExecuteTx({
   simulate?: boolean
   printOnly?: boolean
   logger?: LoggerStandIn
+  exceedBudget?: boolean
 }): Promise<
   VersionedTransactionResponse[] | SimulatedTransactionResponse[] | []
 > {
@@ -286,8 +308,9 @@ export async function splitAndExecuteTx({
         lastValidBlockHeight: transaction.lastValidBlockHeight,
       }
     }
-    let lastValidTransaction = await getTransaction(feePayerDefined, blockhash)
     let checkingTransaction = await getTransaction(feePayerDefined, blockhash)
+    let lastValidTransaction = await getTransaction(feePayerDefined, blockhash)
+    addComputeBudgetIx(exceedBudget, checkingTransaction)
     for (const ix of transaction.instructions) {
       checkingTransaction.add(ix)
       const filteredSigners = filterSignersForInstruction(
@@ -296,16 +319,27 @@ export async function splitAndExecuteTx({
         feePayerDefined
       )
       const signaturesSize = filteredSigners.length * 64
-      const txSize = checkingTransaction.serialize({
-        verifySignatures: false,
-        requireAllSignatures: false,
-      }).byteLength
+      let txSize: number | undefined = undefined
+      try {
+        txSize = checkingTransaction.serialize({
+          verifySignatures: false,
+          requireAllSignatures: false,
+        }).byteLength
+      } catch (e) {
+        // ignore
+        logDebug(logger, 'Transaction size calculation failed: ' + e)
+      }
 
-      if (txSize + signaturesSize > TRANSACTION_SAFE_SIZE) {
+      if (
+        txSize === undefined ||
+        txSize + signaturesSize > TRANSACTION_SAFE_SIZE
+      ) {
         // size was elapsed, need to split
         transactions.push(lastValidTransaction)
         // nulling data of the checking transaction
         checkingTransaction = await getTransaction(feePayerDefined, blockhash)
+        addComputeBudgetIx(exceedBudget, checkingTransaction)
+        checkingTransaction.add(ix)
       }
       lastValidTransaction = checkingTransaction
     }
@@ -313,7 +347,7 @@ export async function splitAndExecuteTx({
       transactions.push(lastValidTransaction)
     }
 
-    // sign all transactions with fee payer
+    // sign all transactions with fee payer at once
     if (instanceOfWallet(feePayerSigner)) {
       // partial signing by this call
       await feePayerSigner.signAllTransactions(transactions)
