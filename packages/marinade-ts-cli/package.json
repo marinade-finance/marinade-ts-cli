@@ -45,11 +45,11 @@
         "expand-tilde": "^2.0.2",
         "pino": "^8.15.1",
         "pino-pretty": "^10.2.0",
-        "@marinade.finance/cli-common": "^2.0.2",
-        "@marinade.finance/web3js-common": "^2.0.2",
-        "@marinade.finance/ledger-utils": "^2.0.2"
+        "@marinade.finance/cli-common": "^2.0.3",
+        "@marinade.finance/web3js-common": "^2.0.3",
+        "@marinade.finance/ledger-utils": "^2.0.3"
     },
     "devDependencies": {
-        "@marinade.finance/jest-utils": "^2.0.2"
+        "@marinade.finance/jest-utils": "^2.0.3"
     }
 }
