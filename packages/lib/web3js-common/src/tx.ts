@@ -341,7 +341,8 @@ export async function splitAndExecuteTx({
         addComputeBudgetIx(exceedBudget, checkingTransaction)
         checkingTransaction.add(ix)
       }
-      lastValidTransaction = checkingTransaction
+      lastValidTransaction = await getTransaction(feePayerDefined, blockhash)
+      checkingTransaction.instructions.forEach(ix => lastValidTransaction.add(ix))
     }
     if (lastValidTransaction.instructions.length !== 0) {
       transactions.push(lastValidTransaction)
