@@ -327,7 +327,7 @@ export async function splitAndExecuteTx({
         }).byteLength
       } catch (e) {
         // ignore
-        logDebug(logger, 'Transaction size calculation failed: ' + e)
+        // logDebug(logger, 'Transaction size calculation failed: ' + e)
       }
 
       if (
