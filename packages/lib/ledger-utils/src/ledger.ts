@@ -68,9 +68,10 @@ export class LedgerWallet implements Wallet {
   public async signAllTransactions<
     T extends Transaction | VersionedTransaction,
   >(txs: T[]): Promise<T[]> {
-    const signedTxs = await Promise.all(
-      txs.map(async tx => await this.signTransaction(tx))
-    )
+    const signedTxs: T[] = []
+    for (const tx of txs) {
+      signedTxs.push(await this.signTransaction(tx))
+    }
     return signedTxs
   }
 
