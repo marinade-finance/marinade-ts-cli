@@ -342,7 +342,9 @@ export async function splitAndExecuteTx({
         checkingTransaction.add(ix)
       }
       lastValidTransaction = await getTransaction(feePayerDefined, blockhash)
-      checkingTransaction.instructions.forEach(ix => lastValidTransaction.add(ix))
+      checkingTransaction.instructions.forEach(ix =>
+        lastValidTransaction.add(ix)
+      )
     }
     if (lastValidTransaction.instructions.length !== 0) {
       transactions.push(lastValidTransaction)
