@@ -52,7 +52,8 @@ export type ReformatAction =
   | { type: 'Remove' }
 
   // process through object recursively to reformat next formatter in chain
-  | { type: 'UsePassThrough' }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | { type: 'UsePassThrough'; records?: { key: string; value: any }[] }
 
 /**
  * Function that can be used to format show output
@@ -69,9 +70,9 @@ export interface ObjectFormatterInterface {
 }
 
 export class BaseObjectFormatter implements ObjectFormatterInterface {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-  format(_key: string, _value: any): ReformatAction {
-    return { type: 'UsePassThrough' }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  format(key: string, value: any): ReformatAction {
+    return { type: 'UsePassThrough', records: [{ key, value }] }
   }
 }
 
@@ -96,7 +97,7 @@ export class ChainedKeyNameFormatter extends BaseObjectFormatter {
         return result
       }
     }
-    return { type: 'UsePassThrough' }
+    return { type: 'UsePassThrough', records: [{ key, value }] }
   }
 
   addFormatter(formatter: ObjectFormatterFn): void {
@@ -153,12 +154,19 @@ export function reformat(
           )
           break
         }
-        case 'Remove': {
+        case 'UsePassThrough': {
+          if (formatterResult.records) {
+            formatterResult.records.forEach(
+              ({ key: formattedKey, value: formattedValue }) => {
+                result[formattedKey] = reformat(formattedValue, formatter)
+              }
+            )
+          } else {
+            result[key] = reformat(value, formatter)
+          }
           break
         }
-        default: {
-          // UsePassThrough
-          result[key] = reformat(value, formatter)
+        case 'Remove': {
           break
         }
       }
