@@ -92,7 +92,7 @@ export class LedgerWallet implements Wallet {
       throw new Error('No ledger device found')
     }
 
-    let transport: TransportNodeHid
+    let transport: TransportNodeHid | undefined = undefined
     if (pubkey === undefined) {
       // taking first device
       transport = await TransportNodeHid.open('')
@@ -100,24 +100,76 @@ export class LedgerWallet implements Wallet {
       // for cycle for ledgerDevices searching open transport
       // and then searching for pubkey
       for (const device of ledgerDevices) {
-        transport = await TransportNodeHid.open(device.path)
-        const solanaApi = new Solana(transport)
+        const tempTransport = await TransportNodeHid.open(device.path)
+        const solanaApi = new Solana(tempTransport)
         const ledgerPubkey = await LedgerWallet.getPublicKey(
           solanaApi,
           derivedPath
         )
         if (ledgerPubkey.equals(pubkey)) {
+          transport = tempTransport
           break // the last found transport is the one we need
         }
       }
-      throw new Error(
-        'Available ledger devices does not provide pubkey ' +
-          pubkey.toBase58() +
-          ' for derivation path ' +
-          derivedPath
-      )
+
+      if (transport === undefined) {
+        // let's do some heuristic search, currently up to 25
+        const upTo = 25
+        const derivedPathLength = derivedPath.split('/').length - 2 // 44'/501'/<number>
+        const allCombinations: number[][] =
+          LedgerWallet.generateAllCombinations(upTo, derivedPathLength)
+        for (const device of ledgerDevices) {
+          const tempTransport = await TransportNodeHid.open(device.path)
+          for (const combination of allCombinations) {
+            const derivedPath =
+              SOLANA_LEDGER_BIP44_BASE_PATH + combination.join('/')
+            const solanaApi = new Solana(tempTransport)
+            const ledgerPubkey = await LedgerWallet.getPublicKey(
+              solanaApi,
+              derivedPath
+            )
+            if (ledgerPubkey.equals(pubkey)) {
+              console.log(
+                `Using derived path ${derivedPath}, pubkey ${pubkey.toBase58()}`
+              )
+              transport = tempTransport
+              break // the last found transport is the one we need
+            }
+          }
+        }
+      }
+
+      if (transport === undefined) {
+        throw new Error(
+          'Available ledger devices does not provide pubkey ' +
+            pubkey.toBase58() +
+            ' for derivation path ' +
+            derivedPath
+        )
+      }
     }
+
     return new Solana(transport)
+  }
+
+  private static generateAllCombinations(
+    max: number,
+    maxLength: number
+  ): number[][] {
+    const combinations: number[][] = []
+    function generate(prefix: number[], remainingLength: number): void {
+      if (remainingLength === 0) {
+        combinations.push(prefix)
+        return
+      }
+      for (let i = 0; i <= max; i++) {
+        generate([...prefix, i], remainingLength - 1)
+      }
+    }
+    for (let length = 1; length <= maxLength; length++) {
+      generate([], length)
+    }
+    return combinations
   }
 
   /**
