@@ -154,6 +154,9 @@ export class LedgerWallet implements Wallet {
               break // the last found transport is the one we need
             }
           }
+          if (transport !== undefined) {
+            break // the last found transport is the one we need
+          }
         }
         // let's close all the opened transports that are not the one we need
         openedTransports.filter(t => t !== transport).forEach(t => t.close())
