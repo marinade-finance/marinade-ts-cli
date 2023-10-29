@@ -109,6 +109,8 @@ export class LedgerWallet implements Wallet {
         if (ledgerPubkey.equals(pubkey)) {
           transport = tempTransport
           break // the last found transport is the one we need
+        } else {
+          tempTransport.close()
         }
       }
 
@@ -134,6 +136,8 @@ export class LedgerWallet implements Wallet {
               )
               transport = tempTransport
               break // the last found transport is the one we need
+            } else {
+              tempTransport.close()
             }
           }
         }
