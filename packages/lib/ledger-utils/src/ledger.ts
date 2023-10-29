@@ -43,7 +43,9 @@ export class LedgerWallet implements Wallet {
     // getting
     const { api, derivedPath } = await LedgerWallet.getSolanaApi(
       pubkey,
-      parsedDerivedPath
+      parsedDerivedPath,
+      12,
+      5,
     )
     const publicKey = await LedgerWallet.getPublicKey(api, derivedPath)
 
