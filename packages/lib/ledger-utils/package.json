@@ -1,6 +1,6 @@
 {
     "name": "@marinade.finance/ledger-utils",
-    "version": "2.0.13",
+    "version": "2.0.14",
     "description": "Utility functions for interacting with the Ledger from CLI",
     "repository": {
       "type": "git",
