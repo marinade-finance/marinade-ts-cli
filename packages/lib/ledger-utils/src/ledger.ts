@@ -140,6 +140,7 @@ export class LedgerWallet implements Wallet {
           for (const combination of heuristicsCombinations) {
             const heuristicDerivedPath =
               SOLANA_LEDGER_BIP44_BASE_PATH + combination.join('/')
+            console.log('heuristicDerivedPath loop:', heuristicDerivedPath)
             const ledgerPubkey = await LedgerWallet.getPublicKey(
               solanaApi,
               heuristicDerivedPath
