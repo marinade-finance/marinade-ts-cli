@@ -110,7 +110,7 @@ export class LedgerWallet implements Wallet {
           transport = tempTransport
           break // the last found transport is the one we need
         } else {
-          tempTransport.close()
+          tempTransport.writeHID
         }
       }
 
@@ -136,8 +136,6 @@ export class LedgerWallet implements Wallet {
               )
               transport = tempTransport
               break // the last found transport is the one we need
-            } else {
-              tempTransport.close()
             }
           }
         }
