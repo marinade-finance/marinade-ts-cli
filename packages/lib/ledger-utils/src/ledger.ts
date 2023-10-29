@@ -9,6 +9,7 @@ import {
   Transaction,
   VersionedTransaction,
 } from '@solana/web3.js'
+import { generateAllCombinations } from './utils'
 
 export const CLI_LEDGER_URL_PREFIX = 'usb://ledger'
 export const SOLANA_LEDGER_BIP44_BASE_PATH = "44'/501'/"
@@ -37,12 +38,16 @@ export class LedgerWallet implements Wallet {
    * creates wrapper class around Solana ledger device from '@ledgerhq/hw-app-solana' package.
    */
   static async instance(ledgerUrl = '0'): Promise<LedgerWallet> {
-    const { pubkey, derivedPath } = parseLedgerUrl(ledgerUrl)
+    const { pubkey, derivedPath: parsedDerivedPath } = parseLedgerUrl(ledgerUrl)
 
-    const solanaApi = await LedgerWallet.findByPubkey(pubkey, derivedPath)
-    const publicKey = await LedgerWallet.getPublicKey(solanaApi, derivedPath)
+    // getting
+    const { api, derivedPath } = await LedgerWallet.getSolanaApi(
+      pubkey,
+      parsedDerivedPath
+    )
+    const publicKey = await LedgerWallet.getPublicKey(api, derivedPath)
 
-    return new LedgerWallet(solanaApi, derivedPath, publicKey)
+    return new LedgerWallet(api, derivedPath, publicKey)
   }
 
   private constructor(
@@ -83,10 +88,17 @@ export class LedgerWallet implements Wallet {
     return new PublicKey(bufAddress)
   }
 
-  private static async findByPubkey(
+  /**
+   * Based on the provided pubkey and derived path
+   * it tries to match the ledger device and returns back the Solana API.
+   * If pubkey is undefined, it takes the first ledger device.
+   */
+  private static async getSolanaApi(
     pubkey: PublicKey | undefined,
-    derivedPath: string
-  ): Promise<Solana> {
+    derivedPath: string,
+    heuristicDepth = 15,
+    heuristicWide = 2
+  ): Promise<{ api: Solana; derivedPath: string }> {
     const ledgerDevices = getDevices()
     if (ledgerDevices.length === 0) {
       throw new Error('No ledger device found')
@@ -97,48 +109,53 @@ export class LedgerWallet implements Wallet {
       // taking first device
       transport = await TransportNodeHid.open('')
     } else {
-      // for cycle for ledgerDevices searching open transport
-      // and then searching for pubkey
+      const openedTransports: TransportNodeHid[] = []
       for (const device of ledgerDevices) {
-        const tempTransport = await TransportNodeHid.open(device.path)
-        const solanaApi = new Solana(tempTransport)
+        openedTransports.push(await TransportNodeHid.open(device.path))
+      }
+
+      // if derived path is provided let's check if matches the pubkey
+      for (const openedTransport of openedTransports) {
+        const solanaApi = new Solana(openedTransport)
         const ledgerPubkey = await LedgerWallet.getPublicKey(
           solanaApi,
           derivedPath
         )
         if (ledgerPubkey.equals(pubkey)) {
-          transport = tempTransport
-          break // the last found transport is the one we need
-        } else {
-          tempTransport.writeHID
+          transport = openedTransport
+          break // the found transport is the one we need
         }
       }
-
       if (transport === undefined) {
-        // let's do some heuristic search, currently up to 25
-        const upTo = 25
-        const derivedPathLength = derivedPath.split('/').length - 2 // 44'/501'/<number>
-        const allCombinations: number[][] =
-          LedgerWallet.generateAllCombinations(upTo, derivedPathLength)
-        for (const device of ledgerDevices) {
-          const tempTransport = await TransportNodeHid.open(device.path)
-          for (const combination of allCombinations) {
-            const derivedPath =
+        console.log(
+          `Ledger device does not provide pubkey ${pubkey.toBase58()} ` +
+            `at defined derivation path ${derivedPath}. A heuristic search processing.`
+        )
+        const heuristicsCombinations: number[][] = generateAllCombinations(
+          heuristicDepth,
+          heuristicWide
+        )
+        for (const openedTransport of openedTransports) {
+          const solanaApi = new Solana(openedTransport)
+          for (const combination of heuristicsCombinations) {
+            const heuristicDerivedPath =
               SOLANA_LEDGER_BIP44_BASE_PATH + combination.join('/')
-            const solanaApi = new Solana(tempTransport)
             const ledgerPubkey = await LedgerWallet.getPublicKey(
               solanaApi,
-              derivedPath
+              heuristicDerivedPath
             )
             if (ledgerPubkey.equals(pubkey)) {
               console.log(
                 `Using derived path ${derivedPath}, pubkey ${pubkey.toBase58()}`
               )
-              transport = tempTransport
+              transport = openedTransport
+              derivedPath = heuristicDerivedPath
               break // the last found transport is the one we need
             }
           }
         }
+        // let's close all the opened transports that are not the one we need
+        openedTransports.filter(t => t !== transport).forEach(t => t.close())
       }
 
       if (transport === undefined) {
@@ -151,27 +168,7 @@ export class LedgerWallet implements Wallet {
       }
     }
 
-    return new Solana(transport)
-  }
-
-  private static generateAllCombinations(
-    max: number,
-    maxLength: number
-  ): number[][] {
-    const combinations: number[][] = []
-    function generate(prefix: number[], remainingLength: number): void {
-      if (remainingLength === 0) {
-        combinations.push(prefix)
-        return
-      }
-      for (let i = 0; i <= max; i++) {
-        generate([...prefix, i], remainingLength - 1)
-      }
-    }
-    for (let length = 1; length <= maxLength; length++) {
-      generate([], length)
-    }
-    return combinations
+    return { api: new Solana(transport), derivedPath }
   }
 
   /**

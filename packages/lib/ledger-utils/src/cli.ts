@@ -49,6 +49,13 @@ export async function parseLedgerWallet(
         )
       } else if (e instanceof LockedDeviceError) {
         logger.error('Ledger device is locked. ' + 'Please, unlock it first.')
+      } else if (
+        e instanceof Error &&
+        e.message.includes('read from a closed HID')
+      ) {
+        logger.error(
+          'Ledger cannot be open, it seems to be closed. Ensure no other program uses it.'
+        )
       } else {
         logger.error(`Failed to connect to Ledger device of key ${pathOrUrl}`)
       }
