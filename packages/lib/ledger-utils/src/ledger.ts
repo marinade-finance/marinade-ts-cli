@@ -45,7 +45,7 @@ export class LedgerWallet implements Wallet {
       pubkey,
       parsedDerivedPath,
       12,
-      5,
+      5
     )
     const publicKey = await LedgerWallet.getPublicKey(api, derivedPath)
 
