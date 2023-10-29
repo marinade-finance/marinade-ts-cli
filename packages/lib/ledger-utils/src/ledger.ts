@@ -145,11 +145,11 @@ export class LedgerWallet implements Wallet {
               heuristicDerivedPath
             )
             if (ledgerPubkey.equals(pubkey)) {
+              transport = openedTransport
+              derivedPath = heuristicDerivedPath
               console.log(
                 `Using derived path ${derivedPath}, pubkey ${pubkey.toBase58()}`
               )
-              transport = openedTransport
-              derivedPath = heuristicDerivedPath
               break // the last found transport is the one we need
             }
           }
