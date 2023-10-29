@@ -1,6 +1,6 @@
 {
     "name": "@marinade.finance/anchor-common",
-    "version": "2.0.12",
+    "version": "2.0.13",
     "description": "Solana Anchor JS utilities",
     "repository": {
       "type": "git",
