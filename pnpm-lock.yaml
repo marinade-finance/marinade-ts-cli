@@ -177,16 +177,16 @@ importers:
         specifier: ^6.27.18
         version: 6.27.18
       '@marinade.finance/cli-common':
-        specifier: ^2.0.9
+        specifier: ^2.0.10
         version: link:../lib/cli-common
       '@marinade.finance/ledger-utils':
-        specifier: ^2.0.9
+        specifier: ^2.0.10
         version: link:../lib/ledger-utils
       '@marinade.finance/marinade-ts-sdk':
         specifier: ^5.0.5
         version: 5.0.5(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0)
       '@marinade.finance/web3js-common':
-        specifier: ^2.0.9
+        specifier: ^2.0.10
         version: link:../lib/web3js-common
       '@solana/spl-governance':
         specifier: ^0.3.28
@@ -220,7 +220,7 @@ importers:
         version: 10.2.0
     devDependencies:
       '@marinade.finance/jest-utils':
-        specifier: ^2.0.9
+        specifier: ^2.0.10
         version: link:../lib/jest-utils
 
 packages:
