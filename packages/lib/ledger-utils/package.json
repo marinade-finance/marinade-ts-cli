@@ -34,9 +34,9 @@
     },
     "peerDependencies": {
       "pino": "^8.15.1",
-        "@ledgerhq/errors": "^6.13.1",
-        "@ledgerhq/hw-app-solana": "^7.0.12",
-        "@ledgerhq/hw-transport-node-hid-noevents": "^6.27.18",
-        "@solana/web3.js": "^1.78.4"
+      "@ledgerhq/errors": "^6.14.0",
+      "@ledgerhq/hw-app-solana": "^7.0.13",
+      "@ledgerhq/hw-transport-node-hid-noevents": "^6.27.19",
+      "@solana/web3.js": "^1.78.4"
     }
   }
