@@ -12,9 +12,15 @@ import {
   Transaction,
   VersionedTransaction,
 } from '@solana/web3.js'
+import { LoggerPlaceholder, logError } from '@marinade.finance/ts-common'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function verifyError(e: any, idl: anchor.Idl, errCode: number) {
+export function verifyError(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  e: any,
+  idl: anchor.Idl,
+  errCode: number,
+  logger: LoggerPlaceholder | undefined = undefined
+) {
   const errorsMap = anchor.parseIdlErrors(idl)
   const errMsg = errorsMap.get(errCode)
   if (errMsg === undefined) {
@@ -32,7 +38,7 @@ export function verifyError(e: any, idl: anchor.Idl, errCode: number) {
   } else if (e instanceof Error) {
     expect(e.message).toContain(errCode.toString())
   } else {
-    console.error(e)
+    logError(logger, e)
     throw e
   }
 }

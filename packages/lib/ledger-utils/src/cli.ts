@@ -4,7 +4,11 @@ import {
   TransportStatusError,
 } from '@ledgerhq/errors'
 import { CLI_LEDGER_URL_PREFIX, LedgerWallet, Wallet } from './ledger'
-import {LoggerPlaceholder, logError}  from '@marinade.finance/ts-common'
+import {
+  LoggerPlaceholder,
+  logError,
+  logDebug,
+} from '@marinade.finance/ts-common'
 
 /**
  * Parsing provided argument a ledger url.
@@ -13,7 +17,7 @@ import {LoggerPlaceholder, logError}  from '@marinade.finance/ts-common'
  */
 export async function parseLedgerWallet(
   pathOrUrl: string,
-  logger: LoggerPlaceholder
+  logger?: LoggerPlaceholder
 ): Promise<Wallet | null> {
   pathOrUrl = pathOrUrl.trim()
 
@@ -21,7 +25,8 @@ export async function parseLedgerWallet(
   if (pathOrUrl.startsWith(CLI_LEDGER_URL_PREFIX)) {
     try {
       const solanaLedger = await LedgerWallet.instance(pathOrUrl)
-      logger.debug(
+      logDebug(
+        logger,
         'Successfully connected to Ledger device of key %s',
         solanaLedger.publicKey.toBase58()
       )
@@ -30,11 +35,13 @@ export async function parseLedgerWallet(
       if (e instanceof TransportStatusError && 'statusCode' in e) {
         if (e.statusCode === 0x6d02) {
           logError(
+            logger,
             'Ledger device Solana application is not activated. ' +
               'Please, enter the Solana app on your ledger device first.'
           )
         } else if (e.statusCode === 0x6808) {
           logError(
+            logger,
             'Solana application does not permit blind signatures. ' +
               'Please, permit it in the Solana app settings at the ledger device first.'
           )
@@ -44,20 +51,28 @@ export async function parseLedgerWallet(
         e.message.includes('Invalid channel')
       ) {
         logError(
+          logger,
           'Ledger device seems not being acknowledged to open the ledger manager. ' +
             'Please, open ledger manager first on your device.'
         )
       } else if (e instanceof LockedDeviceError) {
-        logError('Ledger device is locked. ' + 'Please, unlock it first.')
+        logError(
+          logger,
+          'Ledger device is locked. ' + 'Please, unlock it first.'
+        )
       } else if (
         e instanceof Error &&
         e.message.includes('read from a closed HID')
       ) {
         logError(
+          logger,
           'Ledger cannot be open, it seems to be closed. Ensure no other program uses it.'
         )
       } else {
-        logError(`Failed to connect to Ledger device of key ${pathOrUrl}`)
+        logError(
+          logger,
+          `Failed to connect to Ledger device of key ${pathOrUrl}`
+        )
       }
       throw e
     }

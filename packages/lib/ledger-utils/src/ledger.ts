@@ -10,6 +10,11 @@ import {
   VersionedTransaction,
 } from '@solana/web3.js'
 import { generateAllCombinations } from './utils'
+import {
+  LoggerPlaceholder,
+  logDebug,
+  logInfo,
+} from '@marinade.finance/ts-common'
 
 export const CLI_LEDGER_URL_PREFIX = 'usb://ledger'
 export const SOLANA_LEDGER_BIP44_BASE_PATH = "44'/501'/"
@@ -96,6 +101,7 @@ export class LedgerWallet implements Wallet {
   private static async getSolanaApi(
     pubkey: PublicKey | undefined,
     derivedPath: string,
+    logger: LoggerPlaceholder | undefined = undefined,
     heuristicDepth = 10,
     heuristicWide = 3
   ): Promise<{ api: Solana; derivedPath: string }> {
@@ -127,7 +133,8 @@ export class LedgerWallet implements Wallet {
         }
       }
       if (transport === undefined) {
-        console.log(
+        logInfo(
+          logger,
           `Ledger device does not provide pubkey ${pubkey.toBase58()} ` +
             `at defined derivation path ${derivedPath}, searching...`
         )
@@ -140,7 +147,7 @@ export class LedgerWallet implements Wallet {
           for (const combination of heuristicsCombinations) {
             const heuristicDerivedPath =
               SOLANA_LEDGER_BIP44_BASE_PATH + combination.join('/')
-            console.log('heuristicDerivedPath loop:', heuristicDerivedPath)
+            logDebug(logger, 'search loop:', heuristicDerivedPath)
             const ledgerPubkey = await LedgerWallet.getPublicKey(
               solanaApi,
               heuristicDerivedPath
@@ -148,7 +155,8 @@ export class LedgerWallet implements Wallet {
             if (ledgerPubkey.equals(pubkey)) {
               transport = openedTransport
               derivedPath = heuristicDerivedPath
-              console.log(
+              logInfo(
+                logger,
                 `Using derived path ${derivedPath}, pubkey ${pubkey.toBase58()}`
               )
               break // the last found transport is the one we need

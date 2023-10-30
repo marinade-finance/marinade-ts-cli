@@ -128,12 +128,12 @@ importers:
       '@ledgerhq/hw-transport-node-hid-noevents':
         specifier: ^6.27.18
         version: 6.27.18
+      '@marinade.finance/ts-common':
+        specifier: ^2.0.15
+        version: link:../ts-common
       '@solana/web3.js':
         specifier: ^1.78.4
         version: 1.78.5
-      pino:
-        specifier: ^8.15.1
-        version: 8.15.1
 
   packages/lib/spl-gov-utils:
     dependencies:

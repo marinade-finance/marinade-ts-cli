@@ -15,6 +15,13 @@ import {
 import { Wallet, instanceOfWallet } from './wallet'
 import { serializeInstructionToBase64 } from './txToBase64'
 import { ExecutionError } from './error'
+import {
+  LoggerPlaceholder,
+  logDebug,
+  logInfo,
+  logWarn,
+  isLevelEnabled,
+} from '@marinade.finance/ts-common'
 
 export async function executeTx({
   connection,
@@ -41,7 +48,7 @@ export async function executeTx({
     | undefined = undefined
 
   if (printOnly) {
-    console.log('Instructions (SPL Gov base64):')
+    logInfo(logger, 'Instructions (SPL Gov base64):')
     for (const ix of transaction.instructions) {
       console.log('  ' + serializeInstructionToBase64(ix))
     }
@@ -131,7 +138,7 @@ export async function executeTx({
       logs: (e as SendTransactionError).logs
         ? (e as SendTransactionError).logs
         : undefined,
-      transaction,
+      transaction: isLevelEnabled(logger, 'debug') ? transaction : undefined,
     })
   }
   return result
@@ -247,7 +254,7 @@ export async function splitAndExecuteTx({
   feePayer?: PublicKey
   simulate?: boolean
   printOnly?: boolean
-  logger?: LoggerStandIn
+  logger?: LoggerPlaceholder
   exceedBudget?: boolean
 }): Promise<
   VersionedTransactionResponse[] | SimulatedTransactionResponse[] | []
@@ -320,7 +327,7 @@ export async function splitAndExecuteTx({
         }).byteLength
       } catch (e) {
         // ignore
-        // logDebug(logger, 'Transaction size calculation failed: ' + e)
+        logDebug(logger, 'Transaction size calculation failed: ' + e)
       }
 
       if (
