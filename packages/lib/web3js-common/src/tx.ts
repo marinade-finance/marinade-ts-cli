@@ -16,13 +16,6 @@ import { Wallet, instanceOfWallet } from './wallet'
 import { serializeInstructionToBase64 } from './txToBase64'
 import { ExecutionError } from './error'
 
-type LoggerStandIn = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  debug: (data: any) => void
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  warn: (data: any) => void
-}
-
 export async function executeTx({
   connection,
   transaction,
@@ -38,7 +31,7 @@ export async function executeTx({
   errMessage: string
   simulate?: boolean
   printOnly?: boolean
-  logger?: LoggerStandIn
+  logger?: LoggerPlaceholder
 }): Promise<
   VersionedTransactionResponse | SimulatedTransactionResponse | undefined
 > {
@@ -419,22 +412,4 @@ export function debugStr(transaction: Transaction): string {
     '=> Signers',
     transaction.signatures.map(sg => sg.publicKey.toString()).join('\n'),
   ].join('\n')
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function logWarn(logger: LoggerStandIn | undefined, data: any) {
-  if (logger !== undefined) {
-    logger.warn(data)
-  } else {
-    console.log(data)
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function logDebug(logger: LoggerStandIn | undefined, data: any) {
-  if (logger !== undefined) {
-    logger.debug(data)
-  } else {
-    console.debug(data)
-  }
 }

@@ -43,9 +43,7 @@ export class LedgerWallet implements Wallet {
     // getting
     const { api, derivedPath } = await LedgerWallet.getSolanaApi(
       pubkey,
-      parsedDerivedPath,
-      12,
-      5
+      parsedDerivedPath
     )
     const publicKey = await LedgerWallet.getPublicKey(api, derivedPath)
 
@@ -98,8 +96,8 @@ export class LedgerWallet implements Wallet {
   private static async getSolanaApi(
     pubkey: PublicKey | undefined,
     derivedPath: string,
-    heuristicDepth = 15,
-    heuristicWide = 2
+    heuristicDepth = 10,
+    heuristicWide = 3
   ): Promise<{ api: Solana; derivedPath: string }> {
     const ledgerDevices = getDevices()
     if (ledgerDevices.length === 0) {
@@ -131,7 +129,7 @@ export class LedgerWallet implements Wallet {
       if (transport === undefined) {
         console.log(
           `Ledger device does not provide pubkey ${pubkey.toBase58()} ` +
-            `at defined derivation path ${derivedPath}. A heuristic search processing.`
+            `at defined derivation path ${derivedPath}, searching...`
         )
         const heuristicsCombinations: number[][] = generateAllCombinations(
           heuristicDepth,

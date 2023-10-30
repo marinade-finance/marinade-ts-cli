@@ -4,7 +4,7 @@ import {
   TransportStatusError,
 } from '@ledgerhq/errors'
 import { CLI_LEDGER_URL_PREFIX, LedgerWallet, Wallet } from './ledger'
-import { Logger } from 'pino'
+import {LoggerPlaceholder, logError}  from '@marinade.finance/ts-common'
 
 /**
  * Parsing provided argument a ledger url.
@@ -13,7 +13,7 @@ import { Logger } from 'pino'
  */
 export async function parseLedgerWallet(
   pathOrUrl: string,
-  logger: Logger
+  logger: LoggerPlaceholder
 ): Promise<Wallet | null> {
   pathOrUrl = pathOrUrl.trim()
 
@@ -29,12 +29,12 @@ export async function parseLedgerWallet(
     } catch (e) {
       if (e instanceof TransportStatusError && 'statusCode' in e) {
         if (e.statusCode === 0x6d02) {
-          logger.error(
+          logError(
             'Ledger device Solana application is not activated. ' +
               'Please, enter the Solana app on your ledger device first.'
           )
         } else if (e.statusCode === 0x6808) {
-          logger.error(
+          logError(
             'Solana application does not permit blind signatures. ' +
               'Please, permit it in the Solana app settings at the ledger device first.'
           )
@@ -43,21 +43,21 @@ export async function parseLedgerWallet(
         e instanceof TransportError &&
         e.message.includes('Invalid channel')
       ) {
-        logger.error(
+        logError(
           'Ledger device seems not being acknowledged to open the ledger manager. ' +
             'Please, open ledger manager first on your device.'
         )
       } else if (e instanceof LockedDeviceError) {
-        logger.error('Ledger device is locked. ' + 'Please, unlock it first.')
+        logError('Ledger device is locked. ' + 'Please, unlock it first.')
       } else if (
         e instanceof Error &&
         e.message.includes('read from a closed HID')
       ) {
-        logger.error(
+        logError(
           'Ledger cannot be open, it seems to be closed. Ensure no other program uses it.'
         )
       } else {
-        logger.error(`Failed to connect to Ledger device of key ${pathOrUrl}`)
+        logError(`Failed to connect to Ledger device of key ${pathOrUrl}`)
       }
       throw e
     }

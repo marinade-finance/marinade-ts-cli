@@ -25,6 +25,7 @@
   ],
   "devDependencies": {
     "@solana/web3.js": "^1.78.5",
+    "@marinade.finance/ts-common": "2.0.15",
     "bn.js": "^5.2.1",
     "borsh": "^0.7.0",
     "bs58": "^5.0.0"
