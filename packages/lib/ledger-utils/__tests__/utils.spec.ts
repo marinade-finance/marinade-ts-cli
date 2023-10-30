@@ -17,5 +17,13 @@ describe('Ledger utils', () => {
       [2, 1],
       [2, 2],
     ])
+    const combinationsZero = generateAllCombinations(0, 5)
+    expect(combinationsZero).toEqual([
+      [0],
+      [0, 0],
+      [0, 0, 0],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0, 0],
+    ])
   })
 })

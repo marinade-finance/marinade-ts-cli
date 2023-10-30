@@ -42,13 +42,17 @@ export class LedgerWallet implements Wallet {
    * From ledger url in format of usb://ledger[/<pubkey>[?key=<number>]
    * creates wrapper class around Solana ledger device from '@ledgerhq/hw-app-solana' package.
    */
-  static async instance(ledgerUrl = '0'): Promise<LedgerWallet> {
+  static async instance(
+    ledgerUrl = '0',
+    logger: LoggerPlaceholder | undefined = undefined
+  ): Promise<LedgerWallet> {
     const { pubkey, derivedPath: parsedDerivedPath } = parseLedgerUrl(ledgerUrl)
 
     // getting
     const { api, derivedPath } = await LedgerWallet.getSolanaApi(
       pubkey,
-      parsedDerivedPath
+      parsedDerivedPath,
+      logger
     )
     const publicKey = await LedgerWallet.getPublicKey(api, derivedPath)
 
@@ -138,6 +142,15 @@ export class LedgerWallet implements Wallet {
           `Ledger device does not provide pubkey ${pubkey.toBase58()} ` +
             `at defined derivation path ${derivedPath}, searching...`
         )
+        // parsing the derived path to check heuristic depth and wide
+        // when the derived path is 44'/501'/0/0/5
+        // then the wide will be 3, depth will be max of numbers as it's 5
+        let splitDerivedPath = derivedPath.split('/')
+        if (splitDerivedPath.length > 2) {
+          splitDerivedPath = splitDerivedPath.slice(2)
+          heuristicWide = splitDerivedPath.length
+          heuristicDepth = Math.max(...splitDerivedPath.map(v => parseFloat(v)))
+        }
         const heuristicsCombinations: number[][] = generateAllCombinations(
           heuristicDepth,
           heuristicWide
