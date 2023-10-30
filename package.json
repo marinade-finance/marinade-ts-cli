@@ -19,8 +19,8 @@
         "publish:spl-gov-utils": "pnpm build && pnpm publish dist/packages/lib/spl-gov-utils",
         "publish:ledger-utils": "pnpm build && pnpm publish dist/packages/lib/ledger-utils",
         "publish:marinade-ts-cli": "pnpm build && pnpm publish dist/packages/marinade-ts-cli",
-        "publish:libs" : "pnpm lint && pnpm install && pnpm publish:ts-common && pnpm publish:web3js-common && pnpm publish:cli-common && pnpm publish:anchor-common && pnpm publish:jest-utils && pnpm publish:spl-gov-utils && pnpm publish:ledger-utils",
-        "publish:all" : "pnpm publish:libs && pnpm publish:marinade-ts-cli"
+        "publish:libs": "pnpm lint && pnpm install && pnpm publish:ts-common && pnpm publish:web3js-common && pnpm publish:cli-common && pnpm publish:anchor-common && pnpm publish:jest-utils && pnpm publish:spl-gov-utils && pnpm publish:ledger-utils",
+        "publish:all": "pnpm publish:libs && pnpm publish:marinade-ts-cli"
     },
     "devDependencies": {
         "@jest/globals": "^29.5.0",
@@ -54,5 +54,6 @@
         "hooks": {
             "commit-msg": "[[ -n $HUSKY_BYPASS ]] || commitlint -E HUSKY_GIT_PARAMS"
         }
-    }
+    },
+    "version": "0.0.1"
 }
