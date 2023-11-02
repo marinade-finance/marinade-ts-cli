@@ -17,15 +17,16 @@ export type LoggerErrorAble = {
   error(...data: any): void
 }
 
-export function logDebug(logger: object | undefined, ...data: any) {
+export function logDebug(logger: object | undefined | boolean, ...data: any) {
   if (checkIfFunction<LoggerPlaceholder>(logger, 'debug')) {
     logger.debug(data)
-  } else {
+  } else if (logger) {
+    // logger level is switched off by default
     console.debug(data)
   }
 }
 
-export function logInfo(logger: object | undefined, data: any) {
+export function logInfo(logger: object | undefined, ...data: any) {
   if (checkIfFunction<LoggerPlaceholder>(logger, 'info')) {
     logger.info(data)
   } else {
@@ -33,7 +34,7 @@ export function logInfo(logger: object | undefined, data: any) {
   }
 }
 
-export function logWarn(logger: object | undefined, data: any) {
+export function logWarn(logger: object | undefined, ...data: any) {
   if (checkIfFunction<LoggerPlaceholder>(logger, 'warn')) {
     logger.warn(data)
   } else {
@@ -41,7 +42,7 @@ export function logWarn(logger: object | undefined, data: any) {
   }
 }
 
-export function logError(logger: object | undefined, data: any) {
+export function logError(logger: object | undefined, ...data: any) {
   if (checkIfFunction<LoggerPlaceholder>(logger, 'error')) {
     logger.error(data)
   } else {
