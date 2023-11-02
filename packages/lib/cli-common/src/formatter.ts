@@ -121,7 +121,7 @@ export function reformat(
     try {
       return value.toNumber()
     } catch (e) {
-      return value.toString()
+      return value.toString(10)
     }
   } else if (value instanceof BigInt || typeof value === 'bigint') {
     result = value.toString()
