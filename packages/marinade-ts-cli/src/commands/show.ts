@@ -8,25 +8,44 @@ import {
 import { Command } from 'commander'
 import { BN } from 'bn.js'
 import { getMarinadeCliContext } from '../context'
+import { parsePubkey } from '@marinade.finance/cli-common'
+import { PublicKey } from '@solana/web3.js'
 
 export function installShow(program: Command) {
   program
     .command('show')
     .description('Show marinade state')
+    .argument(
+      '[state-address]',
+      'Address of Marinade state account to be loaded and listed',
+      parsePubkey
+    )
     .option('-l, --list', 'list marinade validators & stake accounts', false)
-    .action(async ({ list }: { list: boolean }) => {
-      await show({
-        withList: list,
-      })
-    })
+    .action(
+      async (stateAddress: Promise<PublicKey>, { list }: { list: boolean }) => {
+        await show({
+          stateAddress: await stateAddress,
+          withList: list,
+        })
+      }
+    )
 }
 
-async function show({ withList }: { withList: boolean }) {
+async function show({
+  stateAddress,
+  withList,
+}: {
+  stateAddress?: PublicKey
+  withList: boolean
+}) {
   const { connection, logger } = getMarinadeCliContext()
 
-  const marinadeConfig = new MarinadeConfig({
-    connection,
-  })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const marinadeConfigParams: any = { connection }
+  if (stateAddress) {
+    marinadeConfigParams['stateAddress'] = stateAddress
+  }
+  const marinadeConfig = new MarinadeConfig(marinadeConfigParams)
   const marinade = new Marinade(marinadeConfig)
   const marinadeState = await marinade.getMarinadeState()
 
