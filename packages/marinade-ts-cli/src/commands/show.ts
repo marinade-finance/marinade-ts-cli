@@ -58,6 +58,7 @@ async function show({
     mSolLeg, // @todo fetch from Marinade instead for MarinadeState? This should be configurable https://docs.marinade.finance/developers/contract-addresses
     treasuryMsolAccount,
     rewardsCommissionPercent,
+    maxStakeMovedPerEpoch,
   } = marinadeState
 
   const mSolMintSupply = await mSolMint.totalSupply()
@@ -208,6 +209,11 @@ async function show({
       state.withdrawStakeAccountFee.bpCents / 10000
     }%`,
     state.withdrawStakeAccountEnabled ? 'enabled' : 'disabled'
+  )
+  console.log(`  Max stake moved per epoch: ${maxStakeMovedPerEpoch}%`)
+  console.log(`  Stake moved: ${state.stakeMoved.toString()} epoch`)
+  console.log(
+    `  Last stake move epoch: ${state.lastStakeMoveEpoch.toString()} epoch`
   )
   console.log()
 
