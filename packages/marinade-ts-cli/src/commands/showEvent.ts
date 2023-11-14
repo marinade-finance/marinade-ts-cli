@@ -24,6 +24,10 @@ async function showEvent({ eventData }: { eventData: string }) {
   })
   const marinade = new Marinade(marinadeConfig)
 
+  eventData = eventData
+    .trim()
+    .replace(/Program data:/g, '')
+    .trim()
   const decodedData =
     marinade.marinadeFinanceProgram.program.coder.events.decode(eventData) ??
     marinade.marinadeReferralProgram.program.coder.events.decode(eventData)
