@@ -3,6 +3,7 @@ import { installShow } from './show'
 import { installShowBalance } from './balance'
 import { installShowReferralState } from './showReferralState'
 import { installShowTickets } from './showTickets'
+import { installShowEvent } from './showEvent'
 import { installManage } from './manage'
 
 export function installCommands(program: Command) {
@@ -11,4 +12,5 @@ export function installCommands(program: Command) {
   installShow(program)
   installManage(program)
   installShowTickets(program)
+  installShowEvent(program)
 }
