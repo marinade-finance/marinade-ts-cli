@@ -128,6 +128,18 @@ export class LedgerWallet implements Wallet {
       for (const device of ledgerDevices) {
         openedTransports.push(await TransportNodeHid.open(device.path))
       }
+      // in case of abrupt exit let's close all the opened transports
+      if (process) {
+        process.on('exit', () => {
+          for (const openedTransport of openedTransports) {
+            try {
+              openedTransport.close()
+            } catch (e) {
+              // ignore error and go to next transport
+            }
+          }
+        })
+      }
 
       // if derived path is provided let's check if matches the pubkey
       for (const openedTransport of openedTransports) {
