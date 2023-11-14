@@ -19,34 +19,34 @@ export type LoggerErrorAble = {
 
 export function logDebug(logger: object | undefined | boolean, ...data: any) {
   if (checkIfFunction<LoggerPlaceholder>(logger, 'debug')) {
-    logger.debug(data)
+    logger.debug(...data)
   } else if (logger) {
     // logger level is switched off by default
-    console.debug(data)
+    console.debug(...data)
   }
 }
 
 export function logInfo(logger: object | undefined, ...data: any) {
   if (checkIfFunction<LoggerPlaceholder>(logger, 'info')) {
-    logger.info(data)
+    logger.info(...data)
   } else {
-    console.log(data)
+    console.log(...data)
   }
 }
 
 export function logWarn(logger: object | undefined, ...data: any) {
   if (checkIfFunction<LoggerPlaceholder>(logger, 'warn')) {
-    logger.warn(data)
+    logger.warn(...data)
   } else {
-    console.warn(data)
+    console.warn(...data)
   }
 }
 
 export function logError(logger: object | undefined, ...data: any) {
   if (checkIfFunction<LoggerPlaceholder>(logger, 'error')) {
-    logger.error(data)
+    logger.error(...data)
   } else {
-    console.error(data)
+    console.error(...data)
   }
 }
 
@@ -71,7 +71,7 @@ function checkIfFunction<T>(
   logger: any | undefined,
   functionName: string
 ): logger is T {
-  return logger !== undefined && typeof logger[functionName] !== 'function'
+  return logger !== undefined && typeof logger[functionName] === 'function'
 }
 
 function searchIfLabelIsEnabled(
