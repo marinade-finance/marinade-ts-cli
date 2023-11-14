@@ -12,13 +12,13 @@ describe('Ledger', () => {
     const url2 = 'usb://ledger'
     expect(parseLedgerUrl(url2)).toEqual({
       pubkey: undefined,
-      derivedPath: "44'/501'/0'/0'",
+      derivedPath: "44'/501'/",
     })
 
     const url3 = 'usb://ledger/GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV'
     expect(parseLedgerUrl(url3)).toEqual({
       pubkey: new PublicKey('GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV'),
-      derivedPath: "44'/501'/0'/0'",
+      derivedPath: "44'/501'/",
     })
 
     const url4 =
@@ -28,19 +28,33 @@ describe('Ledger', () => {
       derivedPath: "44'/501'/0",
     })
 
-    const url5 =
-      'usb://ledger/GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV?key='
-    expect(parseLedgerUrl(url5)).toEqual({
+    const url6 =
+      'usb://ledger/GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV?key=/0/0'
+    expect(parseLedgerUrl(url6)).toEqual({
       pubkey: new PublicKey('GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV'),
-      derivedPath: "44'/501'/0'/0'",
+      derivedPath: "44'/501'/0/0",
     })
 
-    const url6 =
+    const url7 =
+      'usb://ledger/GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV?key='
+    expect(parseLedgerUrl(url7)).toEqual({
+      pubkey: new PublicKey('GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV'),
+      derivedPath: "44'/501'/",
+    })
+
+    const url8 =
       'usb://ledger/GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV?key=44/501/1/2/3'
-    expect(parseLedgerUrl(url6)).toEqual({
+    expect(parseLedgerUrl(url8)).toEqual({
       pubkey: new PublicKey('GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV'),
       derivedPath: '44/501/1/2/3',
     })
+
+    const url9 =
+      "usb://ledger/GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV?key=44/501/0'/0'/0'"
+    expect(parseLedgerUrl(url9)).toEqual({
+      pubkey: new PublicKey('GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV'),
+      derivedPath: "44/501/0'/0'/0'",
+  })
   })
 
   it('should throw an error for an invalid Ledger URL', () => {

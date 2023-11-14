@@ -1,13 +1,13 @@
 /**
  * Generating all combinations for derivation path.
  * When maxDepth is 2 and maxLength is 2, the result is:
- * [[0], [1], [2], [0,0], [0,1], [0,2], [1,0], [1,1], [1,2], [2,0], [2,1], [2,2]]
+ * [[], [0], [1], [2], [0,0], [0,1], [0,2], [1,0], [1,1], [1,2], [2,0], [2,1], [2,2]]
  */
 export function generateAllCombinations(
   maxDepth: number,
   maxLength: number
 ): number[][] {
-  const combinations: number[][] = []
+  const combinations: number[][] = [[]]
   function generate(prefix: number[], remainingLength: number): void {
     if (remainingLength === 0) {
       combinations.push(prefix)

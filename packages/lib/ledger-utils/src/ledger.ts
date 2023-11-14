@@ -220,7 +220,7 @@ export class LedgerWallet implements Wallet {
  * Some of the examples (trying to be compatible with solana cli https://github.com/solana-labs/solana/blob/v1.14.19/clap-utils/src/keypair.rs#L613)
  * Derivation path consists of the "44'" part that signifies the BIP44 standard, and the "501'" part that signifies the Solana's BIP44 coin type.
  *
- * - `usb://ledger` - taking first device and using solana default derivation path 44/501/0/0
+ * - `usb://ledger` - taking first device and using solana default derivation path 44/501/
  * - `usb://ledger?key=0/1` - taking first device and using solana derivation path 44/501/0/1
  * - `usb://ledger/9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd` - searching of all ledger devices where solana default derivation path 44/501/0/0 will result in pubkey 9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd
  * - `usb://ledger/9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd?key=0/1` - searching of all ledger devices where solana derivation path 44/501/0/1 will result in pubkey 9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd
@@ -276,7 +276,8 @@ export function parseLedgerUrl(ledgerUrl: string): {
       derivedPath = key
     } else {
       // case: usb://ledger/<pubkey>?key=<number>
-      derivedPath = SOLANA_LEDGER_BIP44_BASE_PATH + key
+      const keyTrimmed = key.replace(/^\//, '')
+      derivedPath = SOLANA_LEDGER_BIP44_BASE_PATH + keyTrimmed
     }
   } else {
     throw new Error(
