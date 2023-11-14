@@ -17,9 +17,9 @@ import {
 } from '@marinade.finance/ts-common'
 
 export const CLI_LEDGER_URL_PREFIX = 'usb://ledger'
-export const SOLANA_LEDGER_BIP44_BASE_PATH = "44'/501'/"
+export const SOLANA_LEDGER_BIP44_BASE_PATH = "44'/501'"
 export const SOLANA_LEDGER_BIP44_BASE_REGEXP = /^44[']{0,1}\/501[']{0,1}\//
-export const DEFAULT_DERIVATION_PATH = SOLANA_LEDGER_BIP44_BASE_PATH + "0'/0'"
+export const DEFAULT_DERIVATION_PATH = SOLANA_LEDGER_BIP44_BASE_PATH
 
 /**
  * Wallet interface for objects that can be used to sign provider transactions.
@@ -101,6 +101,11 @@ export class LedgerWallet implements Wallet {
    * Based on the provided pubkey and derived path
    * it tries to match the ledger device and returns back the Solana API.
    * If pubkey is undefined, it takes the first ledger device.
+   *
+   * When the `heuristicDepth` and `heuristicWide` are provided,
+   * then the derivation path will be searched through the space of all combinations
+   * of the provided depth and wide. E.g., when the depth is 10 and wide is 3,
+   * then the derivation path will be searched from `44'/501'`, through `44'/501'/0 until `44'/501'/10/10/10`.
    */
   private static async getSolanaApi(
     pubkey: PublicKey | undefined,
@@ -220,7 +225,7 @@ export class LedgerWallet implements Wallet {
  * Some of the examples (trying to be compatible with solana cli https://github.com/solana-labs/solana/blob/v1.14.19/clap-utils/src/keypair.rs#L613)
  * Derivation path consists of the "44'" part that signifies the BIP44 standard, and the "501'" part that signifies the Solana's BIP44 coin type.
  *
- * - `usb://ledger` - taking first device and using solana default derivation path 44/501/
+ * - `usb://ledger` - taking first device and using solana default derivation path 44/501
  * - `usb://ledger?key=0/1` - taking first device and using solana derivation path 44/501/0/1
  * - `usb://ledger/9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd` - searching of all ledger devices where solana default derivation path 44/501/0/0 will result in pubkey 9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd
  * - `usb://ledger/9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd?key=0/1` - searching of all ledger devices where solana derivation path 44/501/0/1 will result in pubkey 9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd
@@ -277,7 +282,7 @@ export function parseLedgerUrl(ledgerUrl: string): {
     } else {
       // case: usb://ledger/<pubkey>?key=<number>
       const keyTrimmed = key.replace(/^\//, '')
-      derivedPath = SOLANA_LEDGER_BIP44_BASE_PATH + keyTrimmed
+      derivedPath = SOLANA_LEDGER_BIP44_BASE_PATH + '/' + keyTrimmed
     }
   } else {
     throw new Error(

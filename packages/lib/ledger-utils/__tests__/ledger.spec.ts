@@ -12,13 +12,13 @@ describe('Ledger', () => {
     const url2 = 'usb://ledger'
     expect(parseLedgerUrl(url2)).toEqual({
       pubkey: undefined,
-      derivedPath: "44'/501'/",
+      derivedPath: "44'/501'",
     })
 
     const url3 = 'usb://ledger/GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV'
     expect(parseLedgerUrl(url3)).toEqual({
       pubkey: new PublicKey('GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV'),
-      derivedPath: "44'/501'/",
+      derivedPath: "44'/501'",
     })
 
     const url4 =
@@ -39,7 +39,7 @@ describe('Ledger', () => {
       'usb://ledger/GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV?key='
     expect(parseLedgerUrl(url7)).toEqual({
       pubkey: new PublicKey('GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV'),
-      derivedPath: "44'/501'/",
+      derivedPath: "44'/501'",
     })
 
     const url8 =
