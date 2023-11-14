@@ -54,7 +54,7 @@ describe('Ledger', () => {
     expect(parseLedgerUrl(url9)).toEqual({
       pubkey: new PublicKey('GontTwDeBduvbW85oHyC8A7GekuT8X1NkZHDDdUWWvsV'),
       derivedPath: "44/501/0'/0'/0'",
-  })
+    })
   })
 
   it('should throw an error for an invalid Ledger URL', () => {

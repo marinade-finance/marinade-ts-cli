@@ -27,5 +27,7 @@ describe('Ledger utils', () => {
       [0, 0, 0, 0],
       [0, 0, 0, 0, 0],
     ])
+    const combinationsUndefined = generateAllCombinations(100, undefined)
+    expect(combinationsUndefined).toEqual([])
   })
 })

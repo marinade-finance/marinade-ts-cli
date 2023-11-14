@@ -24,11 +24,10 @@ export async function parseLedgerWallet(
   // trying ledger (https://docs.solana.com/wallet-guide/hardware-wallets/ledger)
   if (pathOrUrl.startsWith(CLI_LEDGER_URL_PREFIX)) {
     try {
-      const solanaLedger = await LedgerWallet.instance(pathOrUrl)
+      const solanaLedger = await LedgerWallet.instance(pathOrUrl, logger)
       logDebug(
         logger,
-        'Successfully connected to Ledger device of key %s',
-        solanaLedger.publicKey.toBase58()
+        `Successfully connected to Ledger device of key  ${solanaLedger.publicKey.toBase58()}`
       )
       return solanaLedger
     } catch (e) {

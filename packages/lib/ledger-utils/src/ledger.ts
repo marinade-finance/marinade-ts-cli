@@ -111,8 +111,8 @@ export class LedgerWallet implements Wallet {
     pubkey: PublicKey | undefined,
     derivedPath: string,
     logger: LoggerPlaceholder | undefined = undefined,
-    heuristicDepth = 10,
-    heuristicWide = 3
+    heuristicDepth: number | undefined = 10,
+    heuristicWide: number | undefined = 3
   ): Promise<{ api: Solana; derivedPath: string }> {
     const ledgerDevices = getDevices()
     if (ledgerDevices.length === 0) {
@@ -154,7 +154,10 @@ export class LedgerWallet implements Wallet {
         if (splitDerivedPath.length > 2) {
           splitDerivedPath = splitDerivedPath.slice(2)
           heuristicWide = splitDerivedPath.length
-          heuristicDepth = Math.max(...splitDerivedPath.map(v => parseFloat(v)))
+          heuristicDepth = Math.max(
+            heuristicDepth,
+            ...splitDerivedPath.map(v => parseFloat(v))
+          )
         }
         const heuristicsCombinations: number[][] = generateAllCombinations(
           heuristicDepth,
@@ -164,8 +167,8 @@ export class LedgerWallet implements Wallet {
           const solanaApi = new Solana(openedTransport)
           for (const combination of heuristicsCombinations) {
             const heuristicDerivedPath =
-              SOLANA_LEDGER_BIP44_BASE_PATH + combination.join('/')
-            logDebug(logger, 'search loop:', heuristicDerivedPath)
+              SOLANA_LEDGER_BIP44_BASE_PATH + '/' + combination.join('/')
+            logDebug(logger, `search loop: ${heuristicDerivedPath}`)
             const ledgerPubkey = await LedgerWallet.getPublicKey(
               solanaApi,
               heuristicDerivedPath
@@ -181,10 +184,10 @@ export class LedgerWallet implements Wallet {
             }
           }
           if (transport !== undefined) {
-            break // the last found transport is the one we need
+            break // the last transport found as the last one is the one we need
           }
         }
-        // let's close all the opened transports that are not the one we need
+        // let's close all the opened transports that are not the ones we need
         openedTransports.filter(t => t !== transport).forEach(t => t.close())
       }
 
