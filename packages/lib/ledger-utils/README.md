@@ -21,7 +21,7 @@ Derivation path consists of the "44'" part that signifies the BIP44 standard, an
 
 Parsing works in kind of following way.
 
-* `usb://ledger` - taking first device and using solana default derivation path `44/501/`
+* `usb://ledger` - taking first device and using solana default derivation path `44/501`
 * `usb://ledger?key=0/1` - taking first device and using solana derivation path `44/501/0/1`
 * `usb://ledger/9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd?key=0/1` - searching of all ledger devices where solana derivation path `44/501/0/1` will result in public key `9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd`
 * `usb://ledger/9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd` - searching of all ledger devices where solana default derivation path `44/501/` will result in public key `9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd`.
