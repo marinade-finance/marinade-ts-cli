@@ -16,17 +16,20 @@ Options:
   -V, --version                                    output the version number
   -u, --url <url-or-moniker>                       URL of Solana cluster or moniker (m/mainnet/mainnet-beta, d/devnet, t/testnet) (default: "m")
   --commitment <commitment>                        Commitment (default: "confirmed")
-  -k, --keypair <keypair-or-ledger>                Wallet keypair (path or ledger url in format usb://ledger/[<pubkey>][?key=<derivedPath>])  (default: ~/.config/solana/id.json)
+  -k, --keypair <keypair-or-ledger>                Wallet keypair (path or ledger url in format usb://ledger/[<pubkey>][?key=<derivedPath>])  (default:
+                                                   ~/.config/solana/id.json)
   -s, --simulate                                   Simulate (default: false)
-  -p, --print-only                                 Print only mode, no execution, instructions are printed in base64 to output. This can be used for placing the admin commands to SPL Governance UI by hand. (default: false)
+  -p, --print-only                                 Print only mode, no execution, instructions are printed in base64 to output. This can be used for
+                                                   placing the admin commands to SPL Governance UI by hand. (default: false)
   --skip-preflight                                 setting transaction execution flag "skip-preflight" (default: false)
   -d, --debug                                      Debug (default: false)
+  -v, --verbose                                    Verbose (the same as --debug) (default: false)
   -h, --help                                       display help for command
 
 Commands:
   balance [account-pubkey]                         Show account balance
   show-referral-state <referral-code>              Show Marinade referral partner's state
-  show [options]                                   Show marinade state
+  show [options] [state-address]                   Show marinade state
   add-liquidity <amount-sol>                       Provide liquidity to the liquidity pool
   remove-liquidity <amount-sol>                    Remove liquidity from the liquidity pool
   deposit [options] <amount-sol>                   Deposit SOL
@@ -36,6 +39,7 @@ Commands:
   order-unstake <amount-msol>                      Order unstake to get a ticket that can be claimed later
   withdraw-stake-account [options] <amount-msol>   Withdraw stake account
   show-tickets [options]                           Show delayed unstake tickets for a beneficiary (initialized by order-unstake)
+  show-event <event-data>                          Showing data of anchor event
   help [command]                                   display help for command
 ```
 
