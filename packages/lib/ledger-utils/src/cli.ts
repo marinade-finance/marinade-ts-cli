@@ -11,8 +11,8 @@ import {
 } from '@marinade.finance/ts-common'
 
 /**
- * Parsing provided argument a ledger url.
- * It consider it ledger url only when the argument starts with 'usb://ledger',
+ * Parsing provided argument as a ledger url.
+ * It considers it ledger url only when the argument starts with 'usb://ledger',
  * otherwise null is returned.
  */
 export async function parseLedgerWallet(
