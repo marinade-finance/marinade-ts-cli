@@ -39,8 +39,9 @@ program
     false
   )
   .option('-d, --debug', 'Debug', false)
+  .option('-v, --verbose', 'Verbose (the same as --debug)', false)
   .hook('preAction', async (command: Command, action: Command) => {
-    if (command.opts().debug) {
+    if (command.opts().debug || command.opts().verbose) {
       logger.level = 'debug'
     }
 
