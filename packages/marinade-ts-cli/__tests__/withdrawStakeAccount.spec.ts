@@ -16,7 +16,8 @@ beforeAll(async () => {
   shellMatchers()
 })
 
-describe('Withdraw stake account using CLI', () => {
+// Withdraw stake account SDK call is not implemented
+describe.skip('Withdraw stake account using CLI', () => {
   it('withdraw stake account', async () => {
     // Fill SOLs to authority key that's used by Marinade as fee payer
     await transfer({ to: STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY.publicKey })
