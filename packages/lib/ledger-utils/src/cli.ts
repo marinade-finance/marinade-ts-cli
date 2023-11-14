@@ -27,7 +27,7 @@ export async function parseLedgerWallet(
       const solanaLedger = await LedgerWallet.instance(pathOrUrl, logger)
       logDebug(
         logger,
-        `Successfully connected to Ledger device of key  ${solanaLedger.publicKey.toBase58()}`
+        `Successfully connected to Ledger device of key ${solanaLedger.publicKey.toBase58()}`
       )
       return solanaLedger
     } catch (e) {

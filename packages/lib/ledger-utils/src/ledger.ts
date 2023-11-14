@@ -15,6 +15,7 @@ import {
   logDebug,
   logInfo,
 } from '@marinade.finance/ts-common'
+import { exit } from 'process'
 
 export const CLI_LEDGER_URL_PREFIX = 'usb://ledger'
 export const SOLANA_LEDGER_BIP44_BASE_PATH = "44'/501'"
@@ -130,15 +131,19 @@ export class LedgerWallet implements Wallet {
       }
       // in case of abrupt exit let's close all the opened transports
       if (process) {
-        process.on('exit', () => {
-          for (const openedTransport of openedTransports) {
-            try {
-              openedTransport.close()
-            } catch (e) {
-              // ignore error and go to next transport
+        const signals = ['SIGINT', 'SIGTERM', 'SIGQUIT']
+        signals.forEach(signal =>
+          process.on(signal, () => {
+            for (const openedTransport of openedTransports) {
+              try {
+                openedTransport.close()
+              } catch (e) {
+                // ignore error and go to next transport
+              }
+              exit()
             }
-          }
-        })
+          })
+        )
       }
 
       // if derived path is provided let's check if matches the pubkey
@@ -178,8 +183,10 @@ export class LedgerWallet implements Wallet {
         for (const openedTransport of openedTransports) {
           const solanaApi = new Solana(openedTransport)
           for (const combination of heuristicsCombinations) {
-            const heuristicDerivedPath =
-              SOLANA_LEDGER_BIP44_BASE_PATH + '/' + combination.join('/')
+            const strCombination = combination.map(v => v.toString())
+            strCombination.unshift(SOLANA_LEDGER_BIP44_BASE_PATH)
+            const heuristicDerivedPath = strCombination.join('/')
+
             logDebug(logger, `search loop: ${heuristicDerivedPath}`)
             const ledgerPubkey = await LedgerWallet.getPublicKey(
               solanaApi,
