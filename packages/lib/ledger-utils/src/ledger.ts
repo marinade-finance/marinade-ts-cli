@@ -124,27 +124,13 @@ export class LedgerWallet implements Wallet {
     if (pubkey === undefined) {
       // taking first device
       transport = await TransportNodeHid.open('')
+      LedgerWallet.scheduleOnExitClose(transport)
     } else {
       const openedTransports: TransportNodeHid[] = []
       for (const device of ledgerDevices) {
         openedTransports.push(await TransportNodeHid.open(device.path))
       }
-      // in case of abrupt exit let's close all the opened transports
-      if (process) {
-        const signals = ['SIGINT', 'SIGTERM', 'SIGQUIT']
-        signals.forEach(signal =>
-          process.on(signal, () => {
-            for (const openedTransport of openedTransports) {
-              try {
-                openedTransport.close()
-              } catch (e) {
-                // ignore error and go to next transport
-              }
-              exit()
-            }
-          })
-        )
-      }
+      LedgerWallet.scheduleOnExitClose(...openedTransports)
 
       // if derived path is provided let's check if matches the pubkey
       for (const openedTransport of openedTransports) {
@@ -221,6 +207,25 @@ export class LedgerWallet implements Wallet {
     }
 
     return { api: new Solana(transport), derivedPath }
+  }
+
+  // trying to close all provided transports in case of abrupt exit, or just exit
+  private static scheduleOnExitClose(...transports: TransportNodeHid[]): void {
+    if (process) {
+      const signals = ['SIGINT', 'SIGTERM', 'SIGQUIT', 'exit']
+      signals.forEach(signal =>
+        process.on(signal, () => {
+          for (const openedTransport of transports) {
+            try {
+              openedTransport.close()
+            } catch (e) {
+              // ignore error and go to next transport
+            }
+            exit()
+          }
+        })
+      )
+    }
   }
 
   /**
