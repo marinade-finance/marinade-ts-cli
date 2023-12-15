@@ -106,7 +106,9 @@ export async function executeTx({
       )
       if (res.value.err) {
         throw new Error(
-          `Failure confirming transaction ${txSig}, confirm result: ${res}`
+          `Failure confirming transaction ${txSig}, confirm result: ${JSON.stringify(
+            res
+          )}`
         )
       }
       let txSearchConnection = connection
