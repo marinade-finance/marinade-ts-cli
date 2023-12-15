@@ -73,7 +73,7 @@ export function getClusterUrl(url: string): string {
       : url === 'm' || url === 'mainnet'
       ? 'mainnet-beta'
       : url === 'l' || url === 'localnet' || url === 'localhost'
-      ? 'http://localhost:8899'
+      ? 'http://127.0.0.1:8899'
       : url
 
   try {

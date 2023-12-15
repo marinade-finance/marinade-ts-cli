@@ -87,7 +87,7 @@ export const REFERRAL_CODE = new PublicKey(
 // )
 
 export const CONNECTION_COMMITMENT = 'confirmed'
-export const PROVIDER_URL = 'http://localhost:8899'
+export const PROVIDER_URL = 'http://127.0.0.1:8899'
 export const CONNECTION = new Connection(PROVIDER_URL, {
   commitment: CONNECTION_COMMITMENT,
 })
