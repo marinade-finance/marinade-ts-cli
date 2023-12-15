@@ -11,6 +11,7 @@ import {
   BlockhashWithExpiryBlockHeight,
   PublicKey,
   ComputeBudgetProgram,
+  SendOptions,
 } from '@solana/web3.js'
 import { Wallet, instanceOfWallet } from './wallet'
 import { serializeInstructionToBase64 } from './txToBase64'
@@ -31,6 +32,7 @@ export async function executeTx({
   simulate = false,
   printOnly = false,
   logger,
+  sendOpts = {},
 }: {
   connection: Connection
   transaction: Transaction
@@ -39,6 +41,7 @@ export async function executeTx({
   simulate?: boolean
   printOnly?: boolean
   logger?: LoggerPlaceholder
+  sendOpts?: SendOptions
 }): Promise<
   VersionedTransactionResponse | SimulatedTransactionResponse | undefined
 > {
@@ -89,7 +92,10 @@ export async function executeTx({
         )
       }
     } else if (!printOnly) {
-      const txSig = await connection.sendRawTransaction(transaction.serialize())
+      const txSig = await connection.sendRawTransaction(
+        transaction.serialize(),
+        sendOpts
+      )
       const res = await connection.confirmTransaction(
         {
           signature: txSig,
@@ -147,7 +153,8 @@ export async function executeTx({
 export async function executeTxSimple(
   connection: Connection,
   transaction: Transaction,
-  signers?: (Wallet | Keypair | Signer)[]
+  signers?: (Wallet | Keypair | Signer)[],
+  sendOpts?: SendOptions
 ): Promise<
   VersionedTransactionResponse | SimulatedTransactionResponse | undefined
 > {
@@ -155,6 +162,7 @@ export async function executeTxSimple(
     connection,
     transaction,
     signers,
+    sendOpts,
     errMessage: 'Error executing transaction',
   })
 }
@@ -246,6 +254,7 @@ export async function splitAndExecuteTx({
   printOnly = false,
   logger,
   exceedBudget = false,
+  sendOpts = {},
 }: {
   connection: Connection
   transaction: Transaction
@@ -256,6 +265,7 @@ export async function splitAndExecuteTx({
   printOnly?: boolean
   logger?: LoggerPlaceholder
   exceedBudget?: boolean
+  sendOpts?: SendOptions
 }): Promise<
   VersionedTransactionResponse[] | SimulatedTransactionResponse[] | []
 > {
@@ -274,6 +284,7 @@ export async function splitAndExecuteTx({
       logger,
       simulate,
       printOnly,
+      sendOpts,
     })
   } else {
     feePayer = feePayer || transaction.feePayer
@@ -372,6 +383,7 @@ export async function splitAndExecuteTx({
         errMessage,
         signers: txSigners,
         logger,
+        sendOpts,
       })
 
       executionCounter++
