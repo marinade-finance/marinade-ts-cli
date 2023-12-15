@@ -63,7 +63,7 @@ importers:
         specifier: ^0.28.0
         version: 0.28.0
       '@marinade.finance/ts-common':
-        specifier: ^2.0.19
+        specifier: ^2.0.20
         version: link:../ts-common
       '@solana/web3.js':
         specifier: ^1.78.5
@@ -75,7 +75,7 @@ importers:
   packages/lib/cli-common:
     devDependencies:
       '@marinade.finance/web3js-common':
-        specifier: ^2.0.19
+        specifier: ^2.0.20
         version: link:../web3js-common
       '@solana/web3.js':
         specifier: ^1.78.5
@@ -129,7 +129,7 @@ importers:
         specifier: ^6.27.18
         version: 6.27.18
       '@marinade.finance/ts-common':
-        specifier: ^2.0.19
+        specifier: ^2.0.20
         version: link:../ts-common
       '@solana/web3.js':
         specifier: ^1.78.4
@@ -153,7 +153,7 @@ importers:
   packages/lib/web3js-common:
     devDependencies:
       '@marinade.finance/ts-common':
-        specifier: 2.0.19
+        specifier: 2.0.20
         version: link:../ts-common
       '@solana/web3.js':
         specifier: ^1.78.5
@@ -183,16 +183,16 @@ importers:
         specifier: ^6.27.18
         version: 6.27.18
       '@marinade.finance/cli-common':
-        specifier: ^2.0.19
+        specifier: ^2.0.20
         version: link:../lib/cli-common
       '@marinade.finance/ledger-utils':
-        specifier: ^2.0.19
+        specifier: ^2.0.20
         version: link:../lib/ledger-utils
       '@marinade.finance/marinade-ts-sdk':
         specifier: ^5.0.6
         version: 5.0.6(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0)
       '@marinade.finance/web3js-common':
-        specifier: ^2.0.19
+        specifier: ^2.0.20
         version: link:../lib/web3js-common
       '@solana/spl-governance':
         specifier: ^0.3.28
@@ -226,7 +226,7 @@ importers:
         version: 10.2.0
     devDependencies:
       '@marinade.finance/jest-utils':
-        specifier: ^2.0.19
+        specifier: ^2.0.20
         version: link:../lib/jest-utils
       '@solana/spl-token-3.x':
         specifier: npm:@solana/spl-token@^0.3.8
