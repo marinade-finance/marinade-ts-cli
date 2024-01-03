@@ -26,6 +26,9 @@ export const DEFAULT_DERIVATION_PATH = SOLANA_LEDGER_BIP44_BASE_PATH
  * Wallet interface for objects that can be used to sign provider transactions.
  * The interface is compatible with @coral-xyz/anchor/dist/cjs/provider in version 0.28.0
  * See https://github.com/coral-xyz/anchor/blob/v0.28.0/ts/packages/anchor/src/provider.ts#L344
+ *
+ * This intentionally duplicates the interface from packages/lib/web3js-common/src/wallet.ts
+ * as the `ledger-utils` is meant not to be in dependency of `web3js-common`.
  */
 export interface Wallet {
   signTransaction<T extends Transaction | VersionedTransaction>(
