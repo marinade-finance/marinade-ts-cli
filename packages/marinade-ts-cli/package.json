@@ -45,12 +45,12 @@
         "expand-tilde": "^2.0.2",
         "pino": "^8.15.1",
         "pino-pretty": "^10.2.0",
-        "@marinade.finance/cli-common": "^2.0.20",
-        "@marinade.finance/web3js-common": "^2.0.20",
-        "@marinade.finance/ledger-utils": "^2.0.20"
+        "@marinade.finance/cli-common": "^2.0.21",
+        "@marinade.finance/web3js-common": "^2.0.21",
+        "@marinade.finance/ledger-utils": "^2.0.21"
     },
     "devDependencies": {
-        "@marinade.finance/jest-utils": "^2.0.20",
+        "@marinade.finance/jest-utils": "^2.0.21",
         "@types/bn.js": "^5.1.1",
         "@solana/spl-token-3.x": "npm:@solana/spl-token@^0.3.8"
     },

@@ -1,6 +1,6 @@
 {
     "name": "@marinade.finance/ts-common",
-    "version": "2.0.20",
+    "version": "2.0.21",
     "description": "TS common utilities",
     "repository": {
       "type": "git",

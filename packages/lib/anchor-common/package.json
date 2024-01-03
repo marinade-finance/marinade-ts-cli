@@ -1,6 +1,6 @@
 {
     "name": "@marinade.finance/anchor-common",
-    "version": "2.0.20",
+    "version": "2.0.21",
     "description": "Solana Anchor JS utilities",
     "repository": {
       "type": "git",
@@ -29,12 +29,12 @@
       "@solana/web3.js": "^1.78.5",
       "bn.js": "^5.2.1",
       "@coral-xyz/anchor": "^0.28.0",
-      "@marinade.finance/ts-common": "^2.0.20"
+      "@marinade.finance/ts-common": "^2.0.21"
   },
   "peerDependencies": {
       "@solana/web3.js": "^1.78.5",
       "bn.js": "^5.2.1",
       "@coral-xyz/anchor": "^0.28.0",
-      "@marinade.finance/ts-common": "^2.0.20"
+      "@marinade.finance/ts-common": "^2.0.21"
   }
 }
