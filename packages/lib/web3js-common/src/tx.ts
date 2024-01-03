@@ -295,6 +295,11 @@ export async function splitAndExecuteTx({
         'splitAndExecuteTx: transaction fee payer has to be defined, either in transaction or argument'
       )
     }
+    const uniqueSigners: Map<string, Wallet | Keypair | Signer> = new Map()
+    for (const signer of signers) {
+      uniqueSigners.set(signer.publicKey.toBase58(), signer)
+    }
+    signers = Array.from(uniqueSigners.values())
     const feePayerDefined: PublicKey = feePayer
     const feePayerSigner = signers.find(s =>
       s.publicKey.equals(feePayerDefined)
@@ -308,7 +313,6 @@ export async function splitAndExecuteTx({
     }
 
     const transactions: Transaction[] = []
-
     let blockhash: BlockhashWithExpiryBlockHeight
     if (
       transaction.recentBlockhash === undefined ||
