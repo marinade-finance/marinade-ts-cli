@@ -7,15 +7,18 @@ export function configureLogger(level = 'info'): Logger {
         errorLikeObjectKeys: [],
       }
     : {}
-  const logger: Logger = pino({
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        translateTime: 'UTC:yyyy-mm-dd HH:MM:ss.l o',
-        ...pinoAdditionalOptions,
+  const logger: Logger = pino(
+    {
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          translateTime: 'UTC:yyyy-mm-dd HH:MM:ss.l o',
+          ...pinoAdditionalOptions,
+        },
       },
+      level: level,
     },
-    level: level,
-  })
+    pino.destination()
+  )
   return logger
 }
