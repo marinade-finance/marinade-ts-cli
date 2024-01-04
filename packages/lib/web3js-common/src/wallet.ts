@@ -18,6 +18,7 @@ export interface Wallet {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function instanceOfWallet(object: any): object is Wallet {
   return (
+    object &&
     'signTransaction' in object &&
     'signAllTransactions' in object &&
     'publicKey' in object
