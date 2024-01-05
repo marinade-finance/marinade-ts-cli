@@ -4,7 +4,7 @@ import { Wallet } from '@coral-xyz/anchor'
 import { MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
 import {
   Context,
-  getClusterUrl,
+  parseClusterUrl,
   parseCommitment,
   parseKeypair,
   setContext,
@@ -62,7 +62,7 @@ export function setMarinadeCLIContext({
   command: string
 }) {
   const connection = new Connection(
-    getClusterUrl(url),
+    parseClusterUrl(url),
     parseCommitment(commitment)
   )
   setContext(

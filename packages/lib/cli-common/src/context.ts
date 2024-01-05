@@ -1,6 +1,6 @@
 import { Logger } from 'pino'
 import { Wallet } from '@marinade.finance/web3js-common'
-import { Transaction, VersionedTransaction, PublicKey } from '@solana/web3.js'
+import { NullWallet } from './wallet'
 
 let context: Context | undefined
 
@@ -49,21 +49,5 @@ export abstract class Context {
     this.skipPreflight = skipPreflight
     this.simulate = simulate
     this.printOnly = printOnly
-  }
-}
-
-export class NullWallet implements Wallet {
-  readonly publicKey: PublicKey = PublicKey.default
-
-  async signTransaction<T extends Transaction | VersionedTransaction>(
-    tx: T
-  ): Promise<T> {
-    return tx
-  }
-
-  async signAllTransactions<T extends Transaction | VersionedTransaction>(
-    txs: T[]
-  ): Promise<T[]> {
-    return txs
   }
 }

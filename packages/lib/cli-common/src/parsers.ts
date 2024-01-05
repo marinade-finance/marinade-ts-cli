@@ -7,6 +7,14 @@ import {
 } from '@solana/web3.js'
 import expandTilde from 'expand-tilde' // eslint-disable-line node/no-extraneous-import
 import { readFile } from 'fs/promises'
+import { doWithLock } from '@marinade.finance/ts-common'
+import { parseLedgerWallet } from '@marinade.finance/ledger-utils'
+import { CliCommandError } from './error'
+import { Wallet } from '@marinade.finance/web3js-common'
+import { Logger } from 'pino'
+import { getContext } from './context'
+import { configureLogger } from './pinoLogging'
+import { KeypairWallet } from './wallet'
 
 export async function parsePubkey(pubkeyOrPath: string): Promise<PublicKey> {
   try {
@@ -64,7 +72,54 @@ async function parsePubkeyWithPath(pubkeyOrPath: string): Promise<PublicKey> {
   }
 }
 
-export function getClusterUrl(url: string): string {
+// we don't want an async parsing would try
+// to open the same Ledger device twice
+const PARSE_SIGNER_LOCK = 'parseSignerLock'
+
+export async function parseWallet(
+  pathOrLedger: string,
+  logger: Logger
+): Promise<Wallet> {
+  let wallet
+  try {
+    wallet = await doWithLock(PARSE_SIGNER_LOCK, async () =>
+      parseLedgerWallet(pathOrLedger, logger)
+    )
+  } catch (err) {
+    throw new CliCommandError({
+      commandName: '',
+      valueName: '',
+      value: '',
+      msg: `Failed loading Ledger device [${pathOrLedger}]`,
+      cause: err as Error,
+    })
+  }
+  if (wallet) {
+    return wallet
+  }
+  const keypair = await parseKeypair(pathOrLedger)
+  return new KeypairWallet(keypair)
+}
+
+export async function parseWalletOrPubkey(
+  pubkeyOrPathOrLedger: string
+): Promise<Wallet | PublicKey> {
+  let logger: Logger
+  try {
+    logger = getContext().logger
+  } catch (e) {
+    // context logger is not set
+    // let's use not fully configured (but still logger) the logger from index.ts
+    logger = configureLogger()
+  }
+  try {
+    return await parseWallet(pubkeyOrPathOrLedger, logger)
+  } catch (err) {
+    return await parsePubkey(pubkeyOrPathOrLedger)
+  }
+}
+
+export function parseClusterUrl(url: string): string {
   let clusterUrl =
     url === 'd'
       ? 'devnet'

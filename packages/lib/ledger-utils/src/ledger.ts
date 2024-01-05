@@ -14,8 +14,8 @@ import {
   LoggerPlaceholder,
   logDebug,
   logInfo,
+  scheduleOnExit,
 } from '@marinade.finance/ts-common'
-import { exit } from 'process'
 
 export const CLI_LEDGER_URL_PREFIX = 'usb://ledger'
 export const SOLANA_LEDGER_BIP44_BASE_PATH = "44'/501'"
@@ -44,7 +44,7 @@ export interface Wallet {
 
 export class LedgerWallet implements Wallet {
   /**
-   * "Constructor" of SolanaLedger class.
+   * "Constructor" of Solana Ledger to be opened and worked as a Wallet.
    * From ledger url in format of usb://ledger[/<pubkey>[?key=<number>]
    * creates wrapper class around Solana ledger device from '@ledgerhq/hw-app-solana' package.
    */
@@ -52,6 +52,7 @@ export class LedgerWallet implements Wallet {
     ledgerUrl = '0',
     logger: LoggerPlaceholder | undefined = undefined
   ): Promise<LedgerWallet> {
+    // parsedPubkey could be undefined when not provided in url string
     const { parsedPubkey, parsedDerivedPath } = parseLedgerUrl(ledgerUrl)
 
     const { api, pubkey, derivedPath } = await LedgerWallet.getSolanaApi(
@@ -59,7 +60,6 @@ export class LedgerWallet implements Wallet {
       parsedDerivedPath,
       logger
     )
-    console.log('api created', pubkey.toBase58(), derivedPath) // TODO: remove me
     return new LedgerWallet(api, derivedPath, pubkey)
   }
 
@@ -93,14 +93,6 @@ export class LedgerWallet implements Wallet {
     return signedTxs
   }
 
-  private static async getPublicKey(
-    solanaApi: Solana,
-    derivedPath: string
-  ): Promise<PublicKey> {
-    const { address: bufAddress } = await solanaApi.getAddress(derivedPath)
-    return new PublicKey(bufAddress)
-  }
-
   /**
    * Based on the provided pubkey and derived path
    * it tries to match the ledger device and returns back the Solana API.
@@ -126,137 +118,73 @@ export class LedgerWallet implements Wallet {
     let transport: TransportNodeHid | undefined = undefined
     if (pubkey === undefined) {
       // we don't know where to search for the derived path and thus taking first device
-      // when pubkey is defined we search all available devices to match with the pubkey
-      const devicePath = ledgerDevices[0].path
-      transport = await TransportNodeHid.open(devicePath)
-      LedgerWallet.scheduleOnExitClose(transport)
-      IN_LIB_TRANSPORT_CACHE.set(devicePath, transport)
+      // when pubkey is defined we search all available devices to match the derived path with the pubkey
+      const firstDevicePath = ledgerDevices[0].path
+      transport = (await openTransports(firstDevicePath))[0]
     } else {
-      const openedTransports: Map<string, TransportNodeHid> = new Map()
-      for (const device of ledgerDevices) {
-        if (IN_LIB_TRANSPORT_CACHE.has(device.path)) {
-          openedTransports.set(device.path, IN_LIB_TRANSPORT_CACHE.get(device.path)!)
-        } else {
-          openedTransports.set(
-            device.path,
-            await TransportNodeHid.open(device.path)
-          )
-        }
-      }
-      LedgerWallet.scheduleOnExitClose(...openedTransports.values())
-
+      const openedTransports = await openTransports(...ledgerDevices)
       // if derived path is provided let's check if matches the pubkey
-      let foundTransportEntry: [string, TransportNodeHid] | undefined =
-        undefined
-      for (const openedTransport of openedTransports.entries()) {
-        const solanaApi = new Solana(openedTransport[1])
-        const ledgerPubkey = await LedgerWallet.getPublicKey(
-          solanaApi,
-          derivedPath
-        )
+      for (const openedTransport of openedTransports) {
+        const solanaApi = new Solana(openedTransport)
+        const ledgerPubkey = await getPublicKey(solanaApi, derivedPath)
         if (ledgerPubkey.equals(pubkey)) {
-          foundTransportEntry = openedTransport
+          transport = openedTransport
           break // the found transport is the one we need
         }
       }
-      if (foundTransportEntry === undefined) {
+      if (transport === undefined) {
         logInfo(
           logger,
-          `Ledger device does not provide pubkey ${pubkey.toBase58()} ` +
-            `at defined derivation path ${derivedPath}, searching...`
+          `Public key ${pubkey.toBase58()} has not been found at the default or provided ` +
+            `derivation path ${derivedPath}. Going to search, will take a while...`
         )
-        // parsing the derived path to check heuristic depth and wide
-        // when the derived path is 44'/501'/0/0/5
-        // then the wide will be 3, depth will be max of numbers as it's 5
-        let splitDerivedPath = derivedPath.split('/')
-        if (splitDerivedPath.length > 2) {
-          splitDerivedPath = splitDerivedPath.slice(2)
-          heuristicWide = splitDerivedPath.length
-          heuristicDepth = Math.max(
-            heuristicDepth,
-            ...splitDerivedPath.map(v => parseFloat(v))
-          )
-        }
-        const heuristicsCombinations: number[][] = generateAllCombinations(
+        const { depth, wide } = getHeuristicDepthAndWide(
+          derivedPath,
           heuristicDepth,
           heuristicWide
         )
-        for (const openedTransport of openedTransports.entries()) {
-          const solanaApi = new Solana(openedTransport[1])
+        const heuristicsCombinations: number[][] = generateAllCombinations(
+          depth,
+          wide
+        )
+        for (const openedTransport of openedTransports) {
+          const solanaApi = new Solana(openedTransport)
           for (const combination of heuristicsCombinations) {
             const strCombination = combination.map(v => v.toString())
             strCombination.unshift(SOLANA_LEDGER_BIP44_BASE_PATH)
             const heuristicDerivedPath = strCombination.join('/')
-
             logDebug(logger, `search loop: ${heuristicDerivedPath}`)
-            const ledgerPubkey = await LedgerWallet.getPublicKey(
+            const ledgerPubkey = await getPublicKey(
               solanaApi,
               heuristicDerivedPath
             )
             if (ledgerPubkey.equals(pubkey)) {
-              foundTransportEntry = openedTransport
+              transport = openedTransport
               derivedPath = heuristicDerivedPath
               logInfo(
                 logger,
                 `Using derived path ${derivedPath}, pubkey ${pubkey.toBase58()}`
               )
-              break // the last found transport is the one we need
+              break // we found the transport
             }
           }
-          if (foundTransportEntry !== undefined) {
-            break // the last transport found as the one we need
-          }
-        }
-        // let's close all the opened transports that are not the ones we need
-        if (foundTransportEntry !== undefined) {
-          transport = foundTransportEntry[1]
-          IN_LIB_TRANSPORT_CACHE.set(
-            foundTransportEntry[0],
-            transport
-          )
-        }
-        for (const transportToClose of openedTransports.entries()) {
-          if (
-            transportToClose !== undefined &&
-            !IN_LIB_TRANSPORT_CACHE.has(transportToClose[0])
-          ) {
-            transportToClose[1].close()
+          if (transport !== undefined) {
+            break // break out to the outer loop; we found the transport
           }
         }
       }
+    }
 
-      if (transport === undefined) {
-        throw new Error(
-          'Available ledger devices does not provide pubkey ' +
-            pubkey.toBase58() +
-            ' for derivation path ' +
-            derivedPath
-        )
-      }
+    if (transport === undefined) {
+      throw new Error(
+        'Available ledger devices does not provide pubkey ' +
+          `'${pubkey?.toBase58()}' for derivation path '${derivedPath}'`
+      )
     }
 
     const api = new Solana(transport)
-    pubkey = await LedgerWallet.getPublicKey(api, derivedPath)
+    pubkey = await getPublicKey(api, derivedPath)
     return { api, derivedPath, pubkey }
-  }
-
-  // trying to close all provided transports in case of abrupt exit, or just exit
-  private static scheduleOnExitClose(...transports: TransportNodeHid[]): void {
-    if (process) {
-      const signals = ['SIGINT', 'SIGTERM', 'SIGQUIT', 'exit']
-      signals.forEach(signal =>
-        process.on(signal, () => {
-          for (const openedTransport of transports) {
-            try {
-              openedTransport.close()
-            } catch (e) {
-              // ignore error and go to next transport
-            }
-            exit()
-          }
-        })
-      )
-    }
   }
 
   /**
@@ -273,9 +201,7 @@ export class LedgerWallet implements Wallet {
     console.log(
       'signing message',
       this.derivedPath,
-      (
-        await LedgerWallet.getPublicKey(this.solanaApi, this.derivedPath)
-      ).toBase58()
+      (await getPublicKey(this.solanaApi, this.derivedPath)).toBase58()
     )
     const { signature } = await this.solanaApi.signTransaction(
       this.derivedPath,
@@ -283,6 +209,18 @@ export class LedgerWallet implements Wallet {
     )
     return signature
   }
+}
+
+/**
+ * From provided Solana API and derived path
+ * it returns the public key of the derived path.
+ */
+export async function getPublicKey(
+  solanaApi: Solana,
+  derivedPath: string
+): Promise<PublicKey> {
+  const { address: bufAddress } = await solanaApi.getAddress(derivedPath)
+  return new PublicKey(bufAddress)
 }
 
 /**
@@ -357,4 +295,101 @@ export function parseLedgerUrl(ledgerUrl: string): {
   }
 
   return { parsedPubkey, parsedDerivedPath }
+}
+
+export async function searchDerivedPathFromPubkey(
+  pubkey: PublicKey,
+  logger: LoggerPlaceholder | undefined = undefined,
+  heuristicDepth: number | undefined = 10,
+  heuristicWide: number | undefined = 3
+): Promise<{ derivedPath: string; solanaApi: Solana } | null> {
+  const ledgerDevices = getDevices()
+  if (ledgerDevices.length === 0) {
+    throw new Error('No ledger device found')
+  }
+  const openedTransports = await openTransports(...ledgerDevices)
+
+  const heuristicsCombinations: number[][] = generateAllCombinations(
+    heuristicDepth,
+    heuristicWide
+  )
+
+  for (const openedTransport of openedTransports) {
+    const solanaApi = new Solana(openedTransport)
+    for (const combination of heuristicsCombinations) {
+      const strCombination = combination.map(v => v.toString())
+      strCombination.unshift(SOLANA_LEDGER_BIP44_BASE_PATH)
+      const heuristicDerivedPath = strCombination.join('/')
+
+      logDebug(logger, `search loop: ${heuristicDerivedPath}`)
+      const ledgerPubkey = await getPublicKey(solanaApi, heuristicDerivedPath)
+      if (ledgerPubkey.equals(pubkey)) {
+        logDebug(
+          logger,
+          `Using derived path ${heuristicDerivedPath}, pubkey ${pubkey.toBase58()}`
+        )
+        return { derivedPath: heuristicDerivedPath, solanaApi }
+      }
+    }
+  }
+  return null
+}
+
+/**
+ *
+ * Parsing the derived path string to check heuristic depth and wide.
+ *
+ * When the derived path is e.g., 44'/501'/0/0/5 then
+ * the wide will be 3, depth will be max of the provided numbers as it's 5.
+ */
+export function getHeuristicDepthAndWide(
+  derivedPath: string,
+  defaultDepth = 10,
+  defaultWide = 3
+): { depth: number; wide: number } {
+  let depth = defaultDepth
+  let wide = defaultWide
+
+  let splitDerivedPath = derivedPath.split('/')
+  // we expect derived path starts with solana derivation path 44'/501'
+  // going to check parts after first 2
+  if (splitDerivedPath.length > 2) {
+    splitDerivedPath = splitDerivedPath.slice(2)
+    wide = Math.max(defaultWide, splitDerivedPath.length)
+    depth = Math.max(defaultDepth, ...splitDerivedPath.map(v => parseFloat(v)))
+  }
+  return { depth, wide }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function openTransports(...devices: any[]): Promise<TransportNodeHid[]> {
+  const transports: TransportNodeHid[] = []
+  for (const device of devices) {
+    let transport = IN_LIB_TRANSPORT_CACHE.get(device.path)
+    if (transport === undefined) {
+      transport = await TransportNodeHid.open(device.path)
+      scheduleTransportCloseOnExit(transport)
+      IN_LIB_TRANSPORT_CACHE.set(device.path, transport)
+    }
+    transports.push(transport)
+  }
+  return transports
+}
+
+/**
+ * Trying to close all provided transports in case of abrupt exit, or just exit
+ * (ignoring errors when closing the transport).
+ *
+ * @param transports set of transport to be closed on exit
+ */
+function scheduleTransportCloseOnExit(...transports: TransportNodeHid[]): void {
+  scheduleOnExit(() => {
+    for (const openedTransport of transports) {
+      try {
+        openedTransport.close()
+      } catch (e) {
+        // ignore error and go to next transport
+      }
+    }
+  })
 }

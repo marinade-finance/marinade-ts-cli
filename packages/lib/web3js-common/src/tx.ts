@@ -12,6 +12,7 @@ import {
   PublicKey,
   ComputeBudgetProgram,
   SendOptions,
+  VersionedTransaction,
 } from '@solana/web3.js'
 import { Wallet, instanceOfWallet } from './wallet'
 import { serializeInstructionToBase64 } from './txToBase64'
@@ -194,6 +195,15 @@ export function isSimulatedTransactionResponse(
     (response as SimulatedTransactionResponse).unitsConsumed !== undefined &&
     (response as SimulatedTransactionResponse).returnData !== undefined
   )
+}
+
+/**
+ * Verified if object is the versioned transaction
+ */
+export function isVersionedTransaction(
+  transaction: Transaction | VersionedTransaction
+): transaction is VersionedTransaction {
+  return 'version' in transaction
 }
 
 /**

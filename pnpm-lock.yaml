@@ -74,6 +74,12 @@ importers:
 
   packages/lib/cli-common:
     devDependencies:
+      '@marinade.finance/ledger-utils':
+        specifier: ^2.0.22
+        version: link:../ledger-utils
+      '@marinade.finance/ts-common':
+        specifier: ^2.0.22
+        version: link:../ts-common
       '@marinade.finance/web3js-common':
         specifier: ^2.0.22
         version: link:../web3js-common
