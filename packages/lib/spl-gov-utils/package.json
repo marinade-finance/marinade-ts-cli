@@ -1,6 +1,6 @@
 {
     "name": "@marinade.finance/spl-gov-utils",
-    "version": "2.0.22",
+    "version": "2.1.0",
     "description": "SPL Governance Utilities",
     "repository": {
       "type": "git",
