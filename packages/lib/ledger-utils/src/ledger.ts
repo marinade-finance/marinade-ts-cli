@@ -22,6 +22,8 @@ export const SOLANA_LEDGER_BIP44_BASE_PATH = "44'/501'"
 export const SOLANA_LEDGER_BIP44_BASE_REGEXP = /^44[']{0,1}\/501[']{0,1}\//
 export const DEFAULT_DERIVATION_PATH = SOLANA_LEDGER_BIP44_BASE_PATH
 
+const IN_LIB_TRANSPORT_CACHE: Map<string, TransportNodeHid> = new Map()
+
 /**
  * Wallet interface for objects that can be used to sign provider transactions.
  * The interface is compatible with @coral-xyz/anchor/dist/cjs/provider in version 0.28.0
@@ -50,17 +52,15 @@ export class LedgerWallet implements Wallet {
     ledgerUrl = '0',
     logger: LoggerPlaceholder | undefined = undefined
   ): Promise<LedgerWallet> {
-    const { pubkey, derivedPath: parsedDerivedPath } = parseLedgerUrl(ledgerUrl)
+    const { parsedPubkey, parsedDerivedPath } = parseLedgerUrl(ledgerUrl)
 
-    // getting
-    const { api, derivedPath } = await LedgerWallet.getSolanaApi(
-      pubkey,
+    const { api, pubkey, derivedPath } = await LedgerWallet.getSolanaApi(
+      parsedPubkey,
       parsedDerivedPath,
       logger
     )
-    const publicKey = await LedgerWallet.getPublicKey(api, derivedPath)
-
-    return new LedgerWallet(api, derivedPath, publicKey)
+    console.log('api created', pubkey.toBase58(), derivedPath) // TODO: remove me
+    return new LedgerWallet(api, derivedPath, pubkey)
   }
 
   private constructor(
@@ -117,7 +117,7 @@ export class LedgerWallet implements Wallet {
     logger: LoggerPlaceholder | undefined = undefined,
     heuristicDepth: number | undefined = 10,
     heuristicWide: number | undefined = 3
-  ): Promise<{ api: Solana; derivedPath: string }> {
+  ): Promise<{ api: Solana; derivedPath: string; pubkey: PublicKey }> {
     const ledgerDevices = getDevices()
     if (ledgerDevices.length === 0) {
       throw new Error('No ledger device found')
@@ -125,29 +125,41 @@ export class LedgerWallet implements Wallet {
 
     let transport: TransportNodeHid | undefined = undefined
     if (pubkey === undefined) {
-      // taking first device
-      transport = await TransportNodeHid.open('')
+      // we don't know where to search for the derived path and thus taking first device
+      // when pubkey is defined we search all available devices to match with the pubkey
+      const devicePath = ledgerDevices[0].path
+      transport = await TransportNodeHid.open(devicePath)
       LedgerWallet.scheduleOnExitClose(transport)
+      IN_LIB_TRANSPORT_CACHE.set(devicePath, transport)
     } else {
-      const openedTransports: TransportNodeHid[] = []
+      const openedTransports: Map<string, TransportNodeHid> = new Map()
       for (const device of ledgerDevices) {
-        openedTransports.push(await TransportNodeHid.open(device.path))
+        if (IN_LIB_TRANSPORT_CACHE.has(device.path)) {
+          openedTransports.set(device.path, IN_LIB_TRANSPORT_CACHE.get(device.path)!)
+        } else {
+          openedTransports.set(
+            device.path,
+            await TransportNodeHid.open(device.path)
+          )
+        }
       }
-      LedgerWallet.scheduleOnExitClose(...openedTransports)
+      LedgerWallet.scheduleOnExitClose(...openedTransports.values())
 
       // if derived path is provided let's check if matches the pubkey
-      for (const openedTransport of openedTransports) {
-        const solanaApi = new Solana(openedTransport)
+      let foundTransportEntry: [string, TransportNodeHid] | undefined =
+        undefined
+      for (const openedTransport of openedTransports.entries()) {
+        const solanaApi = new Solana(openedTransport[1])
         const ledgerPubkey = await LedgerWallet.getPublicKey(
           solanaApi,
           derivedPath
         )
         if (ledgerPubkey.equals(pubkey)) {
-          transport = openedTransport
+          foundTransportEntry = openedTransport
           break // the found transport is the one we need
         }
       }
-      if (transport === undefined) {
+      if (foundTransportEntry === undefined) {
         logInfo(
           logger,
           `Ledger device does not provide pubkey ${pubkey.toBase58()} ` +
@@ -169,8 +181,8 @@ export class LedgerWallet implements Wallet {
           heuristicDepth,
           heuristicWide
         )
-        for (const openedTransport of openedTransports) {
-          const solanaApi = new Solana(openedTransport)
+        for (const openedTransport of openedTransports.entries()) {
+          const solanaApi = new Solana(openedTransport[1])
           for (const combination of heuristicsCombinations) {
             const strCombination = combination.map(v => v.toString())
             strCombination.unshift(SOLANA_LEDGER_BIP44_BASE_PATH)
@@ -182,7 +194,7 @@ export class LedgerWallet implements Wallet {
               heuristicDerivedPath
             )
             if (ledgerPubkey.equals(pubkey)) {
-              transport = openedTransport
+              foundTransportEntry = openedTransport
               derivedPath = heuristicDerivedPath
               logInfo(
                 logger,
@@ -191,12 +203,26 @@ export class LedgerWallet implements Wallet {
               break // the last found transport is the one we need
             }
           }
-          if (transport !== undefined) {
-            break // the last transport found as the last one is the one we need
+          if (foundTransportEntry !== undefined) {
+            break // the last transport found as the one we need
           }
         }
         // let's close all the opened transports that are not the ones we need
-        openedTransports.filter(t => t !== transport).forEach(t => t.close())
+        if (foundTransportEntry !== undefined) {
+          transport = foundTransportEntry[1]
+          IN_LIB_TRANSPORT_CACHE.set(
+            foundTransportEntry[0],
+            transport
+          )
+        }
+        for (const transportToClose of openedTransports.entries()) {
+          if (
+            transportToClose !== undefined &&
+            !IN_LIB_TRANSPORT_CACHE.has(transportToClose[0])
+          ) {
+            transportToClose[1].close()
+          }
+        }
       }
 
       if (transport === undefined) {
@@ -209,7 +235,9 @@ export class LedgerWallet implements Wallet {
       }
     }
 
-    return { api: new Solana(transport), derivedPath }
+    const api = new Solana(transport)
+    pubkey = await LedgerWallet.getPublicKey(api, derivedPath)
+    return { api, derivedPath, pubkey }
   }
 
   // trying to close all provided transports in case of abrupt exit, or just exit
@@ -242,6 +270,13 @@ export class LedgerWallet implements Wallet {
    * ```
    */
   private async signMessage(message: MessageV0 | Message): Promise<Buffer> {
+    console.log(
+      'signing message',
+      this.derivedPath,
+      (
+        await LedgerWallet.getPublicKey(this.solanaApi, this.derivedPath)
+      ).toBase58()
+    )
     const { signature } = await this.solanaApi.signTransaction(
       this.derivedPath,
       Buffer.from(message.serialize())
@@ -261,8 +296,8 @@ export class LedgerWallet implements Wallet {
  * - `usb://ledger/9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd?key=0/1` - searching of all ledger devices where solana derivation path 44/501/0/1 will result in pubkey 9rPVSygg3brqghvdZ6wsL2i5YNQTGhXGdJzF65YxaCQd
  */
 export function parseLedgerUrl(ledgerUrl: string): {
-  pubkey: PublicKey | undefined
-  derivedPath: string
+  parsedPubkey: PublicKey | undefined
+  parsedDerivedPath: string
 } {
   ledgerUrl = ledgerUrl.trim()
   if (!ledgerUrl.startsWith(CLI_LEDGER_URL_PREFIX)) {
@@ -270,8 +305,8 @@ export function parseLedgerUrl(ledgerUrl: string): {
       `Invalid ledger url ${ledgerUrl}. Expected url started with "usb://ledger".`
     )
   }
-  let pubkey: PublicKey | undefined
-  let derivedPath: string
+  let parsedPubkey: PublicKey | undefined
+  let parsedDerivedPath: string
 
   // removal of the prefix + optional slash
   const ledgerUrlRegexp = new RegExp(CLI_LEDGER_URL_PREFIX + '/?')
@@ -297,22 +332,22 @@ export function parseLedgerUrl(ledgerUrl: string): {
   const parts = ledgerUrl.split('?key=')
   if (parts.length === 1) {
     //case: usb://ledger/<pubkey>
-    pubkey = parsePubkey(parts[0])
-    derivedPath = DEFAULT_DERIVATION_PATH
+    parsedPubkey = parsePubkey(parts[0])
+    parsedDerivedPath = DEFAULT_DERIVATION_PATH
   } else if (parts.length === 2) {
     //case: usb://ledger/<pubkey>?key=<number>
-    pubkey = parsePubkey(parts[0])
+    parsedPubkey = parsePubkey(parts[0])
     const key = parts[1]
     if (key === '') {
       // case: usb://ledger/<pubkey>?key=
-      derivedPath = DEFAULT_DERIVATION_PATH
+      parsedDerivedPath = DEFAULT_DERIVATION_PATH
     } else if (SOLANA_LEDGER_BIP44_BASE_REGEXP.test(key)) {
       // case: usb://ledger/<pubkey>?key=44'/501'/<number>
-      derivedPath = key
+      parsedDerivedPath = key
     } else {
       // case: usb://ledger/<pubkey>?key=<number>
       const keyTrimmed = key.replace(/^\//, '')
-      derivedPath = SOLANA_LEDGER_BIP44_BASE_PATH + '/' + keyTrimmed
+      parsedDerivedPath = SOLANA_LEDGER_BIP44_BASE_PATH + '/' + keyTrimmed
     }
   } else {
     throw new Error(
@@ -321,5 +356,5 @@ export function parseLedgerUrl(ledgerUrl: string): {
     )
   }
 
-  return { pubkey, derivedPath }
+  return { parsedPubkey, parsedDerivedPath }
 }

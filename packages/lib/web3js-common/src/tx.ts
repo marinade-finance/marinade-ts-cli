@@ -80,6 +80,7 @@ export async function executeTx({
     }
   }
 
+  let txSig: string | undefined = undefined
   try {
     if (simulate) {
       logWarn(logger, '[[Simulation mode]]')
@@ -92,7 +93,7 @@ export async function executeTx({
         )
       }
     } else if (!printOnly) {
-      const txSig = await connection.sendRawTransaction(
+      txSig = await connection.sendRawTransaction(
         transaction.serialize(),
         sendOpts
       )
@@ -141,7 +142,7 @@ export async function executeTx({
     }
   } catch (e) {
     throw new ExecutionError({
-      msg: errMessage,
+      msg: txSig ? `${txSig} ` : '' + errMessage,
       cause: e as Error,
       logs: (e as SendTransactionError).logs
         ? (e as SendTransactionError).logs

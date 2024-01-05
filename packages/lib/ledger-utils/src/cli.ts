@@ -35,7 +35,8 @@ export async function parseLedgerWallet(
         if (e.statusCode === 0x6d02) {
           logError(
             logger,
-            'Ledger device Solana application is not activated. ' +
+            `Ledger device [${pathOrUrl}] ` +
+              ': Solana application is not opened. ' +
               'Please, enter the Solana app on your ledger device first.'
           )
         } else if (e.statusCode === 0x6808) {
@@ -44,6 +45,12 @@ export async function parseLedgerWallet(
             'Solana application does not permit blind signatures. ' +
               'Please, permit it in the Solana app settings at the ledger device first.'
           )
+        } else if (e.statusCode === 0x5515) {
+          logError(
+            logger,
+            `Ledger device [${pathOrUrl}] is locked. ` +
+              'Please, unlock it first.'
+          )
         }
       } else if (
         e instanceof TransportError &&
@@ -51,13 +58,14 @@ export async function parseLedgerWallet(
       ) {
         logError(
           logger,
-          'Ledger device seems not being acknowledged to open the ledger manager. ' +
+          `Ledger device  [${pathOrUrl}] seems not being acknowledged to have opened the manager. ` +
             'Please, open ledger manager first on your device.'
         )
       } else if (e instanceof LockedDeviceError) {
         logError(
           logger,
-          'Ledger device is locked. ' + 'Please, unlock it first.'
+          `Ledger device [${pathOrUrl}] is locked. ` +
+            'Please, unlock it first.'
         )
       } else if (
         e instanceof Error &&
@@ -65,13 +73,11 @@ export async function parseLedgerWallet(
       ) {
         logError(
           logger,
-          'Ledger cannot be open, it seems to be closed. Ensure no other program uses it.'
+          `Ledger device [${pathOrUrl}] ` +
+            'cannot be open, it seems to be closed. Ensure no other program uses it.'
         )
       } else {
-        logError(
-          logger,
-          `Failed to connect to Ledger device of key ${pathOrUrl}`
-        )
+        logError(logger, `Failed to connect to Ledger device [${pathOrUrl}]`)
       }
       throw e
     }
