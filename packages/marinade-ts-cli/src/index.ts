@@ -2,10 +2,10 @@
 
 /* eslint-disable no-process-exit */
 import { Command } from 'commander'
-import { parseSigner, setMarinadeCLIContext } from './context'
+import { setMarinadeCLIContext } from './context'
 import { installCommands } from './commands'
 import { Logger } from 'pino'
-import { configureLogger } from '@marinade.finance/cli-common'
+import { configureLogger, parseWallet } from '@marinade.finance/cli-common'
 
 const DEFAULT_KEYPAIR_PATH = '~/.config/solana/id.json'
 const logger: Logger = configureLogger()
@@ -46,7 +46,7 @@ program
     }
 
     let walletSigner = (await command.opts().keypair) ?? DEFAULT_KEYPAIR_PATH
-    walletSigner = await parseSigner(walletSigner, logger)
+    walletSigner = await parseWallet(walletSigner, logger)
 
     setMarinadeCLIContext({
       url: command.opts().url as string,

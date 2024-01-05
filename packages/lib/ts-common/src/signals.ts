@@ -35,10 +35,11 @@ function runHooks(signal: string): void {
       }
     })
   }
-  if (EXIT_SIGNALS.includes(signal)) {
-    // eslint-disable-next-line no-process-exit
-    process.exit(exitSignalsToCode.get(signal) ?? 0)
-  }
+  // TODO: not sure if needed to really do the process.exit, it seems it's ok to just return
+  // if (EXIT_SIGNALS.includes(signal)) {
+  //   // eslint-disable-next-line no-process-exit
+  //   process.exit(exitSignalsToCode.get(signal) ?? 0)
+  // }
 }
 
 export function scheduleOn(hook: () => void, ...signals: string[]): void {

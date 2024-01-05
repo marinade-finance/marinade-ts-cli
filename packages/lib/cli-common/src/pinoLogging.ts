@@ -1,5 +1,7 @@
 import pino, { Logger } from 'pino'
 
+export let PINO_CONFIGURED_LOGGER: Logger | undefined
+
 export function configureLogger(level = 'info'): Logger {
   const pinoAdditionalOptions = process.env.NODE_ENV?.startsWith('prod')
     ? {
@@ -20,5 +22,6 @@ export function configureLogger(level = 'info'): Logger {
     },
     pino.destination()
   )
+  PINO_CONFIGURED_LOGGER = logger
   return logger
 }

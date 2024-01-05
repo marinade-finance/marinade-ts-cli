@@ -60,13 +60,14 @@ export class LedgerWallet implements Wallet {
       parsedDerivedPath,
       logger
     )
-    return new LedgerWallet(api, derivedPath, pubkey)
+    return new LedgerWallet(api, derivedPath, pubkey, logger)
   }
 
   private constructor(
     public readonly solanaApi: Solana,
     public readonly derivedPath: string,
-    public readonly publicKey: PublicKey
+    public readonly publicKey: PublicKey,
+    public readonly logger: LoggerPlaceholder | undefined = undefined
   ) {}
 
   public async signTransaction<T extends Transaction | VersionedTransaction>(
@@ -118,9 +119,9 @@ export class LedgerWallet implements Wallet {
     let transport: TransportNodeHid | undefined = undefined
     if (pubkey === undefined) {
       // we don't know where to search for the derived path and thus taking first device
-      // when pubkey is defined we search all available devices to match the derived path with the pubkey
-      const firstDevicePath = ledgerDevices[0].path
-      transport = (await openTransports(firstDevicePath))[0]
+      // we will search for the provided derived path at this first device when signing message
+      // when pubkey is defined we search all available devices to find a match of pubkey and derived path
+      transport = (await openTransports(ledgerDevices[0]))[0]
     } else {
       const openedTransports = await openTransports(...ledgerDevices)
       // if derived path is provided let's check if matches the pubkey
@@ -136,41 +137,26 @@ export class LedgerWallet implements Wallet {
         logInfo(
           logger,
           `Public key ${pubkey.toBase58()} has not been found at the default or provided ` +
-            `derivation path ${derivedPath}. Going to search, will take a while...`
+            `derivation path ${derivedPath}. Going to search, it will take a while...`
         )
         const { depth, wide } = getHeuristicDepthAndWide(
           derivedPath,
           heuristicDepth,
           heuristicWide
         )
-        const heuristicsCombinations: number[][] = generateAllCombinations(
+        const searchedData = await searchDerivedPathFromPubkey(
+          pubkey,
+          logger,
           depth,
           wide
         )
-        for (const openedTransport of openedTransports) {
-          const solanaApi = new Solana(openedTransport)
-          for (const combination of heuristicsCombinations) {
-            const strCombination = combination.map(v => v.toString())
-            strCombination.unshift(SOLANA_LEDGER_BIP44_BASE_PATH)
-            const heuristicDerivedPath = strCombination.join('/')
-            logDebug(logger, `search loop: ${heuristicDerivedPath}`)
-            const ledgerPubkey = await getPublicKey(
-              solanaApi,
-              heuristicDerivedPath
-            )
-            if (ledgerPubkey.equals(pubkey)) {
-              transport = openedTransport
-              derivedPath = heuristicDerivedPath
-              logInfo(
-                logger,
-                `Using derived path ${derivedPath}, pubkey ${pubkey.toBase58()}`
-              )
-              break // we found the transport
-            }
-          }
-          if (transport !== undefined) {
-            break // break out to the outer loop; we found the transport
-          }
+        if (searchedData !== null) {
+          transport = searchedData.transport
+          derivedPath = searchedData.derivedPath
+          logInfo(
+            logger,
+            `For public key ${pubkey.toBase58()} has been found derived path ${derivedPath}`
+          )
         }
       }
     }
@@ -198,10 +184,11 @@ export class LedgerWallet implements Wallet {
    * ```
    */
   private async signMessage(message: MessageV0 | Message): Promise<Buffer> {
-    console.log(
-      'signing message',
-      this.derivedPath,
-      (await getPublicKey(this.solanaApi, this.derivedPath)).toBase58()
+    logDebug(
+      this.logger,
+      'signing message with pubkey ' +
+        (await getPublicKey(this.solanaApi, this.derivedPath)).toBase58() +
+        ` of derived path ${this.derivedPath}`
     )
     const { signature } = await this.solanaApi.signTransaction(
       this.derivedPath,
@@ -302,7 +289,11 @@ export async function searchDerivedPathFromPubkey(
   logger: LoggerPlaceholder | undefined = undefined,
   heuristicDepth: number | undefined = 10,
   heuristicWide: number | undefined = 3
-): Promise<{ derivedPath: string; solanaApi: Solana } | null> {
+): Promise<{
+  derivedPath: string
+  solanaApi: Solana
+  transport: TransportNodeHid
+} | null> {
   const ledgerDevices = getDevices()
   if (ledgerDevices.length === 0) {
     throw new Error('No ledger device found')
@@ -314,8 +305,8 @@ export async function searchDerivedPathFromPubkey(
     heuristicWide
   )
 
-  for (const openedTransport of openedTransports) {
-    const solanaApi = new Solana(openedTransport)
+  for (const transport of openedTransports) {
+    const solanaApi = new Solana(transport)
     for (const combination of heuristicsCombinations) {
       const strCombination = combination.map(v => v.toString())
       strCombination.unshift(SOLANA_LEDGER_BIP44_BASE_PATH)
@@ -326,9 +317,9 @@ export async function searchDerivedPathFromPubkey(
       if (ledgerPubkey.equals(pubkey)) {
         logDebug(
           logger,
-          `Using derived path ${heuristicDerivedPath}, pubkey ${pubkey.toBase58()}`
+          `Found path ${heuristicDerivedPath}, pubkey ${pubkey.toBase58()}`
         )
-        return { derivedPath: heuristicDerivedPath, solanaApi }
+        return { derivedPath: heuristicDerivedPath, solanaApi, transport }
       }
     }
   }

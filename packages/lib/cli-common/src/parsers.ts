@@ -13,7 +13,7 @@ import { CliCommandError } from './error'
 import { Wallet } from '@marinade.finance/web3js-common'
 import { Logger } from 'pino'
 import { getContext } from './context'
-import { configureLogger } from './pinoLogging'
+import { PINO_CONFIGURED_LOGGER } from './pinoLogging'
 import { KeypairWallet } from './wallet'
 
 export async function parsePubkey(pubkeyOrPath: string): Promise<PublicKey> {
@@ -31,7 +31,7 @@ export async function parsePubkey(pubkeyOrPath: string): Promise<PublicKey> {
   }
 }
 
-export async function parsePubkeyOrKeypair(
+export async function parseKeypairOrPubkey(
   pubkeyOrPath: string
 ): Promise<PublicKey | Keypair> {
   try {
@@ -78,7 +78,7 @@ const PARSE_SIGNER_LOCK = 'parseSignerLock'
 
 export async function parseWallet(
   pathOrLedger: string,
-  logger: Logger
+  logger: Logger | undefined
 ): Promise<Wallet> {
   let wallet
   try {
@@ -104,13 +104,12 @@ export async function parseWallet(
 export async function parseWalletOrPubkey(
   pubkeyOrPathOrLedger: string
 ): Promise<Wallet | PublicKey> {
-  let logger: Logger
+  let logger: Logger | undefined = undefined
   try {
     logger = getContext().logger
   } catch (e) {
-    // context logger is not set
-    // let's use not fully configured (but still logger) the logger from index.ts
-    logger = configureLogger()
+    // context logger is not set, use default
+    logger = PINO_CONFIGURED_LOGGER
   }
   try {
     return await parseWallet(pubkeyOrPathOrLedger, logger)

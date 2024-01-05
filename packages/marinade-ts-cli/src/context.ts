@@ -1,16 +1,13 @@
 import { Connection } from '@solana/web3.js'
 import { Wallet as AnchorWalletInterface } from '@coral-xyz/anchor/dist/cjs/provider'
-import { Wallet } from '@coral-xyz/anchor'
 import { MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
 import {
   Context,
   parseClusterUrl,
   parseCommitment,
-  parseKeypair,
   setContext,
   getContext,
 } from '@marinade.finance/cli-common'
-import { parseLedgerWallet } from '@marinade.finance/ledger-utils'
 import { Logger } from 'pino'
 
 export class MarinadeCLIContext extends Context {
@@ -81,16 +78,4 @@ export function setMarinadeCLIContext({
 
 export function getMarinadeCliContext(): MarinadeCLIContext {
   return getContext() as MarinadeCLIContext
-}
-
-export async function parseSigner(
-  pathOrUrl: string,
-  logger: Logger
-): Promise<AnchorWalletInterface> {
-  const wallet = await parseLedgerWallet(pathOrUrl, logger)
-  if (wallet) {
-    return wallet
-  }
-  const keypair = await parseKeypair(pathOrUrl)
-  return new Wallet(keypair)
 }
