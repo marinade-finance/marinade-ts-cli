@@ -279,13 +279,15 @@ export async function splitAndExecuteTx({
   logger?: LoggerPlaceholder
   exceedBudget?: boolean
   sendOpts?: SendOptions
-}): Promise<
-  VersionedTransactionResponse[] | SimulatedTransactionResponse[] | []
-> {
+}): Promise<{
+  result: VersionedTransactionResponse[] | SimulatedTransactionResponse[] | []
+  transactions: Transaction[]
+}> {
   const result:
     | VersionedTransactionResponse[]
     | SimulatedTransactionResponse[]
     | [] = []
+  const resultTransactions: Transaction[] = []
 
   // only to print in base64
   if (!simulate && printOnly) {
@@ -299,6 +301,7 @@ export async function splitAndExecuteTx({
       printOnly,
       sendOpts,
     })
+    resultTransactions.push(transaction)
   } else {
     feePayer = feePayer || transaction.feePayer
     if (feePayer === undefined) {
@@ -389,6 +392,7 @@ export async function splitAndExecuteTx({
     }
 
     let executionCounter = 0
+    resultTransactions.push(...transactions)
     for (const transaction of transactions) {
       const txSigners: (Signer | Wallet)[] = filterSignersForInstruction(
         transaction.instructions,
@@ -420,7 +424,7 @@ export async function splitAndExecuteTx({
     }
   }
 
-  return result
+  return { result, transactions: resultTransactions }
 }
 
 /**
