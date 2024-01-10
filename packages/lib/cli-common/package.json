@@ -1,6 +1,6 @@
 {
   "name": "@marinade.finance/cli-common",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "CLI tooling",
   "repository": {
     "type": "git",
@@ -26,9 +26,9 @@
   ],
   "devDependencies": {
     "@solana/web3.js": "^1.78.5",
-    "@marinade.finance/web3js-common": "^2.1.0",
-    "@marinade.finance/ts-common": "^2.1.0",
-    "@marinade.finance/ledger-utils": "^2.1.0",
+    "@marinade.finance/web3js-common": "^2.1.1",
+    "@marinade.finance/ts-common": "^2.1.1",
+    "@marinade.finance/ledger-utils": "^2.1.1",
     "@types/expand-tilde": "^2.0.0",
     "bn.js": "^5.2.1",
     "borsh": "^0.7.0",
@@ -39,9 +39,9 @@
   },
   "peerDependencies": {
     "@solana/web3.js": "^1.78.5",
-    "@marinade.finance/web3js-common": "^2.1.0",
-    "@marinade.finance/ts-common": "^2.1.0",
-    "@marinade.finance/ledger-utils": "^2.1.0",
+    "@marinade.finance/web3js-common": "^2.1.1",
+    "@marinade.finance/ts-common": "^2.1.1",
+    "@marinade.finance/ledger-utils": "^2.1.1",
     "bn.js": "^5.2.1",
     "borsh": "^0.7.0",
     "bs58": "^5.0.0",
