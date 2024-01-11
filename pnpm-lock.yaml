@@ -141,18 +141,7 @@ importers:
         specifier: ^1.78.4
         version: 1.78.5
 
-  packages/lib/spl-gov-utils:
-    dependencies:
-      solana-spl-token-modern:
-        specifier: npm:@solana/spl-token@^0.3.8
-        version: /@solana/spl-token@0.3.8(@solana/web3.js@1.78.5)
-    devDependencies:
-      '@coral-xyz/anchor':
-        specifier: '0.28'
-        version: 0.28.0
-      '@solana/web3.js':
-        specifier: ^1.78.4
-        version: 1.78.5
+  packages/lib/spl-gov-utils: {}
 
   packages/lib/ts-common: {}
 
@@ -1334,22 +1323,6 @@ packages:
       - bufferutil
       - encoding
       - utf-8-validate
-
-  /@solana/spl-token@0.3.8(@solana/web3.js@1.78.5):
-    resolution: {integrity: sha512-ogwGDcunP9Lkj+9CODOWMiVJEdRtqHAtX2rWF62KxnnSWtMZtV9rDhTrZFshiyJmxDnRL/1nKE1yJHg4jjs3gg==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      '@solana/web3.js': ^1.47.4
-    dependencies:
-      '@solana/buffer-layout': 4.0.1
-      '@solana/buffer-layout-utils': 0.2.0
-      '@solana/web3.js': 1.78.5
-      buffer: 6.0.3
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - utf-8-validate
-    dev: false
 
   /@solana/web3.js@1.78.4:
     resolution: {integrity: sha512-up5VG1dK+GPhykmuMIozJZBbVqpm77vbOG6/r5dS7NBGZonwHfTLdBbsYc3rjmaQ4DpCXUa3tUc4RZHRORvZrw==}
