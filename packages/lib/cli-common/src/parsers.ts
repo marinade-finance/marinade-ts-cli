@@ -118,7 +118,8 @@ export async function parseWalletOrPubkey(
   }
 }
 
-export function parseClusterUrl(url: string): string {
+export function parseClusterUrl(url: string | undefined): string {
+  const localhost = 'http://127.0.0.1:8899'
   let clusterUrl =
     url === 'd'
       ? 'devnet'
@@ -127,15 +128,15 @@ export function parseClusterUrl(url: string): string {
       : url === 'm' || url === 'mainnet'
       ? 'mainnet-beta'
       : url === 'l' || url === 'localnet' || url === 'localhost'
-      ? 'http://127.0.0.1:8899'
+      ? localhost
       : url
 
   try {
-    clusterUrl = clusterApiUrl(clusterUrl as Cluster)
+    clusterUrl = clusterApiUrl(clusterUrl as Cluster | undefined)
   } catch (e) {
     // ignore
   }
-  return clusterUrl
+  return clusterUrl || localhost
 }
 
 export function parseCommitment(commitment: string): Commitment {
