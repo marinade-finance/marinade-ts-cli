@@ -13,6 +13,7 @@ import {
   ComputeBudgetProgram,
   SendOptions,
   VersionedTransaction,
+  Commitment,
 } from '@solana/web3.js'
 import { Wallet, instanceOfWallet } from './wallet'
 import { serializeInstructionToBase64 } from './txToBase64'
@@ -25,6 +26,11 @@ import {
   isLevelEnabled,
 } from '@marinade.finance/ts-common'
 
+export type ConfirmTransactionOptions = {
+  commitment?: Commitment
+  timeoutMs?: number
+}
+
 export async function executeTx({
   connection,
   transaction,
@@ -34,6 +40,7 @@ export async function executeTx({
   printOnly = false,
   logger,
   sendOpts = {},
+  confirmOpts = {},
 }: {
   connection: Connection
   transaction: Transaction
@@ -43,6 +50,7 @@ export async function executeTx({
   printOnly?: boolean
   logger?: LoggerPlaceholder
   sendOpts?: SendOptions
+  confirmOpts?: ConfirmTransactionOptions
 }): Promise<
   VersionedTransactionResponse | SimulatedTransactionResponse | undefined
 > {
@@ -108,20 +116,21 @@ export async function executeTx({
       )
       if (res.value.err) {
         throw new Error(
-          `Failure confirming transaction ${txSig}, confirm result: ${JSON.stringify(
-            res
-          )}`
+          `Transaction ${txSig} failure, result: ${JSON.stringify(res)}`
         )
       }
       let txSearchConnection = connection
       let timeout = 0
-      if (connection.commitment === 'processed') {
+      if (confirmOpts) {
+        timeout = confirmOpts.timeoutMs || 0
+        txSearchConnection = new Connection(connection.rpcEndpoint, {
+          commitment: confirmOpts.commitment || connection.commitment,
+        })
+      } else if (connection.commitment === 'processed') {
         txSearchConnection = new Connection(connection.rpcEndpoint, {
           commitment: 'confirmed',
         })
-        // TODO: this could be parametrized, max supported version too
-        // if commitment was 'processed' for sending we await for 'confirmed'
-        timeout = 1000 * 7 // 7 seconds
+        timeout = 1000 * 7
       }
 
       let txRes: VersionedTransactionResponse | null =
@@ -158,6 +167,25 @@ export async function executeTxSimple(
   connection: Connection,
   transaction: Transaction,
   signers?: (Wallet | Keypair | Signer)[],
+  sendOpts?: SendOptions,
+  confirmOpts?: ConfirmTransactionOptions
+): Promise<
+  VersionedTransactionResponse | SimulatedTransactionResponse | undefined
+> {
+  return await executeTx({
+    connection,
+    transaction,
+    signers,
+    sendOpts,
+    confirmOpts,
+    errMessage: 'Error executing transaction',
+  })
+}
+
+export async function executeTxFinalized(
+  connection: Connection,
+  transaction: Transaction,
+  signers?: (Wallet | Keypair | Signer)[],
   sendOpts?: SendOptions
 ): Promise<
   VersionedTransactionResponse | SimulatedTransactionResponse | undefined
@@ -167,6 +195,8 @@ export async function executeTxSimple(
     transaction,
     signers,
     sendOpts,
+    // a blockhash is valid for 150 slots, ~ 60 seconds
+    confirmOpts: { commitment: 'finalized', timeoutMs: 70 * 1000 },
     errMessage: 'Error executing transaction',
   })
 }
@@ -268,6 +298,7 @@ export async function splitAndExecuteTx({
   logger,
   exceedBudget = false,
   sendOpts = {},
+  confirmOpts = {},
 }: {
   connection: Connection
   transaction: Transaction
@@ -279,6 +310,7 @@ export async function splitAndExecuteTx({
   logger?: LoggerPlaceholder
   exceedBudget?: boolean
   sendOpts?: SendOptions
+  confirmOpts?: ConfirmTransactionOptions
 }): Promise<{
   result: VersionedTransactionResponse[] | SimulatedTransactionResponse[] | []
   transactions: Transaction[]
@@ -300,6 +332,7 @@ export async function splitAndExecuteTx({
       simulate,
       printOnly,
       sendOpts,
+      confirmOpts,
     })
     resultTransactions.push(transaction)
   } else {
