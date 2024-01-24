@@ -13,7 +13,7 @@ import {
   ComputeBudgetProgram,
   SendOptions,
   VersionedTransaction,
-  Commitment,
+  Finality,
 } from '@solana/web3.js'
 import { Wallet, instanceOfWallet } from './wallet'
 import { serializeInstructionToBase64 } from './txToBase64'
@@ -27,7 +27,7 @@ import {
 } from '@marinade.finance/ts-common'
 
 export type ConfirmTransactionOptions = {
-  commitment?: Commitment
+  commitment?: Finality
   timeoutMs?: number
 }
 
@@ -40,7 +40,7 @@ export async function executeTx({
   printOnly = false,
   logger,
   sendOpts = {},
-  confirmOpts = {},
+  confirmOpts,
 }: {
   connection: Connection
   transaction: Transaction
@@ -106,49 +106,39 @@ export async function executeTx({
         transaction.serialize(),
         sendOpts
       )
-      const res = await connection.confirmTransaction(
-        {
-          signature: txSig,
-          blockhash: currentBlockhash.blockhash,
-          lastValidBlockHeight: currentBlockhash.lastValidBlockHeight,
-        },
-        connection.commitment
-      )
-      if (res.value.err) {
-        throw new Error(
-          `Transaction ${txSig} failure, result: ${JSON.stringify(res)}`
-        )
-      }
-      let txSearchConnection = connection
-      let timeout = 0
-      if (confirmOpts) {
-        timeout = confirmOpts.timeoutMs || 0
-        txSearchConnection = new Connection(connection.rpcEndpoint, {
-          commitment: confirmOpts.commitment || connection.commitment,
-        })
-      } else if (connection.commitment === 'processed') {
-        txSearchConnection = new Connection(connection.rpcEndpoint, {
-          commitment: 'confirmed',
-        })
-        timeout = 1000 * 7
-      }
 
-      let txRes: VersionedTransactionResponse | null =
-        await txSearchConnection.getTransaction(txSig, {
-          maxSupportedTransactionVersion: 0,
-        })
+      let timeout = 1000 * 10
+      let commitment: Finality =
+        connection.commitment === 'finalized' ? 'finalized' : 'confirmed'
+      if (confirmOpts !== undefined) {
+        timeout = confirmOpts.timeoutMs || 0
+        commitment = confirmOpts.commitment || commitment
+      }
+      const txSearchConnection = new Connection(connection.rpcEndpoint, {
+        commitment,
+      })
+
+      let txRes: VersionedTransactionResponse | null = null
       const startTime = Date.now()
       while (txRes === null && Date.now() - startTime < timeout) {
         txRes = await txSearchConnection.getTransaction(txSig, {
+          commitment,
           maxSupportedTransactionVersion: 0,
         })
       }
       if (txRes === null) {
-        throw new Error(`Transaction ${txSig} not found`)
+        throw new Error(
+          `Transaction ${txSig} not found, failed to get to ${connection.rpcEndpoint}`
+        )
       }
-      result = txRes
+      if (txRes.meta?.err) {
+        throw new Error(
+          `Transaction ${txSig} failure, result: ${JSON.stringify(txRes)}`
+        )
+      }
       logDebug(logger, 'Transaction signature: ' + txSig)
       logDebug(logger, txRes.meta?.logMessages)
+      result = txRes
     }
   } catch (e) {
     throw new ExecutionError({
@@ -298,7 +288,7 @@ export async function splitAndExecuteTx({
   logger,
   exceedBudget = false,
   sendOpts = {},
-  confirmOpts = {},
+  confirmOpts,
 }: {
   connection: Connection
   transaction: Transaction
