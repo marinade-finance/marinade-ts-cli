@@ -63,7 +63,7 @@ importers:
         specifier: ^0.29.0
         version: 0.29.0
       '@marinade.finance/ts-common':
-        specifier: ^2.1.2
+        specifier: ^2.1.3
         version: link:../ts-common
       '@solana/web3.js':
         specifier: ^1.78.5
@@ -75,13 +75,13 @@ importers:
   packages/lib/cli-common:
     devDependencies:
       '@marinade.finance/ledger-utils':
-        specifier: ^2.1.2
+        specifier: ^2.1.3
         version: link:../ledger-utils
       '@marinade.finance/ts-common':
-        specifier: ^2.1.2
+        specifier: ^2.1.3
         version: link:../ts-common
       '@marinade.finance/web3js-common':
-        specifier: ^2.1.2
+        specifier: ^2.1.3
         version: link:../web3js-common
       '@solana/web3.js':
         specifier: ^1.78.5
@@ -135,7 +135,7 @@ importers:
         specifier: ^6.27.18
         version: 6.27.18
       '@marinade.finance/ts-common':
-        specifier: ^2.1.2
+        specifier: ^2.1.3
         version: link:../ts-common
       '@solana/web3.js':
         specifier: ^1.78.5
@@ -148,7 +148,7 @@ importers:
   packages/lib/web3js-common:
     devDependencies:
       '@marinade.finance/ts-common':
-        specifier: 2.1.2
+        specifier: 2.1.3
         version: link:../ts-common
       '@solana/web3.js':
         specifier: ^1.78.5
@@ -178,26 +178,26 @@ importers:
         specifier: ^6.27.18
         version: 6.27.18
       '@marinade.finance/cli-common':
-        specifier: ^2.1.2
+        specifier: ^2.1.3
         version: link:../lib/cli-common
       '@marinade.finance/ledger-utils':
-        specifier: ^2.1.2
+        specifier: ^2.1.3
         version: link:../lib/ledger-utils
       '@marinade.finance/marinade-ts-sdk':
         specifier: ^5.0.6
-        version: 5.0.6(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0)
+        version: 5.0.6(@solana/web3.js@1.78.5)(bn.js@5.2.1)(jsbi@4.3.0)
       '@marinade.finance/web3js-common':
-        specifier: ^2.1.2
+        specifier: ^2.1.3
         version: link:../lib/web3js-common
       '@solana/spl-governance':
         specifier: ^0.3.28
         version: 0.3.28
       '@solana/spl-token':
         specifier: ^0.3.8
-        version: 0.3.8(@solana/web3.js@1.78.4)
+        version: 0.3.8(@solana/web3.js@1.78.5)
       '@solana/web3.js':
-        specifier: ^1.78.4
-        version: 1.78.4
+        specifier: ^1.78.5
+        version: 1.78.5
       bn.js:
         specifier: ^5.2.1
         version: 5.2.1
@@ -221,11 +221,11 @@ importers:
         version: 10.2.0
     devDependencies:
       '@marinade.finance/jest-utils':
-        specifier: ^2.1.2
+        specifier: ^2.1.3
         version: link:../lib/jest-utils
       '@solana/spl-token-3.x':
         specifier: npm:@solana/spl-token@^0.3.8
-        version: /@solana/spl-token@0.3.8(@solana/web3.js@1.78.4)
+        version: /@solana/spl-token@0.3.8(@solana/web3.js@1.78.5)
       '@types/bn.js':
         specifier: ^5.1.1
         version: 5.1.1
@@ -1149,7 +1149,7 @@ packages:
   /@ledgerhq/logs@6.10.1:
     resolution: {integrity: sha512-z+ILK8Q3y+nfUl43ctCPuR4Y2bIxk/ooCQFwZxhtci1EhAtMDzMAx2W25qx8G1PPL9UUOdnUax19+F0OjXoj4w==}
 
-  /@marinade.finance/directed-stake-sdk@0.0.4(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0):
+  /@marinade.finance/directed-stake-sdk@0.0.4(@solana/web3.js@1.78.5)(bn.js@5.2.1)(jsbi@4.3.0):
     resolution: {integrity: sha512-5WTBDRg8hbCHS54wUUhPUuXj9JiQE3Bc1+nmDI3JivQPHu7VsDaPB3w1SHRh0bfARnZQg9oKg8s6jVwNiScCsQ==}
     engines: {node: '>10'}
     peerDependencies:
@@ -1158,7 +1158,7 @@ packages:
       jsbi: ^4.3.0
     dependencies:
       '@coral-xyz/anchor': 0.27.0
-      '@solana/web3.js': 1.78.4
+      '@solana/web3.js': 1.78.5
       bn.js: 5.2.1
       bs58: 5.0.0
       jsbi: 4.3.0
@@ -1168,15 +1168,15 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@marinade.finance/marinade-ts-sdk@5.0.6(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0):
+  /@marinade.finance/marinade-ts-sdk@5.0.6(@solana/web3.js@1.78.5)(bn.js@5.2.1)(jsbi@4.3.0):
     resolution: {integrity: sha512-oP1SNCey8l/2WJt2h84KSJFiynNGIEsLI6YOslMnvnaNn+PbcBDbxdTUh8IMW+L6bLF3qWYoXryK4TNOzdjR6g==}
     engines: {anchor: '>=0.28.0', node: '>=16.0.0'}
     dependencies:
       '@coral-xyz/anchor': 0.28.0
-      '@marinade.finance/directed-stake-sdk': 0.0.4(@solana/web3.js@1.78.4)(bn.js@5.2.1)(jsbi@4.3.0)
+      '@marinade.finance/directed-stake-sdk': 0.0.4(@solana/web3.js@1.78.5)(bn.js@5.2.1)(jsbi@4.3.0)
       '@marinade.finance/native-staking-sdk': 1.0.0
       '@solana/spl-stake-pool': 0.6.5
-      '@solana/spl-token-3.x': /@solana/spl-token@0.3.8(@solana/web3.js@1.78.4)
+      '@solana/spl-token-3.x': /@solana/spl-token@0.3.8(@solana/web3.js@1.78.5)
       borsh: 0.7.0
       bs58: 5.0.0
     transitivePeerDependencies:
@@ -1346,7 +1346,7 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@solana/spl-token@0.3.8(@solana/web3.js@1.78.4):
+  /@solana/spl-token@0.3.8(@solana/web3.js@1.78.5):
     resolution: {integrity: sha512-ogwGDcunP9Lkj+9CODOWMiVJEdRtqHAtX2rWF62KxnnSWtMZtV9rDhTrZFshiyJmxDnRL/1nKE1yJHg4jjs3gg==}
     engines: {node: '>=16'}
     peerDependencies:
@@ -1354,31 +1354,8 @@ packages:
     dependencies:
       '@solana/buffer-layout': 4.0.1
       '@solana/buffer-layout-utils': 0.2.0
-      '@solana/web3.js': 1.78.4
+      '@solana/web3.js': 1.78.5
       buffer: 6.0.3
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - utf-8-validate
-
-  /@solana/web3.js@1.78.4:
-    resolution: {integrity: sha512-up5VG1dK+GPhykmuMIozJZBbVqpm77vbOG6/r5dS7NBGZonwHfTLdBbsYc3rjmaQ4DpCXUa3tUc4RZHRORvZrw==}
-    dependencies:
-      '@babel/runtime': 7.22.10
-      '@noble/curves': 1.1.0
-      '@noble/hashes': 1.3.1
-      '@solana/buffer-layout': 4.0.1
-      agentkeepalive: 4.5.0
-      bigint-buffer: 1.1.5
-      bn.js: 5.2.1
-      borsh: 0.7.0
-      bs58: 4.0.1
-      buffer: 6.0.3
-      fast-stable-stringify: 1.0.0
-      jayson: 4.1.0
-      node-fetch: 2.6.12
-      rpc-websockets: 7.5.1
-      superstruct: 0.14.2
     transitivePeerDependencies:
       - bufferutil
       - encoding
