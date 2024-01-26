@@ -24,8 +24,14 @@ export async function orderUnstake({
 }: {
   amountMsol: number
 }): Promise<void> {
-  const { connection, logger, wallet, simulate, printOnly } =
-    getMarinadeCliContext()
+  const {
+    connection,
+    logger,
+    wallet,
+    simulate,
+    printOnly,
+    confirmationFinality,
+  } = getMarinadeCliContext()
 
   const amountLamports = MarinadeUtils.solToLamports(amountMsol)
   logger.info(
@@ -58,6 +64,7 @@ export async function orderUnstake({
     logger,
     simulate,
     printOnly,
+    confirmOpts: confirmationFinality,
   })
   logger.info(
     'Successfully ordered unstake %d mSOLs (signed by %s). Ticket: %s',

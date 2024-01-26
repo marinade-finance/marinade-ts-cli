@@ -55,6 +55,8 @@ describe('Liquid unstake using CLI', () => {
           '488',
           '--keypair',
           walletPath,
+          '--confirmation-finality',
+          'confirmed',
         ],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ]) as any

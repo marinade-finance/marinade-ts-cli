@@ -59,6 +59,8 @@ describe.skip('Withdraw stake account using CLI', () => {
           STAKE_ACCOUNT_TO_WITHDRAW.publicKey.toBase58(),
           '--keypair',
           STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY_PATH,
+          '--confirmation-finality',
+          'confirmed',
           '-d',
         ],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

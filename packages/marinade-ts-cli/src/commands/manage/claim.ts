@@ -18,8 +18,14 @@ export function installClaim(program: Command) {
 }
 
 export async function claim({ ticket }: { ticket: PublicKey }): Promise<void> {
-  const { connection, logger, wallet, simulate, printOnly } =
-    getMarinadeCliContext()
+  const {
+    connection,
+    logger,
+    wallet,
+    simulate,
+    printOnly,
+    confirmationFinality,
+  } = getMarinadeCliContext()
 
   logger.info('Claiming unstake ticket %s', ticket.toString())
 
@@ -39,6 +45,7 @@ export async function claim({ ticket }: { ticket: PublicKey }): Promise<void> {
     logger,
     simulate,
     printOnly,
+    confirmOpts: confirmationFinality,
   })
   logger.info('Successfully claimed ticket %s', ticket.toBase58())
 }

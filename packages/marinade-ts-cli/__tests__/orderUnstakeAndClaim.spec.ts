@@ -55,6 +55,8 @@ describe('Order unstake and claim using CLI', () => {
           '444',
           '--keypair',
           walletPath,
+          '--confirmation-finality',
+          'confirmed',
           '-d',
         ],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -107,6 +109,8 @@ describe('Order unstake and claim using CLI', () => {
           ticket[0].toBase58(),
           '--keypair',
           walletPath,
+          '--confirmation-finality',
+          'confirmed',
         ],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ]) as any

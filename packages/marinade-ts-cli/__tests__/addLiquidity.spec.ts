@@ -38,6 +38,8 @@ describe('Add liquidity using CLI', () => {
           '888',
           '--keypair',
           walletPath,
+          '--confirmation-finality',
+          'confirmed',
         ],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ]) as any

@@ -1,4 +1,4 @@
-import { Connection } from '@solana/web3.js'
+import { Connection, Finality } from '@solana/web3.js'
 import { Wallet as AnchorWalletInterface } from '@coral-xyz/anchor/dist/cjs/provider'
 import { MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
 import {
@@ -7,6 +7,7 @@ import {
   parseCommitment,
   setContext,
   getContext,
+  parseConfirmationFinality,
 } from '@marinade.finance/cli-common'
 import { Logger } from 'pino'
 
@@ -19,6 +20,7 @@ export class MarinadeCLIContext extends Context {
     wallet,
     logger,
     skipPreflight,
+    confirmationFinality,
     simulate,
     printOnly,
     commandName,
@@ -28,12 +30,21 @@ export class MarinadeCLIContext extends Context {
     wallet: AnchorWalletInterface
     logger: Logger
     skipPreflight: boolean
+    confirmationFinality: Finality
     simulate: boolean
     printOnly: boolean
     commandName: string
     marinadeDefaults: MarinadeConfig
   }) {
-    super({ wallet, logger, skipPreflight, simulate, printOnly, commandName })
+    super({
+      wallet,
+      logger,
+      skipPreflight,
+      confirmationFinality,
+      simulate,
+      printOnly,
+      commandName,
+    })
     this.connection = connection
     this.marinadeDefaults = marinadeDefaults
   }
@@ -45,6 +56,7 @@ export function setMarinadeCLIContext({
   logger,
   commitment,
   skipPreflight,
+  confirmationFinality,
   simulate,
   printOnly,
   command,
@@ -54,6 +66,7 @@ export function setMarinadeCLIContext({
   simulate: boolean
   printOnly: boolean
   skipPreflight: boolean
+  confirmationFinality: Finality
   commitment: string
   logger: Logger
   command: string
@@ -68,6 +81,7 @@ export function setMarinadeCLIContext({
       wallet: walletSigner,
       logger,
       skipPreflight,
+      confirmationFinality: parseConfirmationFinality(confirmationFinality),
       simulate,
       printOnly,
       commandName: command,

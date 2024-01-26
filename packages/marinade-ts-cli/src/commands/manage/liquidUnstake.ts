@@ -39,8 +39,14 @@ export async function liquidUnstake({
   amountMsol: number
   referralCode?: PublicKey
 }): Promise<void> {
-  const { connection, logger, wallet, simulate, printOnly } =
-    getMarinadeCliContext()
+  const {
+    connection,
+    logger,
+    wallet,
+    simulate,
+    printOnly,
+    confirmationFinality,
+  } = getMarinadeCliContext()
 
   const amountLamports = MarinadeUtils.solToLamports(amountMsol)
   logger.info(
@@ -71,6 +77,7 @@ export async function liquidUnstake({
     logger,
     simulate,
     printOnly,
+    confirmOpts: confirmationFinality,
   })
   logger.info(
     'Successfully liquid unstaked %d mSOLs, signed by %s (referral code: %s)',

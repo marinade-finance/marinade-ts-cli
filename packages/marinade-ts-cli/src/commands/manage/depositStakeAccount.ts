@@ -49,8 +49,14 @@ export async function depositStakeAccount({
   referralCode?: PublicKey
   validatorVoteAddress?: PublicKey
 }): Promise<void> {
-  const { connection, wallet, logger, simulate, printOnly } =
-    getMarinadeCliContext()
+  const {
+    connection,
+    wallet,
+    logger,
+    simulate,
+    printOnly,
+    confirmationFinality,
+  } = getMarinadeCliContext()
 
   logger.info(
     'Depositing stake account: %s from wallet key %s',
@@ -77,6 +83,7 @@ export async function depositStakeAccount({
     logger,
     simulate,
     printOnly,
+    confirmOpts: confirmationFinality,
   })
   logger.info(
     'Successfully deposited stake account %s from wallet key %s (validator vote address: %s, referral code: %s)',

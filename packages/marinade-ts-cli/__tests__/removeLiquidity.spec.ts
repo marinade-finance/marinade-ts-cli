@@ -50,6 +50,8 @@ describe('Remove liquidity using CLI', () => {
           '123',
           '--keypair',
           walletPath,
+          '--confirmation-finality',
+          'confirmed',
         ],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ]) as any

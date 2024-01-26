@@ -37,6 +37,8 @@ describe('Deposit stake account using CLI', () => {
           SDK_USER_PATH,
           '--validator',
           solanaTestValidatorVotePubkey.toBase58(),
+          '--confirmation-finality',
+          'confirmed',
           '-d',
         ],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

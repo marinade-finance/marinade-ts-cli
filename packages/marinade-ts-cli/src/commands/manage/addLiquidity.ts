@@ -24,8 +24,14 @@ export async function addLiquidity({
 }: {
   amountSol: number
 }): Promise<void> {
-  const { logger, connection, wallet, simulate, printOnly } =
-    getMarinadeCliContext()
+  const {
+    logger,
+    connection,
+    wallet,
+    simulate,
+    printOnly,
+    confirmationFinality,
+  } = getMarinadeCliContext()
 
   const amountLamports = MarinadeUtils.solToLamports(amountSol)
   logger.info(
@@ -56,6 +62,7 @@ export async function addLiquidity({
     logger,
     simulate,
     printOnly,
+    confirmOpts: confirmationFinality,
   })
   logger.info(
     'Successfully added liquidity of %d SOLs from %s',

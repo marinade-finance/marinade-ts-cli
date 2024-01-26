@@ -24,8 +24,14 @@ export async function removeLiquidity({
 }: {
   amountSol: number
 }): Promise<void> {
-  const { connection, logger, wallet, simulate, printOnly } =
-    getMarinadeCliContext()
+  const {
+    connection,
+    logger,
+    wallet,
+    simulate,
+    printOnly,
+    confirmationFinality,
+  } = getMarinadeCliContext()
 
   const amountLamports = MarinadeUtils.solToLamports(amountSol)
   logger.info(
@@ -62,6 +68,7 @@ export async function removeLiquidity({
     logger,
     simulate,
     printOnly,
+    confirmOpts: confirmationFinality,
   })
   logger.info(
     'Successfully removed liquidity of %d LPs, signed by %s',

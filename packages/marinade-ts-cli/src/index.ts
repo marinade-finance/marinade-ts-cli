@@ -22,6 +22,11 @@ program
   )
   .option('--commitment <commitment>', 'Commitment', 'confirmed')
   .option(
+    '--confirmation-finality <finality>',
+    'Confirmation finality',
+    'finalized'
+  )
+  .option(
     '-k, --keypair <keypair-or-ledger>',
     'Wallet keypair (path or ledger url in format usb://ledger/[<pubkey>][?key=<derivedPath>]) ' +
       ` (default: ${DEFAULT_KEYPAIR_PATH})`
@@ -54,6 +59,7 @@ program
       simulate: Boolean(command.opts().simulate),
       printOnly: Boolean(command.opts().printOnly),
       skipPreflight: Boolean(command.opts().skipPreflight),
+      confirmationFinality: command.opts().confirmationFinality,
       commitment: command.opts().commitment,
       logger,
       command: action.name(),

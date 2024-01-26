@@ -63,8 +63,14 @@ export async function deposit({
   owner?: PublicKey
   validatorVoteAddress?: PublicKey
 }): Promise<void> {
-  const { connection, logger, wallet, simulate, printOnly } =
-    getMarinadeCliContext()
+  const {
+    connection,
+    logger,
+    wallet,
+    simulate,
+    printOnly,
+    confirmationFinality,
+  } = getMarinadeCliContext()
 
   const amountLamports = MarinadeUtils.solToLamports(amountSol)
   logger.info(
@@ -98,6 +104,7 @@ export async function deposit({
     logger,
     simulate,
     printOnly,
+    confirmOpts: confirmationFinality,
   })
   logger.info(
     'Successfully deposited %d SOLs from %s for mSOL mint owner %s (validator vote address: %s, referral code: %s)',

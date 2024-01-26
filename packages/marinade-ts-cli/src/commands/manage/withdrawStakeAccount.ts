@@ -37,7 +37,7 @@ export async function withdrawStakeAccount({
   amountMsol: number
   stakeAccount: PublicKey
 }): Promise<void> {
-  // const { connection, wallet, logger, simulate, printOnly } =
+  // const { connection, wallet, logger, simulate, printOnly, confirmationFinality } =
   //   getMarinadeCliContext()
 
   const { wallet, logger } = getMarinadeCliContext()
@@ -78,6 +78,7 @@ export async function withdrawStakeAccount({
   //   logger,
   //   simulate,
   //   printOnly,
+  //   confirmOpts: confirmationFinality
   // })
   // logger.info(
   //   'Successfully withdrawn %d MSOLs from stake account %s. The MSOLs converted from MSOL ATA %s to SOL into wallet key account %s',

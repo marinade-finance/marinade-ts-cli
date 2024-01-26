@@ -4,17 +4,17 @@ import {
   Commitment,
   clusterApiUrl,
   Cluster,
+  Finality,
 } from '@solana/web3.js'
 import expandTilde from 'expand-tilde' // eslint-disable-line node/no-extraneous-import
 import { readFile } from 'fs/promises'
 import { doWithLock } from '@marinade.finance/ts-common'
 import { parseLedgerWallet } from '@marinade.finance/ledger-utils'
 import { CliCommandError } from './error'
-import { Wallet } from '@marinade.finance/web3js-common'
+import { Wallet, KeypairWallet } from '@marinade.finance/web3js-common'
 import { Logger } from 'pino'
 import { getContext } from './context'
 import { PINO_CONFIGURED_LOGGER } from './pinoLogging'
-import { KeypairWallet } from './wallet'
 
 export async function parsePubkey(pubkeyOrPath: string): Promise<PublicKey> {
   try {
@@ -161,6 +161,22 @@ export function parseCommitment(commitment: string): Commitment {
       'Invalid value of --commitment: ' +
         commitment +
         '. Permitted values: processed, confirmed, finalized, recent, single, singleGossip, root, max'
+    )
+  }
+}
+
+export function parseConfirmationFinality(
+  confirmationFinality: string
+): Finality {
+  if (confirmationFinality === 'confirmed') {
+    return 'confirmed'
+  } else if (confirmationFinality === 'finalized') {
+    return 'finalized'
+  } else {
+    throw new Error(
+      'Invalid value of --confirmation-finality: ' +
+        confirmationFinality +
+        '. Permitted values: confirmed and finalized'
     )
   }
 }

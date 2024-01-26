@@ -61,6 +61,8 @@ describe('Deposit using CLI', () => {
           ownerKeypair.publicKey.toBase58(),
           '--validator',
           solanaTestValidatorVotePubkey.toBase58(),
+          '--confirmation-finality',
+          'confirmed',
         ],
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ]) as any
