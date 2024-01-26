@@ -19,20 +19,20 @@ export class MarinadeCLIContext extends Context {
     connection,
     wallet,
     logger,
-    skipPreflight,
-    confirmationFinality,
     simulate,
     printOnly,
+    skipPreflight,
+    confirmationFinality,
     commandName,
     marinadeDefaults,
   }: {
     connection: Connection
     wallet: AnchorWalletInterface
     logger: Logger
-    skipPreflight: boolean
-    confirmationFinality: Finality
     simulate: boolean
     printOnly: boolean
+    skipPreflight: boolean
+    confirmationFinality: Finality
     commandName: string
     marinadeDefaults: MarinadeConfig
   }) {
@@ -52,22 +52,22 @@ export class MarinadeCLIContext extends Context {
 
 export function setMarinadeCLIContext({
   url,
-  walletSigner,
-  logger,
-  commitment,
-  skipPreflight,
-  confirmationFinality,
+  walletKeypair,
   simulate,
   printOnly,
+  skipPreflight,
+  commitment,
+  confirmationFinality,
+  logger,
   command,
 }: {
   url: string
-  walletSigner: AnchorWalletInterface
+  walletKeypair: AnchorWalletInterface
   simulate: boolean
   printOnly: boolean
   skipPreflight: boolean
-  confirmationFinality: Finality
   commitment: string
+  confirmationFinality: Finality
   logger: Logger
   command: string
 }) {
@@ -78,12 +78,12 @@ export function setMarinadeCLIContext({
   setContext(
     new MarinadeCLIContext({
       connection,
-      wallet: walletSigner,
+      wallet: walletKeypair,
       logger,
-      skipPreflight,
-      confirmationFinality: parseConfirmationFinality(confirmationFinality),
       simulate,
       printOnly,
+      skipPreflight,
+      confirmationFinality: parseConfirmationFinality(confirmationFinality),
       commandName: command,
       marinadeDefaults: new MarinadeConfig(),
     })

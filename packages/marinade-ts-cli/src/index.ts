@@ -5,7 +5,7 @@ import { Command } from 'commander'
 import { setMarinadeCLIContext } from './context'
 import { installCommands } from './commands'
 import { Logger } from 'pino'
-import { configureLogger, parseWallet } from '@marinade.finance/cli-common'
+import { configureLogger, parseWallet, parseWalletFromOpts } from '@marinade.finance/cli-common'
 
 const DEFAULT_KEYPAIR_PATH = '~/.config/solana/id.json'
 const logger: Logger = configureLogger()
@@ -17,14 +17,8 @@ program
   .option(
     '-u, --url <url-or-moniker>',
     'URL of Solana cluster or ' +
-      'moniker (m/mainnet/mainnet-beta, d/devnet, t/testnet)',
-    'm'
-  )
-  .option('--commitment <commitment>', 'Commitment', 'confirmed')
-  .option(
-    '--confirmation-finality <finality>',
-    'Confirmation finality',
-    'finalized'
+      'moniker (m/mainnet/mainnet-beta, d/devnet, t/testnet, l/localhost)',
+    'mainnet'
   )
   .option(
     '-k, --keypair <keypair-or-ledger>',
@@ -43,6 +37,12 @@ program
     'setting transaction execution flag "skip-preflight"',
     false
   )
+  .option('--commitment <commitment>', 'Commitment', 'confirmed')
+  .option(
+    '--confirmation-finality <finality>',
+    'Confirmation finality',
+    'finalized'
+  )
   .option('-d, --debug', 'Debug', false)
   .option('-v, --verbose', 'Verbose (the same as --debug)', false)
   .hook('preAction', async (command: Command, action: Command) => {
@@ -50,17 +50,22 @@ program
       logger.level = 'debug'
     }
 
-    let walletSigner = (await command.opts().keypair) ?? DEFAULT_KEYPAIR_PATH
-    walletSigner = await parseWallet(walletSigner, logger)
+    const printOnly = Boolean(command.opts().printOnly)
+    const walletKeypair = await parseWalletFromOpts(
+      command.opts().keypair,
+      printOnly,
+      command.args,
+      logger
+    )
 
     setMarinadeCLIContext({
       url: command.opts().url as string,
-      walletSigner,
+      walletKeypair,
       simulate: Boolean(command.opts().simulate),
       printOnly: Boolean(command.opts().printOnly),
       skipPreflight: Boolean(command.opts().skipPreflight),
-      confirmationFinality: command.opts().confirmationFinality,
       commitment: command.opts().commitment,
+      confirmationFinality: command.opts().confirmationFinality,
       logger,
       command: action.name(),
     })

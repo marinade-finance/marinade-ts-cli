@@ -41,7 +41,7 @@ export abstract class Context {
     wallet?: Wallet
     logger: Logger
     skipPreflight: boolean
-    confirmationFinality: Finality
+    confirmationFinality?: Finality
     simulate: boolean
     printOnly: boolean
     commandName: string

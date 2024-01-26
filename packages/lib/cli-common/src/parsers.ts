@@ -11,10 +11,12 @@ import { readFile } from 'fs/promises'
 import { doWithLock } from '@marinade.finance/ts-common'
 import { parseLedgerWallet } from '@marinade.finance/ledger-utils'
 import { CliCommandError } from './error'
-import { Wallet, KeypairWallet } from '@marinade.finance/web3js-common'
+import { Wallet, KeypairWallet, NullWallet } from '@marinade.finance/web3js-common'
 import { Logger } from 'pino'
 import { getContext } from './context'
 import { PINO_CONFIGURED_LOGGER } from './pinoLogging'
+
+const DEFAULT_KEYPAIR_PATH = '~/.config/solana/id.json'
 
 export async function parsePubkey(pubkeyOrPath: string): Promise<PublicKey> {
   try {
@@ -116,6 +118,51 @@ export async function parseWalletOrPubkey(
   } catch (err) {
     return await parsePubkey(pubkeyOrPathOrLedger)
   }
+}
+
+/**
+ * --keypair (considered as 'wallet') could be defined or undefined (and default is on parsing).
+ * For 'show*' command we don't need a working wallet, so we can use NullWallet.
+ * For '--print-only' we don't need a working wallet, so we can use NullWallet.
+ * For other commands we need a working wallet, when cannot be parsed then Error.
+ */
+export async function parseWalletFromOpts(
+  keypairArg: string,
+  printOnly: boolean,
+  commandArgs: string[],
+  logger: Logger,
+  defaultKeypair: string = DEFAULT_KEYPAIR_PATH
+): Promise<Wallet> {
+  const wallet = keypairArg
+  let walletInterface: Wallet
+  try {
+    walletInterface = wallet
+      ? await parseWallet(wallet, logger)
+      : await parseWallet(defaultKeypair, logger)
+  } catch (err) {
+    if (
+      commandArgs.find(arg => arg.startsWith('show')) !== undefined ||
+      printOnly
+    ) {
+      // when working with show command it does not matter to use NullWallet
+      // for other instructions it could matter as the transaction fees cannot be paid by NullWallet
+      // still using NullWallet is ok when one generates only --print-only
+      logger.debug(
+        `Cannot load --keypair wallet '${
+          wallet || defaultKeypair
+        }' but it's show or --print-only command, using NullWallet`
+      )
+      walletInterface = new NullWallet()
+    } else {
+      const definedMsg =
+        wallet !== undefined
+          ? `--keypair wallet '${wallet}'`
+          : `default keypair path ${defaultKeypair}`
+      logger.error(`Failed to use ${definedMsg}, exiting.`)
+      throw err
+    }
+  }
+  return walletInterface
 }
 
 export function parseClusterUrl(url: string | undefined): string {
