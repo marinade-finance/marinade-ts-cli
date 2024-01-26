@@ -1,6 +1,6 @@
 import { Logger } from 'pino'
-import { Wallet } from '@marinade.finance/web3js-common'
-import { NullWallet } from './wallet'
+import { Wallet, NullWallet } from '@marinade.finance/web3js-common'
+import { Finality } from '@solana/web3.js'
 
 let context: Context | undefined
 
@@ -24,6 +24,7 @@ export abstract class Context {
   readonly wallet: Wallet
   readonly logger: Logger
   readonly skipPreflight: boolean
+  readonly confirmationFinality: Finality
   readonly simulate: boolean
   readonly printOnly: boolean
   readonly commandName: string
@@ -32,6 +33,7 @@ export abstract class Context {
     wallet = new NullWallet(),
     logger,
     skipPreflight,
+    confirmationFinality = 'finalized',
     simulate,
     printOnly,
     commandName,
@@ -39,6 +41,7 @@ export abstract class Context {
     wallet?: Wallet
     logger: Logger
     skipPreflight: boolean
+    confirmationFinality: Finality
     simulate: boolean
     printOnly: boolean
     commandName: string
@@ -47,6 +50,7 @@ export abstract class Context {
     this.wallet = wallet
     this.logger = logger
     this.skipPreflight = skipPreflight
+    this.confirmationFinality = confirmationFinality
     this.simulate = simulate
     this.printOnly = printOnly
   }

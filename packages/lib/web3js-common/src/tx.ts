@@ -25,10 +25,31 @@ import {
   logWarn,
   isLevelEnabled,
 } from '@marinade.finance/ts-common'
+import Provider, { instanceOfProvider, providerPubkey } from './provider'
 
-export type ConfirmTransactionOptions = {
-  commitment?: Finality
-  timeoutMs?: number
+export async function transaction(
+  connection: Connection | Provider,
+  feePayer?: PublicKey | Wallet | Keypair | Signer
+): Promise<Transaction> {
+  if (feePayer === undefined && instanceOfProvider(connection)) {
+    feePayer = providerPubkey(connection)
+  }
+  if (feePayer === undefined) {
+    throw new Error(
+      'transaction: feePayer or instance of Provider has to be passed in to ' +
+        'find the transaction fee payer'
+    )
+  }
+  connection = instanceOfProvider(connection)
+    ? connection.connection
+    : connection
+  const bh = await connection.getLatestBlockhash()
+  feePayer = feePayer instanceof PublicKey ? feePayer : feePayer.publicKey
+  return new Transaction({
+    feePayer,
+    blockhash: bh.blockhash,
+    lastValidBlockHeight: bh.lastValidBlockHeight,
+  })
 }
 
 export async function executeTx({
@@ -50,7 +71,7 @@ export async function executeTx({
   printOnly?: boolean
   logger?: LoggerPlaceholder
   sendOpts?: SendOptions
-  confirmOpts?: ConfirmTransactionOptions
+  confirmOpts?: Finality
 }): Promise<
   VersionedTransactionResponse | SimulatedTransactionResponse | undefined
 > {
@@ -71,7 +92,6 @@ export async function executeTx({
 
   const currentBlockhash = await connection.getLatestBlockhash()
   if (
-    transaction.recentBlockhash === undefined ||
     transaction.recentBlockhash === undefined ||
     transaction.feePayer === undefined
   ) {
@@ -102,33 +122,59 @@ export async function executeTx({
         )
       }
     } else if (!printOnly) {
+      let confirmFinality: Finality | undefined = confirmOpts
+      if (
+        confirmFinality === undefined &&
+        (connection.commitment === 'finalized' ||
+          connection.commitment === 'confirmed')
+      ) {
+        confirmFinality = connection.commitment
+      }
+      confirmFinality = confirmFinality || 'confirmed'
+      const confirmBlockhash = connection.getLatestBlockhash(confirmFinality)
+
       txSig = await connection.sendRawTransaction(
         transaction.serialize(),
         sendOpts
       )
 
-      let timeout = 1000 * 10
-      let commitment: Finality =
-        connection.commitment === 'finalized' ? 'finalized' : 'confirmed'
-      if (confirmOpts !== undefined) {
-        timeout = confirmOpts.timeoutMs || 0
-        commitment = confirmOpts.commitment || commitment
-      }
       const txSearchConnection = new Connection(connection.rpcEndpoint, {
-        commitment,
+        commitment: confirmFinality,
       })
-
-      let txRes: VersionedTransactionResponse | null = null
-      const startTime = Date.now()
-      while (txRes === null && Date.now() - startTime < timeout) {
+      let txRes: VersionedTransactionResponse | null =
+        await txSearchConnection.getTransaction(txSig, {
+          commitment: confirmFinality,
+          maxSupportedTransactionVersion: 0, // TODO: configurable?
+        })
+      console.log(
+        'txRes',
+        JSON.stringify(txRes),
+        'is valid blockhash?',
+        await connection.isBlockhashValid((await confirmBlockhash).blockhash, {
+          commitment: confirmFinality,
+        })
+      )
+      while (
+        confirmOpts !== undefined &&
+        txRes === null &&
+        (
+          await connection.isBlockhashValid(
+            (await confirmBlockhash).blockhash,
+            {
+              commitment: confirmFinality,
+            }
+          )
+        ).value
+      ) {
         txRes = await txSearchConnection.getTransaction(txSig, {
-          commitment,
+          commitment: confirmFinality,
           maxSupportedTransactionVersion: 0,
         })
       }
+
       if (txRes === null) {
         throw new Error(
-          `Transaction ${txSig} not found, failed to get to ${connection.rpcEndpoint}`
+          `Transaction ${txSig} not found, failed to get from ${connection.rpcEndpoint}`
         )
       }
       if (txRes.meta?.err) {
@@ -158,7 +204,7 @@ export async function executeTxSimple(
   transaction: Transaction,
   signers?: (Wallet | Keypair | Signer)[],
   sendOpts?: SendOptions,
-  confirmOpts?: ConfirmTransactionOptions
+  confirmOpts?: Finality
 ): Promise<
   VersionedTransactionResponse | SimulatedTransactionResponse | undefined
 > {
@@ -168,25 +214,6 @@ export async function executeTxSimple(
     signers,
     sendOpts,
     confirmOpts,
-    errMessage: 'Error executing transaction',
-  })
-}
-
-export async function executeTxFinalized(
-  connection: Connection,
-  transaction: Transaction,
-  signers?: (Wallet | Keypair | Signer)[],
-  sendOpts?: SendOptions
-): Promise<
-  VersionedTransactionResponse | SimulatedTransactionResponse | undefined
-> {
-  return await executeTx({
-    connection,
-    transaction,
-    signers,
-    sendOpts,
-    // a blockhash is valid for 150 slots, ~ 60 seconds
-    confirmOpts: { commitment: 'finalized', timeoutMs: 70 * 1000 },
     errMessage: 'Error executing transaction',
   })
 }
@@ -300,7 +327,7 @@ export async function splitAndExecuteTx({
   logger?: LoggerPlaceholder
   exceedBudget?: boolean
   sendOpts?: SendOptions
-  confirmOpts?: ConfirmTransactionOptions
+  confirmOpts?: Finality
 }): Promise<{
   result: VersionedTransactionResponse[] | SimulatedTransactionResponse[] | []
   transactions: Transaction[]
