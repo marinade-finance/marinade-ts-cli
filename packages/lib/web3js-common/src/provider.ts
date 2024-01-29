@@ -53,14 +53,7 @@ export type WalletProvider = Provider & { wallet: Wallet | Signer | Keypair }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function instanceOfProvider(object: any): object is Provider {
-  return (
-    object &&
-    'connection' in object &&
-    'send' in object &&
-    'sendAndConfirm' in object &&
-    'sendAll' in object &&
-    'simulate' in object
-  )
+  return object && typeof object === 'object' && 'connection' in object
 }
 
 export function instanceOfWalletProvider(
@@ -69,6 +62,7 @@ export function instanceOfWalletProvider(
 ): object is WalletProvider {
   return (
     object &&
+    typeof object === 'object' &&
     'connection' in object &&
     'send' in object &&
     'sendAndConfirm' in object &&

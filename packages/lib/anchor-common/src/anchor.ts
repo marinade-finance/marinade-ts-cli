@@ -5,12 +5,17 @@ import { LoggerPlaceholder, logError } from '@marinade.finance/ts-common'
 export function verifyError(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   e: any,
-  idl: anchor.Idl,
+  idl: anchor.Idl | Map<number, string>,
   errCode: number,
   errMessage?: string,
   logger: LoggerPlaceholder | undefined = undefined
 ) {
-  const anchorErrorMap = anchor.parseIdlErrors(idl)
+  let anchorErrorMap: Map<number, string>
+  if (idl instanceof Map) {
+    anchorErrorMap = idl
+  } else {
+    anchorErrorMap = anchor.parseIdlErrors(idl)
+  }
   const anchorErrorMsg = anchorErrorMap.get(errCode)
   if (anchorErrorMsg === undefined) {
     throw new Error(`Error ${errCode} not found in IDL`)
@@ -21,6 +26,15 @@ export function verifyError(
         `does not match expected errMessage ${errMessage}`
     )
   }
+  let decNum: number
+  if (errCode.toString().startsWith('0x')) {
+    decNum = parseInt(errCode.toString(), 16)
+  } else {
+    decNum = parseInt(errCode.toString())
+  }
+  const hexNumber = '0x' + decNum.toString(16)
+  const decimalNumber = decNum.toString()
+
   if (e instanceof anchor.ProgramError) {
     expect(e.msg).toStrictEqual(anchorErrorMsg)
     expect(e.code).toStrictEqual(errCode)
@@ -34,9 +48,12 @@ export function verifyError(
     if (!checkErrorMessage(e, errCode)) {
       verifyError(e.cause, idl, errCode, errMessage, logger)
     }
-  } else if (!checkErrorMessage(e, errCode)) {
-    logError(logger, `Error does not include error number '${errCode}`)
-    logError(logger, e)
+  } else if (
+    !checkErrorMessage(e, decimalNumber) &&
+    !checkErrorMessage(e, hexNumber)
+  ) {
+    logError(logger, `Error does not include error number '${errCode}: [${e}]`)
+    throw e
   }
 }
 
