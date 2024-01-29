@@ -4,7 +4,7 @@
 
 Jest testing utilities.
 
-For global equality tester it can be added to check `BN` and `@solana/web3.js` `Publickey`
+For global equality tester it can be added to check `BN` and `@solana/web3.js` `PublicKey`
 and when using [`jest-shell-matchers`](https://www.npmjs.com/package/jest-shell-matchers)
 then adding TypeScript typing for it.
 
@@ -19,7 +19,7 @@ module.exports = {
   testEnvironment: 'node',
   testTimeout: 90000,
   detectOpenHandles: true,
-  modulePathIgnorePatterns: ['<rootDir>/dist/'],
+  modulePathIgnorePatterns: ['<rootDir>/build/'],
   testPathIgnorePatterns: ['__tests__/.*.skip.ts', '__tests__/setup/*'],
   globalSetup:
     '<rootDir>/packages/marinade-ts-cli/__tests__/setup/globalSetup.ts',

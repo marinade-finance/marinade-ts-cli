@@ -11,7 +11,11 @@ import { readFile } from 'fs/promises'
 import { doWithLock } from '@marinade.finance/ts-common'
 import { parseLedgerWallet } from '@marinade.finance/ledger-utils'
 import { CliCommandError } from './error'
-import { Wallet, KeypairWallet, NullWallet } from '@marinade.finance/web3js-common'
+import {
+  Wallet,
+  KeypairWallet,
+  NullWallet,
+} from '@marinade.finance/web3js-common'
 import { Logger } from 'pino'
 import { getContext } from './context'
 import { PINO_CONFIGURED_LOGGER } from './pinoLogging'

@@ -5,7 +5,10 @@ import { Command } from 'commander'
 import { setMarinadeCLIContext } from './context'
 import { installCommands } from './commands'
 import { Logger } from 'pino'
-import { configureLogger, parseWallet, parseWalletFromOpts } from '@marinade.finance/cli-common'
+import {
+  configureLogger,
+  parseWalletFromOpts,
+} from '@marinade.finance/cli-common'
 
 const DEFAULT_KEYPAIR_PATH = '~/.config/solana/id.json'
 const logger: Logger = configureLogger()
