@@ -15,6 +15,7 @@ import {
   Wallet,
   KeypairWallet,
   NullWallet,
+  pubkey,
 } from '@marinade.finance/web3js-common'
 import { Logger } from 'pino'
 import { getContext } from './context'
@@ -117,11 +118,22 @@ export async function parseWalletOrPubkey(
     // context logger is not set, use default
     logger = PINO_CONFIGURED_LOGGER
   }
+  pubkeyOrPathOrLedger = pubkeyOrPathOrLedger.trim()
   try {
     return await parseWallet(pubkeyOrPathOrLedger, logger)
   } catch (err) {
+    if (pubkeyOrPathOrLedger.startsWith('usb://')) {
+      // ledger
+      throw err
+    }
     return await parsePubkey(pubkeyOrPathOrLedger)
   }
+}
+
+export async function parsePubkeyOrPubkeyFromWallet(
+  pubkeyOrPathOrLedger: string
+): Promise<PublicKey> {
+  return pubkey(await parseWalletOrPubkey(pubkeyOrPathOrLedger))
 }
 
 /**
