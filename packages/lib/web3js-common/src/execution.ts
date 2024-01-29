@@ -8,7 +8,7 @@ import {
 } from '@solana/web3.js'
 import { executeTxSimple, transaction } from './tx'
 import { Wallet } from './wallet'
-import Provider, { walletProviderOrConnection } from './provider'
+import { Provider, walletProviderOrConnection } from './provider'
 import BN from 'bn.js'
 import { toBigint } from './math'
 

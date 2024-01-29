@@ -16,7 +16,7 @@ import { Wallet } from './wallet'
 /**
  * Interface compatible with AnchorProvider. It's a copy&paste to not enforcing anchor dependency.
  */
-export default interface Provider {
+export interface Provider {
   readonly connection: Connection
   readonly publicKey?: PublicKey
   send?(

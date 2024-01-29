@@ -25,7 +25,7 @@ import {
   logWarn,
   isLevelEnabled,
 } from '@marinade.finance/ts-common'
-import Provider, { instanceOfProvider, providerPubkey } from './provider'
+import { Provider, instanceOfProvider, providerPubkey } from './provider'
 
 export async function transaction(
   connection: Connection | Provider,
@@ -131,7 +131,6 @@ export async function executeTx({
         confirmFinality = connection.commitment
       }
       confirmFinality = confirmFinality || 'confirmed'
-      const confirmBlockhash = connection.getLatestBlockhash(confirmFinality)
 
       txSig = await connection.sendRawTransaction(
         transaction.serialize(),
@@ -146,16 +145,8 @@ export async function executeTx({
           commitment: confirmFinality,
           maxSupportedTransactionVersion: 0, // TODO: configurable?
         })
-      console.log(
-        'txRes',
-        JSON.stringify(txRes),
-        'is valid blockhash?',
-        await connection.isBlockhashValid((await confirmBlockhash).blockhash, {
-          commitment: confirmFinality,
-        })
-      )
+      const confirmBlockhash = connection.getLatestBlockhash(confirmFinality)
       while (
-        confirmOpts !== undefined &&
         txRes === null &&
         (
           await connection.isBlockhashValid(
