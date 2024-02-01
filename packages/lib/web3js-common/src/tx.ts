@@ -52,6 +52,18 @@ export async function transaction(
   })
 }
 
+export type ExecuteTxParams = {
+  connection: Connection
+  transaction: Transaction
+  signers?: (Wallet | Keypair | Signer)[]
+  errMessage: string
+  simulate?: boolean
+  printOnly?: boolean
+  logger?: LoggerPlaceholder
+  sendOpts?: SendOptions
+  confirmOpts?: Finality
+}
+
 export async function executeTx({
   connection,
   transaction,
@@ -62,17 +74,7 @@ export async function executeTx({
   logger,
   sendOpts = {},
   confirmOpts,
-}: {
-  connection: Connection
-  transaction: Transaction
-  signers?: (Wallet | Keypair | Signer)[]
-  errMessage: string
-  simulate?: boolean
-  printOnly?: boolean
-  logger?: LoggerPlaceholder
-  sendOpts?: SendOptions
-  confirmOpts?: Finality
-}): Promise<
+}: ExecuteTxParams): Promise<
   VersionedTransactionResponse | SimulatedTransactionResponse | undefined
 > {
   let result:
@@ -90,11 +92,12 @@ export async function executeTx({
     }
   }
 
-  const currentBlockhash = await connection.getLatestBlockhash()
   if (
     transaction.recentBlockhash === undefined ||
+    transaction.lastValidBlockHeight === undefined ||
     transaction.feePayer === undefined
   ) {
+    const currentBlockhash = await connection.getLatestBlockhash()
     transaction.lastValidBlockHeight = currentBlockhash.lastValidBlockHeight
     transaction.recentBlockhash = currentBlockhash.blockhash
     transaction.feePayer = transaction.feePayer ?? signers[0].publicKey
@@ -207,6 +210,35 @@ export async function executeTxSimple(
     confirmOpts,
     errMessage: 'Error executing transaction',
   })
+}
+
+export async function executeTxWithExceededBlockhashRetry(
+  txParams: ExecuteTxParams
+): Promise<
+  VersionedTransactionResponse | SimulatedTransactionResponse | undefined
+> {
+  try {
+    return await executeTx(txParams)
+  } catch (e) {
+    if (checkErrorMessage(e, 'block height exceeded')) {
+      txParams.transaction.recentBlockhash = undefined
+      return await executeTx(txParams)
+    } else {
+      throw e
+    }
+  }
+}
+
+// TODO: move this from anchor.ts
+type ToString = { toString(): string }
+function checkErrorMessage(e: unknown, message: ToString): boolean {
+  return (
+    typeof e === 'object' &&
+    e !== null &&
+    'message' in e &&
+    typeof e.message === 'string' &&
+    e.message.includes(message.toString())
+  )
 }
 
 /**
@@ -422,16 +454,6 @@ export async function splitAndExecuteTx({
       transactions.push(lastValidTransaction)
     }
 
-    // sign all transactions with fee payer at once
-    if (instanceOfWallet(feePayerSigner)) {
-      // partial signing by this call
-      await feePayerSigner.signAllTransactions(transactions)
-    } else {
-      for (const transaction of transactions) {
-        transaction.partialSign(feePayerSigner)
-      }
-    }
-
     let executionCounter = 0
     resultTransactions.push(...transactions)
     for (const transaction of transactions) {
@@ -439,11 +461,13 @@ export async function splitAndExecuteTx({
         transaction.instructions,
         signers
       ).filter(s => !s.publicKey.equals(feePayerDefined))
-      const executeResult = await executeTx({
+      txSigners.push(feePayerSigner)
+      const executeResult = await executeTxWithExceededBlockhashRetry({
         connection,
         transaction,
         errMessage,
         signers: txSigners,
+        simulate,
         logger,
         sendOpts,
       })
