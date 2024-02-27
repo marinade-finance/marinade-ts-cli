@@ -14,24 +14,16 @@ import BN from 'bn.js'
  * Equality testers for jest to compare BN and PublicKey.
  */
 expect.addEqualityTesters([
+  // Numbers
   (a, b) => {
-    if (a instanceof BN && typeof b === 'number') {
-      return a.toNumber() === b
-    }
-    return undefined
-  },
-  (a, b) => {
-    if (typeof a === 'number' && b instanceof BN) {
-      return a === b.toNumber()
-    }
-    return undefined
-  },
-  (a, b) => {
+    a = convertNumberToBN(a)
+    b = convertNumberToBN(b)
     if (a instanceof BN) {
       return a.eq(b as BN)
     }
     return undefined
   },
+  // Public key
   (a, b) => {
     if (a instanceof PublicKey) {
       return a.equals(b as PublicKey)
@@ -39,3 +31,14 @@ expect.addEqualityTesters([
     return undefined
   },
 ])
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function convertNumberToBN(value: any): any {
+  if (typeof value === 'bigint') {
+    return new BN(value.toString())
+  }
+  if (typeof value === 'number') {
+    return new BN(value)
+  }
+  return value
+}
