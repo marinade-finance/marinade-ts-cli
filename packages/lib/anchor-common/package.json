@@ -26,13 +26,13 @@
       "src"
     ],
     "devDependencies": {
-      "@solana/web3.js": "^1.78.5",
+      "@solana/web3.js": "^1.91.1",
       "bn.js": "^5.2.1",
       "@coral-xyz/anchor": "^0.29.0",
       "@marinade.finance/ts-common": "^2.2.3"
     },
     "peerDependencies": {
-      "@solana/web3.js": "^1.78.5",
+      "@solana/web3.js": "^1.91.1",
       "bn.js": "^5.2.1",
       "@coral-xyz/anchor": "^0.29.0",
       "@marinade.finance/ts-common": "^2.2.3"
