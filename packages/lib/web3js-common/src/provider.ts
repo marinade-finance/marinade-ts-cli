@@ -56,19 +56,19 @@ export function instanceOfProvider(object: any): object is Provider {
   return object && typeof object === 'object' && 'connection' in object
 }
 
-export function instanceOfWalletProvider(
+export function instanceOfProviderWithWallet(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   object: any
-): object is WalletProvider {
+): object is Provider & { wallet: Wallet | Signer | Keypair } {
   return (
     object &&
     typeof object === 'object' &&
     'connection' in object &&
-    'send' in object &&
-    'sendAndConfirm' in object &&
-    'sendAll' in object &&
-    'simulate' in object &&
-    'wallet' in object
+    'wallet' in object &&
+    (object.wallet instanceof Keypair || // Keypair
+      'secretKey' in object.wallet || // Signer
+      ('signTransaction' in object.wallet &&
+        'signAllTransactions' in object.wallet)) // Wallet
   )
 }
 
@@ -105,7 +105,7 @@ export function walletProviderOrConnection(
   provider: Provider | Connection,
   feePayer?: Wallet | Signer | Keypair
 ): [Connection, Wallet | Signer | Keypair] {
-  if (feePayer === undefined && instanceOfWalletProvider(provider)) {
+  if (feePayer === undefined && instanceOfProviderWithWallet(provider)) {
     feePayer = provider.wallet
   }
   if (feePayer === undefined) {
@@ -128,27 +128,27 @@ export class NullProvider implements Provider {
     this.connection = connection
   }
 
-  send?(
+  send(
     tx: Transaction | VersionedTransaction,
     signers?: Signer[] | undefined,
     opts?: SendOptions | undefined
   ): Promise<string> {
     throw new Error('Method not implemented.')
   }
-  sendAndConfirm?(
+  sendAndConfirm(
     tx: Transaction | VersionedTransaction,
     signers?: Signer[] | undefined,
     opts?: ConfirmOptions | undefined
   ): Promise<string> {
     throw new Error('Method not implemented.')
   }
-  sendAll?<T extends Transaction | VersionedTransaction>(
+  sendAll<T extends Transaction | VersionedTransaction>(
     txWithSigners: { tx: T; signers?: Signer[] | undefined }[],
     opts?: ConfirmOptions | undefined
   ): Promise<string[]> {
     throw new Error('Method not implemented.')
   }
-  simulate?(
+  simulate(
     tx: Transaction | VersionedTransaction,
     signers?: Signer[] | undefined,
     commitment?: Commitment | undefined,
