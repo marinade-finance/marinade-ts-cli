@@ -1,11 +1,20 @@
-import * as anchor from '@coral-xyz/anchor'
 import { SendTransactionError } from '@solana/web3.js'
-import { LoggerPlaceholder, checkErrorMessage, logError } from '@marinade.finance/ts-common'
+import {
+  LoggerPlaceholder,
+  checkErrorMessage,
+  logError,
+} from '@marinade.finance/ts-common'
+import {
+  parseIdlErrors,
+  Idl,
+  ProgramError,
+  AnchorError,
+} from '@coral-xyz/anchor'
 
 export function verifyError(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   e: any,
-  idl: anchor.Idl | Map<number, string>,
+  idl: Idl | Map<number, string>,
   errCode: number,
   errMessage?: string,
   logger: LoggerPlaceholder | undefined = undefined
@@ -14,7 +23,7 @@ export function verifyError(
   if (idl instanceof Map) {
     anchorErrorMap = idl
   } else {
-    anchorErrorMap = anchor.parseIdlErrors(idl)
+    anchorErrorMap = parseIdlErrors(idl)
   }
   const anchorErrorMsg = anchorErrorMap.get(errCode)
   if (anchorErrorMsg === undefined) {
@@ -35,10 +44,10 @@ export function verifyError(
   const hexNumber = '0x' + decNum.toString(16)
   const decimalNumber = decNum.toString()
 
-  if (e instanceof anchor.ProgramError) {
+  if (e instanceof ProgramError) {
     expect(e.msg).toStrictEqual(anchorErrorMsg)
     expect(e.code).toStrictEqual(errCode)
-  } else if (e instanceof anchor.AnchorError) {
+  } else if (e instanceof AnchorError) {
     expect(e.error.errorMessage).toStrictEqual(anchorErrorMsg)
     expect(e.error.errorCode.number).toStrictEqual(errCode)
   } else if (e instanceof SendTransactionError) {

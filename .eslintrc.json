@@ -1,7 +1,8 @@
 {
   "extends": "./node_modules/gts/",
   "rules": {
-    "semi": ["error", "never"]
+    "semi": ["error", "never"],
+    "@typescript-eslint/no-extra-semi" : "off"
   },
   "settings": {
     "node": {

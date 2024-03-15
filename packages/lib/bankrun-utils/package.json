@@ -1,7 +1,7 @@
 {
-  "name": "@marinade.finance/cli-common",
+  "name": "@marinade.finance/bankrun-utils",
   "version": "2.2.3",
-  "description": "CLI tooling",
+  "description": "Bankrun library utilities",
   "repository": {
     "type": "git",
     "url": "git@github.com:marinade-finance/marinade-ts-cli.git"
@@ -16,7 +16,7 @@
     "solana",
     "marinade.finance",
     "blockchain",
-    "cli"
+    "bankrun"
   ],
   "author": "Marinade Finance",
   "license": "ISC",
@@ -27,27 +27,16 @@
   "devDependencies": {
     "@solana/web3.js": "^1.91.1",
     "@marinade.finance/web3js-common": "2.2.3",
-    "@marinade.finance/ts-common": "2.2.3",
-    "@marinade.finance/ledger-utils": "^3.0.1",
-    "@types/expand-tilde": "^2.0.0",
-    "bn.js": "^5.2.1",
-    "borsh": "^0.7.0",
-    "bs58": "^5.0.0",
-    "expand-tilde": "^2.0.2",
-    "pino": "^8.15.1",
-    "yaml": "^2.3.2"
+    "solana-bankrun": "^0.2.0",
+    "anchor-bankrun": "^0.3.0",
+    "class-transformer": "^0.5.1"
   },
   "peerDependencies": {
     "@solana/web3.js": "^1.91.1",
-    "@marinade.finance/ledger-utils": "^3.0.1",
     "@marinade.finance/web3js-common": "2.2.3",
-    "@marinade.finance/ts-common": "2.2.3",
-    "bn.js": "^5.2.1",
-    "borsh": "^0.7.0",
-    "bs58": "^5.0.0",
-    "expand-tilde": "^2.0.2",
-    "pino": "^8.15.1",
-    "yaml": "^2.3.2"
+    "solana-bankrun": "^0.2.0",
+    "anchor-bankrun": "^0.3.0",
+    "class-transformer": "^0.5.1"
   },
   "engines": {
     "node": ">=16.0.0"

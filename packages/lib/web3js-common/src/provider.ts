@@ -8,13 +8,16 @@ import {
   Signer,
   SimulatedTransactionResponse,
   Transaction,
+  TransactionInstruction,
+  TransactionInstructionCtorFields,
   TransactionSignature,
   VersionedTransaction,
 } from '@solana/web3.js'
 import { Wallet } from './wallet'
 
 /**
- * Interface compatible with AnchorProvider. It's a copy&paste to not enforcing anchor dependency.
+ * Interface compatible with AnchorProvider.
+ * This is a copy&paste to omit direct anchor TS lib dependency.
  */
 export interface Provider {
   readonly connection: Connection
@@ -156,4 +159,19 @@ export class NullProvider implements Provider {
   ): Promise<SuccessfulTxSimulationResponse> {
     throw new Error('Method not implemented.')
   }
+}
+
+export type SignerType = Keypair | Signer | Wallet
+
+export interface ExtendedProvider extends Provider {
+  sendIx(
+    signers: SignerType[],
+    ...ixes: (
+      | Transaction
+      | TransactionInstruction
+      | TransactionInstructionCtorFields
+    )[]
+  ): Promise<void>
+
+  get walletPubkey(): PublicKey
 }

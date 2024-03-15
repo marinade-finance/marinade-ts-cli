@@ -28,7 +28,6 @@ import {
 } from '@marinade.finance/ts-common'
 import { Provider, instanceOfProvider, providerPubkey } from './provider'
 
-
 export const TRANSACTION_SAFE_SIZE = 1280 - 40 - 8 - 1 // 1231
 
 export async function transaction(

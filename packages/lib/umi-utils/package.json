@@ -1,7 +1,7 @@
 {
-  "name": "@marinade.finance/web3js-common",
+  "name": "@marinade.finance/umi-utils",
   "version": "2.2.3",
-  "description": "Web3 JS reusable utilities",
+  "description": "Umi library utilities",
   "repository": {
     "type": "git",
     "url": "git@github.com:marinade-finance/marinade-ts-cli.git"
@@ -15,7 +15,8 @@
   "keywords": [
     "solana",
     "marinade.finance",
-    "blockchain"
+    "blockchain",
+    "umi"
   ],
   "author": "Marinade Finance",
   "license": "ISC",
@@ -24,20 +25,16 @@
     "src"
   ],
   "devDependencies": {
-    "@marinade.finance/ts-common": "2.2.3",
     "@solana/web3.js": "^1.91.1",
-    "@solana/buffer-layout": "^4.0.1",
-    "bn.js": "^5.2.1",
-    "borsh": "^0.7.0",
-    "bs58": "^5.0.0"
+    "@metaplex-foundation/umi-bundle-defaults": "0.9.1",
+    "@metaplex-foundation/umi": "0.9.1",
+    "@marinade.finance/web3js-common": "2.2.3"
   },
   "peerDependencies": {
-    "@marinade.finance/ts-common": "2.2.3",
     "@solana/web3.js": "^1.91.1",
-    "@solana/buffer-layout": "^4.0.1",
-    "bn.js": "^5.2.1",
-    "borsh": "^0.7.0",
-    "bs58": "^5.0.0"
+    "@metaplex-foundation/umi-bundle-defaults": "0.9.1",
+    "@metaplex-foundation/umi": "0.9.1",
+    "@marinade.finance/web3js-common": "2.2.3"
   },
   "engines": {
     "node": ">=16.0.0"

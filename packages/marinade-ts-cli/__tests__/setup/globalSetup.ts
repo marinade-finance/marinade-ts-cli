@@ -196,9 +196,8 @@ async function addValidatorInstructionBuilder({
       rent: SYSVAR_RENT_PUBKEY,
       validatorVote,
       managerAuthority: marinadeState.state.validatorSystem.managerAuthority,
-      duplicationFlag: await marinadeState.validatorDuplicationFlag(
-        validatorVote
-      ),
+      duplicationFlag:
+        await marinadeState.validatorDuplicationFlag(validatorVote),
       clock: SYSVAR_CLOCK_PUBKEY,
       systemProgram: SystemProgram.programId,
     })
