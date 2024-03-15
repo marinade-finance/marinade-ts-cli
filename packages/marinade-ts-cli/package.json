@@ -48,7 +48,7 @@
     },
     "devDependencies": {
         "@marinade.finance/jest-utils": "^2.2.3",
-        "@types/bn.js": "^5.1.1",
+        "@types/bn.js": "^5.1.5",
         "@solana/spl-token-3.x": "npm:@solana/spl-token@^0.3.8"
     },
     "engines": {

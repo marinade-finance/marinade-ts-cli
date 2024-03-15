@@ -8,7 +8,11 @@ import {
 } from '@solana/web3.js'
 import { executeTxSimple, transaction } from './tx'
 import { Wallet } from './wallet'
-import { Provider, walletProviderOrConnection } from './provider'
+import {
+  ExtendedProvider,
+  Provider,
+  walletProviderOrConnection,
+} from './provider'
 import BN from 'bn.js'
 import { toBigint } from './math'
 
@@ -18,7 +22,7 @@ export async function createUserAndFund({
   lamports = LAMPORTS_PER_SOL,
   from,
 }: {
-  provider: Connection | Provider
+  provider: Connection | Provider | ExtendedProvider
   user?: Signer | Wallet | Keypair | PublicKey
   lamports?: number | BN | bigint
   from?: Signer | Wallet | Keypair
@@ -29,7 +33,11 @@ export async function createUserAndFund({
     toPubkey: user instanceof PublicKey ? user : user.publicKey,
     lamports: toBigint(lamports),
   })
-  const tx = (await transaction(provider)).add(ix)
-  await executeTxSimple(connection, tx, [payer])
+  if ('sendIx' in provider) {
+    await provider.sendIx([payer], ix)
+  } else {
+    const tx = (await transaction(provider)).add(ix)
+    await executeTxSimple(connection, tx, [payer])
+  }
   return user
 }

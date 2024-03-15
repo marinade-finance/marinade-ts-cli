@@ -4,7 +4,7 @@
     "author": "Marinade.Finance",
     "scripts": {
         "compile": "npx tsc -b -verbose",
-        "_copy-readme": "cp packages/lib/anchor-common/*.md build/packages/lib/anchor-common/ && cp packages/lib/cli-common/*.md build/packages/lib/cli-common/ && cp packages/lib/jest-utils/*.md build/packages/lib/jest-utils/ && cp packages/lib/spl-gov-utils/*.md build/packages/lib/spl-gov-utils/ && cp packages/lib/web3js-common/*.md build/packages/lib/web3js-common/ && cp packages/marinade-ts-cli/*.md build/packages/marinade-ts-cli/",
+        "_copy-readme": "cp packages/lib/anchor-common/*.md build/packages/lib/anchor-common/ && cp packages/lib/cli-common/*.md build/packages/lib/cli-common/ && cp packages/lib/jest-utils/*.md build/packages/lib/jest-utils/ && cp packages/lib/spl-gov-utils/*.md build/packages/lib/spl-gov-utils/ && cp packages/lib/web3js-common/*.md build/packages/lib/web3js-common/ && cp packages/lib/umi-utils/*.md build/packages/lib/umi-utils/ && cp packages/lib/bankrun-utils/*.md build/packages/lib/bankrun-utils/ && cp packages/marinade-ts-cli/*.md build/packages/marinade-ts-cli/",
         "build": "pnpm compile && pnpm _copy-readme",
         "marinade": "pnpm cli",
         "cli": "ts-node ./packages/marinade-ts-cli/src/index.ts",
@@ -15,33 +15,29 @@
         "test:no-anchor": "jest --globalSetup='' $FILE",
         "publish:ts-common": "pnpm build && pnpm publish build/packages/lib/ts-common",
         "publish:web3js-common": "pnpm build && pnpm publish build/packages/lib/web3js-common",
+        "publish:umi-utils": "pnpm build && pnpm publish build/packages/lib/umi-utils",
+        "publish:bankrun-utils": "pnpm build && pnpm publish build/packages/lib/bankrun-utils",
         "publish:cli-common": "pnpm build && pnpm publish build/packages/lib/cli-common",
         "publish:anchor-common": "pnpm build && pnpm publish build/packages/lib/anchor-common",
         "publish:jest-utils": "pnpm build && pnpm publish build/packages/lib/jest-utils",
         "publish:spl-gov-utils": "pnpm build && pnpm publish build/packages/lib/spl-gov-utils",
         "publish:marinade-ts-cli": "pnpm build && pnpm publish build/packages/marinade-ts-cli",
-        "publish:libs": "pnpm lint && pnpm install && pnpm publish:ts-common && pnpm publish:web3js-common && pnpm publish:cli-common && pnpm publish:anchor-common && pnpm publish:jest-utils && pnpm publish:spl-gov-utils",
+        "publish:libs": "pnpm lint && pnpm install && pnpm publish:ts-common && pnpm publish:web3js-common && pnpm publish:umi-utils && pnpm publish:bankrun-utils && pnpm publish:cli-common && pnpm publish:anchor-common && pnpm publish:jest-utils && pnpm publish:spl-gov-utils",
         "publish:all": "pnpm publish:libs && pnpm publish:marinade-ts-cli"
     },
     "devDependencies": {
-        "@jest/globals": "^29.5.0",
-        "@types/jest": "^29.5.2",
-        "@types/node": "^18.15.10",
-        "@types/bn.js": "^5.1.1",
-        "@typescript-eslint/eslint-plugin": "^5.59.1",
-        "@typescript-eslint/parser": "^5.59.1",
-        "@typescript-eslint/typescript-estree": "^5.59.1",
+        "@jest/globals": "^29.7.0",
+        "@types/jest": "^29.5.12",
+        "@types/node": "^18.19.24",
+        "@types/bn.js": "^5.1.5",
         "bigint-buffer": "^1.1.5",
-        "gts": "^5.0.0",
-        "husky": "^8.0.3",
-        "jest": "^29.0.5",
-        "lint-staged": "^13.2.2",
-        "ts-jest": "^29.1.0",
-        "ts-node": "^10.9.1",
-        "typescript": "5.0.4"
-    },
-    "resolutions": {
-        "@typescript-eslint/typescript-estree": "^5.59.1"
+        "gts": "^5.2.0",
+        "husky": "^9.0.11",
+        "jest": "^29.7.0",
+        "lint-staged": "^15.2.2",
+        "ts-jest": "^29.1.2",
+        "ts-node": "^10.9.2",
+        "typescript": "5.1.6"
     },
     "engines": {
         "node": ">=16.0.0"
