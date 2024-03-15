@@ -56,15 +56,18 @@ export async function transaction(
 }
 
 export type ExecuteTxParams = {
-  connection: Connection
+  connection: Connection | Provider
   transaction: Transaction
   signers?: (Wallet | Keypair | Signer)[]
   errMessage: string
   simulate?: boolean
   printOnly?: boolean
   logger?: LoggerPlaceholder
+  feePayer?: PublicKey
   sendOpts?: SendOptions
   confirmOpts?: Finality
+  computeUnitPrice?: number
+  computeUnitLimit?: number
 }
 
 export async function executeTx({
@@ -75,8 +78,11 @@ export async function executeTx({
   simulate = false,
   printOnly = false,
   logger,
+  feePayer,
   sendOpts = {},
   confirmOpts,
+  computeUnitLimit,
+  computeUnitPrice,
 }: ExecuteTxParams): Promise<
   VersionedTransactionResponse | SimulatedTransactionResponse | undefined
 > {
@@ -95,6 +101,12 @@ export async function executeTx({
     }
   }
 
+  connection = instanceOfProvider(connection)
+    ? connection.connection
+    : connection
+
+  addComputeBudgetIxes({ transaction, computeUnitLimit, computeUnitPrice })
+
   if (
     transaction.recentBlockhash === undefined ||
     transaction.lastValidBlockHeight === undefined ||
@@ -103,7 +115,8 @@ export async function executeTx({
     const currentBlockhash = await connection.getLatestBlockhash()
     transaction.lastValidBlockHeight = currentBlockhash.lastValidBlockHeight
     transaction.recentBlockhash = currentBlockhash.blockhash
-    transaction.feePayer = transaction.feePayer ?? signers[0].publicKey
+    transaction.feePayer =
+      transaction.feePayer ?? feePayer ?? signers[0].publicKey
   }
 
   for (const signer of signers) {
@@ -298,17 +311,33 @@ async function getTransaction(
   })
 }
 
-async function addComputeBudgetIx(
-  exceedBudget: boolean | undefined,
-  tx: Transaction
-) {
-  if (exceedBudget) {
-    tx.add(
-      ComputeBudgetProgram.setComputeUnitLimit({
-        units: 1_000_000,
-      })
-    )
+async function addComputeBudgetIxes({
+  transaction,
+  computeUnitLimit,
+  computeUnitPrice,
+}: {
+  transaction: Transaction
+  computeUnitLimit?: number
+  computeUnitPrice?: number
+}) {
+  if (computeUnitLimit !== undefined && computeUnitLimit >= 0) {
+    transaction.add(setComputeUnitLimitIx(computeUnitLimit))
   }
+  if (computeUnitPrice !== undefined && computeUnitPrice >= 0) {
+    transaction.add(setComputeUnitPriceIx(computeUnitPrice))
+  }
+}
+
+function setComputeUnitLimitIx(units: number): TransactionInstruction {
+  return ComputeBudgetProgram.setComputeUnitLimit({ units })
+}
+
+/**
+ * Priority fee that is calculated in micro lamports (0.000001 SOL)
+ * Every declared CU for the transaction is paid with this additional payment.
+ */
+function setComputeUnitPriceIx(microLamports: number): TransactionInstruction {
+  return ComputeBudgetProgram.setComputeUnitPrice({ microLamports })
 }
 
 /**
@@ -325,22 +354,11 @@ export async function splitAndExecuteTx({
   simulate = false,
   printOnly = false,
   logger,
-  exceedBudget = false,
   sendOpts = {},
   confirmOpts,
-}: {
-  connection: Connection
-  transaction: Transaction
-  errMessage: string
-  signers?: (Wallet | Keypair | Signer)[]
-  feePayer?: PublicKey
-  simulate?: boolean
-  printOnly?: boolean
-  logger?: LoggerPlaceholder
-  exceedBudget?: boolean
-  sendOpts?: SendOptions
-  confirmOpts?: Finality
-}): Promise<{
+  computeUnitLimit,
+  computeUnitPrice,
+}: ExecuteTxParams): Promise<{
   result: VersionedTransactionResponse[] | SimulatedTransactionResponse[] | []
   transactions: Transaction[]
 }> {
@@ -365,6 +383,9 @@ export async function splitAndExecuteTx({
     })
     resultTransactions.push(transaction)
   } else {
+    connection = instanceOfProvider(connection)
+      ? connection.connection
+      : connection
     feePayer = feePayer || transaction.feePayer
     if (feePayer === undefined) {
       throw new Error(
@@ -403,7 +424,11 @@ export async function splitAndExecuteTx({
     }
     let checkingTransaction = await getTransaction(feePayerDefined, blockhash)
     let lastValidTransaction = await getTransaction(feePayerDefined, blockhash)
-    addComputeBudgetIx(exceedBudget, checkingTransaction)
+    addComputeBudgetIxes({
+      transaction: checkingTransaction,
+      computeUnitLimit,
+      computeUnitPrice,
+    })
     for (const ix of transaction.instructions) {
       checkingTransaction.add(ix)
       const filteredSigners = filterSignersForInstruction(
@@ -431,7 +456,11 @@ export async function splitAndExecuteTx({
         transactions.push(lastValidTransaction)
         // nulling data of the checking transaction
         checkingTransaction = await getTransaction(feePayerDefined, blockhash)
-        addComputeBudgetIx(exceedBudget, checkingTransaction)
+        addComputeBudgetIxes({
+          transaction: checkingTransaction,
+          computeUnitLimit,
+          computeUnitPrice,
+        })
         checkingTransaction.add(ix)
       }
       lastValidTransaction = await getTransaction(feePayerDefined, blockhash)
