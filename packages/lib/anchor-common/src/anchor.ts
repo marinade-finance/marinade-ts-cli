@@ -1,6 +1,6 @@
 import * as anchor from '@coral-xyz/anchor'
 import { SendTransactionError } from '@solana/web3.js'
-import { LoggerPlaceholder, logError } from '@marinade.finance/ts-common'
+import { LoggerPlaceholder, checkErrorMessage, logError } from '@marinade.finance/ts-common'
 
 export function verifyError(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -55,16 +55,4 @@ export function verifyError(
     logError(logger, `Error does not include error number '${errCode}: [${e}]`)
     throw e
   }
-}
-
-type ToString = { toString(): string }
-
-export function checkErrorMessage(e: unknown, message: ToString): boolean {
-  return (
-    typeof e === 'object' &&
-    e !== null &&
-    'message' in e &&
-    typeof e.message === 'string' &&
-    e.message.includes(message.toString())
-  )
 }
