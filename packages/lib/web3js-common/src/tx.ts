@@ -24,8 +24,12 @@ import {
   logInfo,
   logWarn,
   isLevelEnabled,
+  checkErrorMessage,
 } from '@marinade.finance/ts-common'
 import { Provider, instanceOfProvider, providerPubkey } from './provider'
+
+
+export const TRANSACTION_SAFE_SIZE = 1280 - 40 - 8 - 1 // 1231
 
 export async function transaction(
   connection: Connection | Provider,
@@ -229,18 +233,6 @@ export async function executeTxWithExceededBlockhashRetry(
   }
 }
 
-// TODO: move this from anchor.ts
-type ToString = { toString(): string }
-function checkErrorMessage(e: unknown, message: ToString): boolean {
-  return (
-    typeof e === 'object' &&
-    e !== null &&
-    'message' in e &&
-    typeof e.message === 'string' &&
-    e.message.includes(message.toString())
-  )
-}
-
 /**
  * Type guard for TransactionResponse and SimulatedTransactionResponse. It does not accept `undefined` as a valid input.
  *
@@ -306,8 +298,6 @@ async function getTransaction(
     lastValidBlockHeight: bh.lastValidBlockHeight,
   })
 }
-
-export const TRANSACTION_SAFE_SIZE = 1280 - 40 - 8 - 1 // 1231
 
 async function addComputeBudgetIx(
   exceedBudget: boolean | undefined,

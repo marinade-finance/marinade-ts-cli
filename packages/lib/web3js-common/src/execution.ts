@@ -15,7 +15,7 @@ import { toBigint } from './math'
 export async function createUserAndFund({
   provider,
   user = Keypair.generate(),
-  lamports = 5 * LAMPORTS_PER_SOL,
+  lamports = LAMPORTS_PER_SOL,
   from,
 }: {
   provider: Connection | Provider
