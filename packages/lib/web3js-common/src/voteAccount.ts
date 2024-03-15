@@ -2,7 +2,6 @@ import * as BufferLayout from '@solana/buffer-layout'
 import {
   Connection,
   PublicKey,
-  VoteAccount,
   Lockout,
   EpochCredits,
   BlockTimestamp,
@@ -47,9 +46,14 @@ export async function getVoteAccountFromData(
   let voteAccountData: VoteAccount
   if (version.V0_23_5) {
     voteAccountData = fromAccount0_23_5Data(voteAccountInfo.data, versionOffset)
-  } else if (version.V1_14_11 || version.CURRENT) {
+  } else if (version.V1_14_11) {
     voteAccountData = fromAccount1_14_11Data(
       voteAccountInfo.data,
+      versionOffset
+    )
+  } else if (version.CURRENT) {
+    voteAccountData = fromAccountCURRENTData(
+      toBuffer(voteAccountInfo.data),
       versionOffset
     )
   } else {
@@ -60,6 +64,73 @@ export async function getVoteAccountFromData(
     )
   }
   return programAccountInfo(address, voteAccountInfo, voteAccountData)
+}
+
+type VoteAccountArgs = {
+  nodePubkey: PublicKey
+  authorizedWithdrawer: PublicKey
+  commission: number
+  rootSlot: number | null
+  votes: LandedVote[]
+  authorizedVoters: AuthorizedVoter[]
+  priorVoters: PriorVoter[]
+  epochCredits: EpochCredits[]
+  lastTimestamp: BlockTimestamp
+}
+
+export class VoteAccount {
+  nodePubkey: PublicKey
+  authorizedWithdrawer: PublicKey
+  commission: number
+  rootSlot: number | null
+  votes: LandedVote[]
+  authorizedVoters: AuthorizedVoter[]
+  priorVoters: PriorVoter[]
+  epochCredits: EpochCredits[]
+  lastTimestamp: BlockTimestamp
+
+  /**
+   * @internal
+   */
+  constructor(args: VoteAccountArgs) {
+    this.nodePubkey = args.nodePubkey
+    this.authorizedWithdrawer = args.authorizedWithdrawer
+    this.commission = args.commission
+    this.rootSlot = args.rootSlot
+    this.votes = args.votes
+    this.authorizedVoters = args.authorizedVoters
+    this.priorVoters = args.priorVoters
+    this.epochCredits = args.epochCredits
+    this.lastTimestamp = args.lastTimestamp
+  }
+}
+
+/**
+ * Deserialize VoteAccount CURRENT from the account data.
+ */
+function fromAccountCURRENTData(
+  buffer: Buffer | Uint8Array | Array<number>,
+  versionOffset: number
+): VoteAccount {
+  const voteAccountCURRENT = VoteAccountCURRENTLayout.decode(
+    toBuffer(buffer),
+    versionOffset
+  )
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return new (VoteAccount as any)({
+    nodePubkey: new PublicKey(voteAccountCURRENT.nodePubkey),
+    authorizedWithdrawer: new PublicKey(
+      voteAccountCURRENT.authorizedWithdrawer
+    ),
+    commission: voteAccountCURRENT.commission,
+    votes: voteAccountCURRENT.votes,
+    rootSlot: voteAccountCURRENT.rootSlot,
+    authorizedVoters:
+      voteAccountCURRENT.authorizedVoters.map(parseAuthorizedVoter),
+    priorVoters: getPriorVoters(voteAccountCURRENT.priorVoters),
+    epochCredits: voteAccountCURRENT.epochCredits,
+    lastTimestamp: voteAccountCURRENT.lastTimestamp,
+  }) as VoteAccount
 }
 
 /**
@@ -80,7 +151,9 @@ function fromAccount1_14_11Data(
       voteAccount1_14_11.authorizedWithdrawer
     ),
     commission: voteAccount1_14_11.commission,
-    votes: voteAccount1_14_11.votes,
+    votes: voteAccount1_14_11.votes.map(vote => {
+      return { latency: 0, lockout: vote }
+    }),
     rootSlot: voteAccount1_14_11.rootSlot,
     authorizedVoters:
       voteAccount1_14_11.authorizedVoters.map(parseAuthorizedVoter),
@@ -106,7 +179,9 @@ function fromAccount0_23_5Data(
     nodePubkey: new PublicKey(voteAccount0_23_5.nodePubkey),
     authorizedWithdrawer: new PublicKey(voteAccount0_23_5.authorizedWithdrawer),
     commission: voteAccount0_23_5.commission,
-    votes: voteAccount0_23_5.votes,
+    votes: voteAccount0_23_5.votes.map(vote => {
+      return { latency: 0, lockout: vote }
+    }),
     rootSlot: voteAccount0_23_5.rootSlot,
     authorizedVoters: [
       parseAuthorizedVoter({
@@ -322,6 +397,62 @@ const VoteAccount1_14_11Layout = BufferLayout.struct<VoteAccountData0_14_11>([
   ),
 ])
 
+const VoteAccountCURRENTLayout = BufferLayout.struct<VoteAccountDataCURRENT>([
+  publicKey('nodePubkey'),
+  publicKey('authorizedWithdrawer'),
+  BufferLayout.u8('commission'),
+  BufferLayout.nu64(), // votes.length
+  BufferLayout.seq<LandedVote>(
+    BufferLayout.struct([
+      BufferLayout.u8('latency'),
+      BufferLayout.nu64('slot'),
+      BufferLayout.u32('confirmationCount'),
+    ]),
+    BufferLayout.offset(BufferLayout.u32(), -8),
+    'votes'
+  ),
+  option(BufferLayout.nu64(), 'rootSlot'),
+  BufferLayout.nu64(), // authorizedVoters.length
+  BufferLayout.seq<AuthorizedVoterRaw>(
+    BufferLayout.struct([
+      BufferLayout.nu64('epoch'),
+      publicKey('authorizedVoter'),
+    ]),
+    BufferLayout.offset(BufferLayout.u32(), -8),
+    'authorizedVoters'
+  ),
+  BufferLayout.struct<PriorVoters>(
+    [
+      BufferLayout.seq(
+        BufferLayout.struct([
+          publicKey('authorizedPubkey'),
+          BufferLayout.nu64('epochOfLastAuthorizedSwitch'),
+          BufferLayout.nu64('targetEpoch'),
+        ]),
+        32,
+        'buf'
+      ),
+      BufferLayout.nu64('idx'),
+      BufferLayout.u8('isEmpty'),
+    ],
+    'priorVoters'
+  ),
+  BufferLayout.nu64(), // epochCredits.length
+  BufferLayout.seq<EpochCredits>(
+    BufferLayout.struct([
+      BufferLayout.nu64('epoch'),
+      BufferLayout.nu64('credits'),
+      BufferLayout.nu64('prevCredits'),
+    ]),
+    BufferLayout.offset(BufferLayout.u32(), -8),
+    'epochCredits'
+  ),
+  BufferLayout.struct<BlockTimestamp>(
+    [BufferLayout.nu64('slot'), BufferLayout.nu64('timestamp')],
+    'lastTimestamp'
+  ),
+])
+
 // copy out from:
 // https://github.com/solana-labs/solana-web3.js/blob/24d71d600c90605a8c2022b020f749234ebc4809/packages/library-legacy/src/vote-account.ts#L77
 type VoteAccountData0_23_5 = Readonly<{
@@ -349,6 +480,18 @@ type VoteAccountData0_14_11 = Readonly<{
   votes: Lockout[]
 }>
 
+type VoteAccountDataCURRENT = Readonly<{
+  authorizedVoters: AuthorizedVoterRaw[]
+  authorizedWithdrawer: Uint8Array
+  commission: number
+  epochCredits: EpochCredits[]
+  lastTimestamp: BlockTimestamp
+  nodePubkey: Uint8Array
+  priorVoters: PriorVoters
+  rootSlot: number | null
+  votes: LandedVote[]
+}>
+
 function parseAuthorizedVoter({
   authorizedVoter,
   epoch,
@@ -357,6 +500,11 @@ function parseAuthorizedVoter({
     epoch,
     authorizedVoter: new PublicKey(authorizedVoter),
   }
+}
+
+type LandedVote = {
+  latency: number
+  lockout: Lockout
 }
 
 type AuthorizedVoterRaw = Readonly<{
