@@ -2,7 +2,8 @@ import { Connection, Keypair, PublicKey } from '@solana/web3.js'
 import { readFile } from 'fs/promises'
 import fs from 'fs'
 import { sleep } from '@marinade.finance/ts-common'
-import { getStakeAccount } from '@marinade.finance/web3js-common/src/stakeAccount'
+import { getStakeAccount } from '@marinade.finance/web3js-common'
+import { waitForEpoch } from '@marinade.finance/web3js-common'
 
 export async function getAnchorValidatorInfo(
   connection: Connection,
@@ -39,23 +40,24 @@ export async function getAnchorValidatorInfo(
   const voteAccounts = await connection.getVoteAccounts()
   // expecting run on localhost and only one voting vote account is available
   // i.e., one validator solana-test-validator is voting and the validator identity is the same
-  if (voteAccounts.current.length !== 1) {
+  const anchorValidatorVoteAccounts = voteAccounts.current.filter(
+    v => v.nodePubkey === validatorIdentity.publicKey.toBase58()
+  )
+  if (anchorValidatorVoteAccounts.length <= 0) {
+    throw new Error(
+      'Expected solana-test-validator to be voting. Cannot continue in global local test setup. ' +
+        `No one with "nodePubkey" of validator ${validatorIdentity.publicKey.toBase58()}. ` +
+        `Number of all vote accounts found: ${voteAccounts.current.length}`
+    )
+  }
+  if (anchorValidatorVoteAccounts.length > 1) {
     throw new Error(
       'Expected one vote account of solana-test-validator. Cannot continue in global local test setup.' +
-        ` Number of vote accounts found: ${voteAccounts.current.length}`
+        `More vote accounts of "nodePubkey" of validator ${validatorIdentity.publicKey.toBase58()}. ` +
+        ` Number of solana-test-validator vote accounts found: ${anchorValidatorVoteAccounts.length}`
     )
   }
-  const votePubkey = new PublicKey(voteAccounts.current[0].votePubkey)
-  if (
-    voteAccounts.current[0].nodePubkey !==
-    validatorIdentity.publicKey.toBase58()
-  ) {
-    throw new Error(
-      `Expected validator identity ${validatorIdentity.publicKey.toBase58()} to be the same as the vote account node pubkey ${
-        voteAccounts.current[0].nodePubkey
-      }`
-    )
-  }
+  const votePubkey = new PublicKey(anchorValidatorVoteAccounts[0].votePubkey)
 
   return {
     votePubkey,
@@ -138,35 +140,4 @@ export async function waitForStakeAccountActivation({
       }
     }
   }
-}
-
-export async function waitForEpoch(
-  connection: Connection,
-  targetEpoch: number,
-  timeoutSeconds: number
-) {
-  const startTime = Date.now()
-  let currentEpoch = (await connection.getEpochInfo()).epoch
-  if (currentEpoch < targetEpoch) {
-    console.debug(
-      `Waiting for the epoch ${targetEpoch}, current epoch is ${currentEpoch}`
-    )
-  }
-  while (currentEpoch < targetEpoch) {
-    if (Date.now() - startTime > timeoutSeconds * 1000) {
-      throw new Error(
-        `Timeout ${timeoutSeconds} elapsed when waiting for epoch ${targetEpoch} (current epoch: ${currentEpoch})`
-      )
-    }
-    await sleep(1000)
-    currentEpoch = (await connection.getEpochInfo()).epoch
-  }
-}
-
-export async function waitForNextEpoch(
-  connection: Connection,
-  timeoutSeconds: number
-) {
-  const currentEpoch = (await connection.getEpochInfo()).epoch
-  await waitForEpoch(connection, currentEpoch + 1, timeoutSeconds)
 }

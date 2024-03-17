@@ -25,7 +25,7 @@ export abstract class Context {
   readonly logger: Logger
   readonly skipPreflight: boolean
   readonly confirmationFinality: Finality
-  readonly computeUnitPrice: number
+  readonly computeUnitPrice: number | undefined
   readonly simulate: boolean
   readonly printOnly: boolean
   readonly commandName: string
@@ -35,7 +35,7 @@ export abstract class Context {
     logger,
     skipPreflight,
     confirmationFinality = 'finalized',
-    computeUnitPrice = 0,
+    computeUnitPrice = undefined,
     simulate,
     printOnly,
     commandName,
@@ -54,7 +54,10 @@ export abstract class Context {
     this.logger = logger
     this.skipPreflight = skipPreflight
     this.confirmationFinality = confirmationFinality
-    this.computeUnitPrice = computeUnitPrice
+    this.computeUnitPrice =
+      computeUnitPrice === undefined || computeUnitPrice < 0
+        ? undefined
+        : computeUnitPrice
     this.simulate = simulate
     this.printOnly = printOnly
   }
