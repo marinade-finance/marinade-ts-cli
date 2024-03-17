@@ -323,7 +323,7 @@ async function addComputeBudgetIxes({
   if (computeUnitLimit !== undefined && computeUnitLimit >= 0) {
     transaction.add(setComputeUnitLimitIx(computeUnitLimit))
   }
-  if (computeUnitPrice !== undefined && computeUnitPrice >= 0) {
+  if (computeUnitPrice !== undefined && computeUnitPrice > 0) {
     transaction.add(setComputeUnitPriceIx(computeUnitPrice))
   }
 }
