@@ -1,6 +1,6 @@
 {
     "name": "@marinade.finance/jest-utils",
-    "version": "2.2.3",
+    "version": "2.3.0",
     "description": "Utility functions for setting up Jest",
     "repository": {
       "type": "git",
