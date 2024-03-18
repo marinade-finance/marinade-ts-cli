@@ -70,6 +70,7 @@ export type ExecuteTxParams = {
   confirmOpts?: Finality
   computeUnitPrice?: number
   computeUnitLimit?: number
+  confirmWaitTime?: number
 }
 
 export async function executeTx({
@@ -85,6 +86,7 @@ export async function executeTx({
   confirmOpts,
   computeUnitLimit,
   computeUnitPrice,
+  confirmWaitTime,
 }: ExecuteTxParams): Promise<
   VersionedTransactionResponse | SimulatedTransactionResponse | undefined
 > {
@@ -148,7 +150,13 @@ export async function executeTx({
         sendOpts
       )
       // Checking if executed
-      result = await confirmTransaction(connection, txSig, confirmOpts, logger)
+      result = await confirmTransaction(
+        connection,
+        txSig,
+        confirmOpts,
+        logger,
+        confirmWaitTime
+      )
     }
   } catch (e) {
     throw new ExecutionError({
@@ -206,8 +214,10 @@ export async function confirmTransaction(
   connection: Connection,
   txSig: TransactionSignature,
   confirmOpts?: Finality,
-  logger?: LoggerPlaceholder
+  logger?: LoggerPlaceholder,
+  confirmWaitTime = 0
 ): Promise<VersionedTransactionResponse | undefined> {
+  const MAX_WAIT_TIME = 10_000
   let confirmFinality: Finality | undefined = confirmOpts
   if (
     confirmFinality === undefined &&
@@ -231,8 +241,6 @@ export async function confirmTransaction(
       maxSupportedTransactionVersion: 0, // TODO: configurable?
     })
   const confirmBlockhash = connection.getLatestBlockhash(confirmFinality)
-  // TODO: waiting time is configured to be reasonable working with public mainnet API
-  let waitingTime = 3000
   while (
     txRes === null &&
     (
@@ -241,7 +249,13 @@ export async function confirmTransaction(
       })
     ).value
   ) {
-    await sleep(waitingTime < 10_000 ? (waitingTime += 1000) : waitingTime)
+    if (confirmWaitTime > 0) {
+      confirmWaitTime =
+        confirmWaitTime < MAX_WAIT_TIME
+          ? (confirmWaitTime += 1000)
+          : confirmWaitTime
+      await sleep(confirmWaitTime)
+    }
     try {
       logDebug(logger, `Checking outcome of transaction '${txSig}'`)
       txRes = await txSearchConnection.getTransaction(txSig, {
