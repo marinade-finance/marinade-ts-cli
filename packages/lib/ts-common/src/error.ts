@@ -6,6 +6,8 @@ export function checkErrorMessage(e: unknown, message: ToString): boolean {
     e !== null &&
     'message' in e &&
     typeof e.message === 'string' &&
-    e.message.includes(message.toString())
+    e.message
+      .toLocaleLowerCase()
+      .includes(message.toString().toLocaleLowerCase())
   )
 }

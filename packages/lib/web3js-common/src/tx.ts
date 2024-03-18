@@ -14,6 +14,7 @@ import {
   SendOptions,
   VersionedTransaction,
   Finality,
+  TransactionSignature,
 } from '@solana/web3.js'
 import { Wallet, instanceOfWallet } from './wallet'
 import { serializeInstructionToBase64 } from './txToBase64'
@@ -25,6 +26,7 @@ import {
   logWarn,
   isLevelEnabled,
   checkErrorMessage,
+  sleep,
 } from '@marinade.finance/ts-common'
 import { Provider, instanceOfProvider, providerPubkey } from './provider'
 
@@ -112,9 +114,7 @@ export async function executeTx({
     transaction.lastValidBlockHeight === undefined ||
     transaction.feePayer === undefined
   ) {
-    const currentBlockhash = await connection.getLatestBlockhash()
-    transaction.lastValidBlockHeight = currentBlockhash.lastValidBlockHeight
-    transaction.recentBlockhash = currentBlockhash.blockhash
+    await updateTransactionBlockhash(transaction, connection)
     transaction.feePayer =
       transaction.feePayer ?? feePayer ?? signers[0].publicKey
   }
@@ -141,64 +141,19 @@ export async function executeTx({
         )
       }
     } else if (!printOnly) {
-      let confirmFinality: Finality | undefined = confirmOpts
-      if (
-        confirmFinality === undefined &&
-        (connection.commitment === 'finalized' ||
-          connection.commitment === 'confirmed')
-      ) {
-        confirmFinality = connection.commitment
-      }
-      confirmFinality = confirmFinality || 'confirmed'
-
-      txSig = await connection.sendRawTransaction(
-        transaction.serialize(),
+      // retry when not having recent blockhash
+      txSig = await sendRawTransactionWithRetry(
+        connection,
+        transaction,
         sendOpts
       )
-
-      const txSearchConnection = new Connection(connection.rpcEndpoint, {
-        commitment: confirmFinality,
-      })
-      let txRes: VersionedTransactionResponse | null =
-        await txSearchConnection.getTransaction(txSig, {
-          commitment: confirmFinality,
-          maxSupportedTransactionVersion: 0, // TODO: configurable?
-        })
-      const confirmBlockhash = connection.getLatestBlockhash(confirmFinality)
-      while (
-        txRes === null &&
-        (
-          await connection.isBlockhashValid(
-            (await confirmBlockhash).blockhash,
-            {
-              commitment: confirmFinality,
-            }
-          )
-        ).value
-      ) {
-        txRes = await txSearchConnection.getTransaction(txSig, {
-          commitment: confirmFinality,
-          maxSupportedTransactionVersion: 0,
-        })
-      }
-
-      if (txRes === null) {
-        throw new Error(
-          `Transaction ${txSig} not found, failed to get from ${connection.rpcEndpoint}`
-        )
-      }
-      if (txRes.meta?.err) {
-        throw new Error(
-          `Transaction ${txSig} failure, result: ${JSON.stringify(txRes)}`
-        )
-      }
-      logDebug(logger, 'Transaction signature: ' + txSig)
-      logDebug(logger, txRes.meta?.logMessages)
-      result = txRes
+      // Checking if executed
+      result = await confirmTransaction(connection, txSig, confirmOpts, logger)
     }
   } catch (e) {
     throw new ExecutionError({
-      msg: txSig ? `${txSig} ` : '' + errMessage,
+      txSignature: txSig,
+      msg: errMessage,
       cause: e as Error,
       logs: (e as SendTransactionError).logs
         ? (e as SendTransactionError).logs
@@ -207,6 +162,112 @@ export async function executeTx({
     })
   }
   return result
+}
+
+export async function updateTransactionBlockhash(
+  transaction: Transaction,
+  connection: Connection
+): Promise<Transaction> {
+  const currentBlockhash = await connection.getLatestBlockhash()
+  transaction.lastValidBlockHeight = currentBlockhash.lastValidBlockHeight
+  transaction.recentBlockhash = currentBlockhash.blockhash
+  return transaction
+}
+
+async function sendRawTransactionWithRetry(
+  connection: Connection,
+  transaction: Transaction,
+  sendOpts?: SendOptions
+): Promise<TransactionSignature> {
+  try {
+    return await connection.sendRawTransaction(
+      transaction.serialize(),
+      sendOpts
+    )
+  } catch (e) {
+    if (checkErrorMessage(e, 'blockhash not found')) {
+      logDebug(
+        undefined,
+        'Blockhash not found, retrying to update transaction blockhash, reason: ' +
+          e
+      )
+      await updateTransactionBlockhash(transaction, connection)
+      return await connection.sendRawTransaction(
+        transaction.serialize(),
+        sendOpts
+      )
+    } else {
+      throw e
+    }
+  }
+}
+
+export async function confirmTransaction(
+  connection: Connection,
+  txSig: TransactionSignature,
+  confirmOpts?: Finality,
+  logger?: LoggerPlaceholder
+): Promise<VersionedTransactionResponse | undefined> {
+  let confirmFinality: Finality | undefined = confirmOpts
+  if (
+    confirmFinality === undefined &&
+    (connection.commitment === 'finalized' ||
+      connection.commitment === 'confirmed')
+  ) {
+    confirmFinality = connection.commitment
+  }
+  confirmFinality = confirmFinality || 'confirmed'
+
+  const txSearchConnection = new Connection(connection.rpcEndpoint, {
+    commitment: confirmFinality,
+  })
+  logDebug(
+    logger,
+    `Waiting to confirm transaction signature: ${txSig} (timeout ~2 minutes)`
+  )
+  let txRes: VersionedTransactionResponse | null =
+    await txSearchConnection.getTransaction(txSig, {
+      commitment: confirmFinality,
+      maxSupportedTransactionVersion: 0, // TODO: configurable?
+    })
+  const confirmBlockhash = connection.getLatestBlockhash(confirmFinality)
+  // TODO: waiting time is configured to be reasonable working with public mainnet API
+  let waitingTime = 3000
+  while (
+    txRes === null &&
+    (
+      await connection.isBlockhashValid((await confirmBlockhash).blockhash, {
+        commitment: confirmFinality,
+      })
+    ).value
+  ) {
+    await sleep(waitingTime < 10_000 ? (waitingTime += 1000) : waitingTime)
+    try {
+      logDebug(logger, `Checking outcome of transaction '${txSig}'`)
+      txRes = await txSearchConnection.getTransaction(txSig, {
+        commitment: confirmFinality,
+        maxSupportedTransactionVersion: 0,
+      })
+    } catch (e) {
+      if (checkErrorMessage(e, 'Too many requests for a specific RPC call')) {
+        logDebug(logger, `Error confirming transaction '${txSig}': ` + e)
+      }
+    }
+  }
+
+  if (txRes === null) {
+    throw new Error(
+      `Transaction ${txSig} not found, failed to get from ${connection.rpcEndpoint}`
+    )
+  }
+  if (txRes.meta?.err) {
+    throw new Error(
+      `Transaction ${txSig} failure, result: ${JSON.stringify(txRes)}`
+    )
+  }
+  logDebug(logger, 'Transaction signature: ' + txSig)
+  logDebug(logger, txRes.meta?.logMessages)
+  return txRes
 }
 
 export async function executeTxSimple(
@@ -237,6 +298,17 @@ export async function executeTxWithExceededBlockhashRetry(
     return await executeTx(txParams)
   } catch (e) {
     if (checkErrorMessage(e, 'block height exceeded')) {
+      const txSig =
+        e instanceof ExecutionError && e.txSignature !== undefined
+          ? `${e.txSignature} `
+          : ''
+      logDebug(
+        txParams.logger,
+        `Failed to execute transaction ${txSig}` +
+          'due to block height exceeded, retrying, ' +
+          'original error: ' +
+          e
+      )
       txParams.transaction.recentBlockhash = undefined
       return await executeTx(txParams)
     } else {
