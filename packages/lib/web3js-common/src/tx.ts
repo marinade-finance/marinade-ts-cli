@@ -28,7 +28,12 @@ import {
   checkErrorMessage,
   sleep,
 } from '@marinade.finance/ts-common'
-import { Provider, instanceOfProvider, providerPubkey } from './provider'
+import {
+  Provider,
+  instanceOfProvider,
+  instanceOfProviderWithWallet,
+  providerPubkey,
+} from './provider'
 
 export const TRANSACTION_SAFE_SIZE = 1280 - 40 - 8 - 1 // 1231
 
@@ -73,6 +78,23 @@ export type ExecuteTxParams = {
   confirmWaitTime?: number
 }
 
+export type ExecuteTxReturn =
+  | {
+      signature: string
+      response: VersionedTransactionResponse | SimulatedTransactionResponse
+    }
+  | undefined
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function isExecuteTxReturn(data: any): data is ExecuteTxReturn {
+  return (
+    data !== undefined &&
+    data !== null &&
+    'signature' in data &&
+    'transaction' in data
+  )
+}
+
 export async function executeTx({
   connection,
   transaction,
@@ -87,10 +109,8 @@ export async function executeTx({
   computeUnitLimit,
   computeUnitPrice,
   confirmWaitTime,
-}: ExecuteTxParams): Promise<
-  VersionedTransactionResponse | SimulatedTransactionResponse | undefined
-> {
-  let result:
+}: ExecuteTxParams): Promise<ExecuteTxReturn> {
+  let txResponse:
     | VersionedTransactionResponse
     | SimulatedTransactionResponse
     | undefined = undefined
@@ -130,29 +150,29 @@ export async function executeTx({
     }
   }
 
-  let txSig: string | undefined = undefined
+  let txSignature: string | undefined = undefined
   try {
     if (simulate) {
       logWarn(logger, '[[Simulation mode]]')
-      result = (await connection.simulateTransaction(transaction)).value
-      logDebug(logger, result)
-      if (result.err) {
+      txResponse = (await connection.simulateTransaction(transaction)).value
+      logDebug(logger, txResponse)
+      if (txResponse.err) {
         throw new SendTransactionError(
-          result.err as string,
-          result.logs || undefined
+          txResponse.err as string,
+          txResponse.logs || undefined
         )
       }
     } else if (!printOnly) {
       // retry when not having recent blockhash
-      txSig = await sendRawTransactionWithRetry(
+      txSignature = await sendRawTransactionWithRetry(
         connection,
         transaction,
         sendOpts
       )
       // Checking if executed
-      result = await confirmTransaction(
+      txResponse = await confirmTransaction(
         connection,
-        txSig,
+        txSignature,
         confirmOpts,
         logger,
         confirmWaitTime
@@ -160,7 +180,7 @@ export async function executeTx({
     }
   } catch (e) {
     throw new ExecutionError({
-      txSignature: txSig,
+      txSignature,
       msg: errMessage,
       cause: e as Error,
       logs: (e as SendTransactionError).logs
@@ -169,7 +189,9 @@ export async function executeTx({
       transaction: isLevelEnabled(logger, 'debug') ? transaction : undefined,
     })
   }
-  return result
+  return txResponse !== undefined && txSignature !== undefined
+    ? { response: txResponse, signature: txSignature }
+    : undefined
 }
 
 export async function updateTransactionBlockhash(
@@ -216,7 +238,7 @@ export async function confirmTransaction(
   confirmOpts?: Finality,
   logger?: LoggerPlaceholder,
   confirmWaitTime = 0
-): Promise<VersionedTransactionResponse | undefined> {
+): Promise<VersionedTransactionResponse> {
   const MAX_WAIT_TIME = 10_000
   let confirmFinality: Finality | undefined = confirmOpts
   if (
@@ -290,9 +312,7 @@ export async function executeTxSimple(
   signers?: (Wallet | Keypair | Signer)[],
   sendOpts?: SendOptions,
   confirmOpts?: Finality
-): Promise<
-  VersionedTransactionResponse | SimulatedTransactionResponse | undefined
-> {
+): Promise<ExecuteTxReturn> {
   return await executeTx({
     connection,
     transaction,
@@ -305,9 +325,7 @@ export async function executeTxSimple(
 
 export async function executeTxWithExceededBlockhashRetry(
   txParams: ExecuteTxParams
-): Promise<
-  VersionedTransactionResponse | SimulatedTransactionResponse | undefined
-> {
+): Promise<ExecuteTxReturn> {
   try {
     return await executeTx(txParams)
   } catch (e) {
@@ -426,6 +444,13 @@ function setComputeUnitPriceIx(microLamports: number): TransactionInstruction {
   return ComputeBudgetProgram.setComputeUnitPrice({ microLamports })
 }
 
+export type TransactionWithSigners = {
+  transaction: Transaction
+  signers: (Wallet | Keypair | Signer)[]
+}
+
+export type SplitAndExecuteTxReturn = ExecuteTxReturn & TransactionWithSigners
+
 /**
  * Split tx into multiple transactions if it exceeds the transaction size limit.
  * TODO: this is a bit hacky, we should use a better approach to split the tx
@@ -444,19 +469,12 @@ export async function splitAndExecuteTx({
   confirmOpts,
   computeUnitLimit,
   computeUnitPrice,
-}: ExecuteTxParams): Promise<{
-  result: VersionedTransactionResponse[] | SimulatedTransactionResponse[] | []
-  transactions: Transaction[]
-}> {
-  const result:
-    | VersionedTransactionResponse[]
-    | SimulatedTransactionResponse[]
-    | [] = []
-  const resultTransactions: Transaction[] = []
+}: ExecuteTxParams): Promise<SplitAndExecuteTxReturn[]> {
+  const result: SplitAndExecuteTxReturn[] = []
 
   // only to print in base64
   if (!simulate && printOnly) {
-    await executeTx({
+    const resultExecuteTx = await executeTx({
       connection,
       transaction,
       errMessage,
@@ -467,17 +485,24 @@ export async function splitAndExecuteTx({
       sendOpts,
       confirmOpts,
     })
-    resultTransactions.push(transaction)
+    if (resultExecuteTx !== undefined) {
+      // printOnly is NOT true
+      result.push({ ...resultExecuteTx, transaction, signers })
+    }
   } else {
-    connection = instanceOfProvider(connection)
-      ? connection.connection
-      : connection
     feePayer = feePayer || transaction.feePayer
+    if (feePayer === undefined && instanceOfProviderWithWallet(connection)) {
+      feePayer = connection.wallet.publicKey
+      signers.push(connection.wallet)
+    }
     if (feePayer === undefined) {
       throw new Error(
         'splitAndExecuteTx: transaction fee payer has to be defined, either in transaction or argument'
       )
     }
+    connection = instanceOfProvider(connection)
+      ? connection.connection
+      : connection
     const uniqueSigners: Map<string, Wallet | Keypair | Signer> = new Map()
     for (const signer of signers) {
       uniqueSigners.set(signer.publicKey.toBase58(), signer)
@@ -559,8 +584,10 @@ export async function splitAndExecuteTx({
     }
 
     let executionCounter = 0
-    resultTransactions.push(...transactions)
+    let priorTransaction: Transaction | undefined = undefined
     for (const transaction of transactions) {
+      transaction.recentBlockhash = priorTransaction?.recentBlockhash
+      transaction.lastValidBlockHeight = priorTransaction?.lastValidBlockHeight
       const txSigners: (Signer | Wallet)[] = filterSignersForInstruction(
         transaction.instructions,
         signers
@@ -577,23 +604,20 @@ export async function splitAndExecuteTx({
       })
 
       executionCounter++
+      priorTransaction = transaction
       logDebug(
         logger,
         `Transaction ${executionCounter}/${transactions.length} ` +
           `(${transaction.instructions.length} instructions) executed`
       )
 
-      if (isSimulatedTransactionResponse(executeResult)) {
-        // eslint-disable-next-line @typescript-eslint/no-extra-semi
-        ;(result as SimulatedTransactionResponse[]).push(executeResult)
-      } else if (executeResult !== undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-extra-semi
-        ;(result as VersionedTransactionResponse[]).push(executeResult)
+      if (executeResult !== undefined) {
+        result.push({ ...executeResult, transaction, signers: txSigners })
       }
     }
   }
 
-  return { result, transactions: resultTransactions }
+  return result
 }
 
 /**
