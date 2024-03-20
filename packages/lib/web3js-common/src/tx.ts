@@ -95,6 +95,22 @@ export function isExecuteTxReturn(data: any): data is ExecuteTxReturn {
   )
 }
 
+export async function partialSign(
+  transaction: Transaction | VersionedTransaction,
+  signers: (Wallet | Keypair | Signer)[]
+) {
+  for (const signer of signers) {
+    if (instanceOfWallet(signer)) {
+      // partial signing by this call, despite the name
+      await signer.signTransaction(transaction)
+    } else {
+      transaction instanceof VersionedTransaction
+        ? transaction.sign([signer])
+        : transaction.partialSign(signer)
+    }
+  }
+}
+
 export async function executeTx({
   connection,
   transaction,
@@ -141,14 +157,7 @@ export async function executeTx({
       transaction.feePayer ?? feePayer ?? signers[0].publicKey
   }
 
-  for (const signer of signers) {
-    if (instanceOfWallet(signer)) {
-      // partial signing by this call
-      await signer.signTransaction(transaction)
-    } else {
-      transaction.partialSign(signer)
-    }
-  }
+  await partialSign(transaction, signers)
 
   let txSignature: string | undefined = undefined
   try {
@@ -194,13 +203,23 @@ export async function executeTx({
     : undefined
 }
 
-export async function updateTransactionBlockhash(
-  transaction: Transaction,
-  connection: Connection
-): Promise<Transaction> {
-  const currentBlockhash = await connection.getLatestBlockhash()
-  transaction.lastValidBlockHeight = currentBlockhash.lastValidBlockHeight
-  transaction.recentBlockhash = currentBlockhash.blockhash
+export async function updateTransactionBlockhash<
+  T extends Transaction | VersionedTransaction,
+>(
+  transaction: T,
+  connection: Connection,
+  currentBlockhash?: Readonly<{
+    blockhash: string
+    lastValidBlockHeight: number
+  }>
+): Promise<T> {
+  currentBlockhash = currentBlockhash ?? (await connection.getLatestBlockhash())
+  if (transaction instanceof VersionedTransaction) {
+    transaction.message.recentBlockhash = currentBlockhash.blockhash
+  } else {
+    transaction.lastValidBlockHeight = currentBlockhash.lastValidBlockHeight
+    transaction.recentBlockhash = currentBlockhash.blockhash
+  }
   return transaction
 }
 
@@ -444,12 +463,15 @@ function setComputeUnitPriceIx(microLamports: number): TransactionInstruction {
   return ComputeBudgetProgram.setComputeUnitPrice({ microLamports })
 }
 
-export type TransactionWithSigners = {
-  transaction: Transaction
+export type TransactionData<T extends Transaction | VersionedTransaction> = {
+  transaction: T
+  instructions: TransactionInstruction[]
   signers: (Wallet | Keypair | Signer)[]
 }
 
-export type SplitAndExecuteTxReturn = ExecuteTxReturn & TransactionWithSigners
+export type SplitAndExecuteTxReturn<
+  T extends Transaction | VersionedTransaction,
+> = ExecuteTxReturn & TransactionData<T>
 
 /**
  * Split tx into multiple transactions if it exceeds the transaction size limit.
@@ -469,8 +491,8 @@ export async function splitAndExecuteTx({
   confirmOpts,
   computeUnitLimit,
   computeUnitPrice,
-}: ExecuteTxParams): Promise<SplitAndExecuteTxReturn[]> {
-  const result: SplitAndExecuteTxReturn[] = []
+}: ExecuteTxParams): Promise<SplitAndExecuteTxReturn<Transaction>[]> {
+  const result: SplitAndExecuteTxReturn<Transaction>[] = []
 
   // only to print in base64
   if (!simulate && printOnly) {
@@ -487,7 +509,12 @@ export async function splitAndExecuteTx({
     })
     if (resultExecuteTx !== undefined) {
       // printOnly is NOT true
-      result.push({ ...resultExecuteTx, transaction, signers })
+      result.push({
+        ...resultExecuteTx,
+        transaction,
+        instructions: transaction.instructions,
+        signers,
+      })
     }
   } else {
     feePayer = feePayer || transaction.feePayer
@@ -612,7 +639,12 @@ export async function splitAndExecuteTx({
       )
 
       if (executeResult !== undefined) {
-        result.push({ ...executeResult, transaction, signers: txSigners })
+        result.push({
+          ...executeResult,
+          transaction,
+          instructions: transaction.instructions,
+          signers: txSigners,
+        })
       }
     }
   }
