@@ -1,6 +1,6 @@
 {
     "name": "@marinade.finance/spl-gov-utils",
-    "version": "2.3.2",
+    "version": "2.4.0",
     "description": "SPL Governance Marinade constants",
     "repository": {
       "type": "git",
