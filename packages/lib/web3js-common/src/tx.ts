@@ -23,7 +23,6 @@ import {
   LoggerPlaceholder,
   logDebug,
   logInfo,
-  logWarn,
   isLevelEnabled,
   checkErrorMessage,
   sleep,
@@ -78,11 +77,16 @@ export type ExecuteTxParams = {
   confirmWaitTime?: number
 }
 
+export type ExecuteTxReturnSimulated = {
+  response: SimulatedTransactionResponse
+}
+export type ExecuteTxReturnExecuted = {
+  signature: string
+  response: VersionedTransactionResponse
+}
 export type ExecuteTxReturn =
-  | {
-      signature: string
-      response: VersionedTransactionResponse | SimulatedTransactionResponse
-    }
+  | ExecuteTxReturnSimulated
+  | ExecuteTxReturnExecuted
   | undefined
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,6 +115,38 @@ export async function partialSign(
   }
 }
 
+export async function executeTx(
+  args: Omit<ExecuteTxParams, 'simulate'> & { simulate: true }
+): Promise<ExecuteTxReturnSimulated>
+export async function executeTx(
+  args: Omit<ExecuteTxParams, 'simulate' | 'printOnly'> & {
+    simulate?: false
+    printOnly?: false
+  }
+): Promise<ExecuteTxReturnExecuted>
+export async function executeTx(
+  args: Omit<ExecuteTxParams, 'simulate' | 'printOnly'> & {
+    simulate?: false
+    printOnly: true
+  }
+): Promise<undefined>
+export async function executeTx(
+  args: ExecuteTxParams
+): Promise<ExecuteTxReturnExecuted>
+export async function executeTx({
+  connection,
+  transaction,
+  signers,
+  errMessage,
+  printOnly,
+  logger,
+  feePayer,
+  sendOpts,
+  confirmOpts,
+  computeUnitLimit,
+  computeUnitPrice,
+  confirmWaitTime,
+}: ExecuteTxParams): Promise<ExecuteTxReturn>
 export async function executeTx({
   connection,
   transaction,
@@ -162,7 +198,7 @@ export async function executeTx({
   let txSignature: string | undefined = undefined
   try {
     if (simulate) {
-      logWarn(logger, '[[Simulation mode]]')
+      logDebug(logger, '[[Simulation mode]]')
       txResponse = (await connection.simulateTransaction(transaction)).value
       logDebug(logger, txResponse)
       if (txResponse.err) {
@@ -198,9 +234,16 @@ export async function executeTx({
       transaction: isLevelEnabled(logger, 'debug') ? transaction : undefined,
     })
   }
-  return txResponse !== undefined && txSignature !== undefined
-    ? { response: txResponse, signature: txSignature }
-    : undefined
+  if (txResponse === undefined) {
+    return undefined
+  } else {
+    return simulate
+      ? { response: txResponse as SimulatedTransactionResponse }
+      : {
+          response: txResponse as VersionedTransactionResponse,
+          signature: txSignature!,
+        }
+  }
 }
 
 export async function updateTransactionBlockhash<
@@ -298,7 +341,9 @@ export async function confirmTransaction(
       await sleep(confirmWaitTime)
     }
     try {
-      logDebug(logger, `Checking outcome of transaction '${txSig}'`)
+      if (confirmWaitTime > 0) {
+        logDebug(logger, `Checking outcome of transaction '${txSig}'`)
+      }
       txRes = await txSearchConnection.getTransaction(txSig, {
         commitment: confirmFinality,
         maxSupportedTransactionVersion: 0,
@@ -331,7 +376,7 @@ export async function executeTxSimple(
   signers?: (Wallet | Keypair | Signer)[],
   sendOpts?: SendOptions,
   confirmOpts?: Finality
-): Promise<ExecuteTxReturn> {
+): Promise<ExecuteTxReturnExecuted | undefined> {
   return await executeTx({
     connection,
     transaction,
@@ -339,6 +384,7 @@ export async function executeTxSimple(
     sendOpts,
     confirmOpts,
     errMessage: 'Error executing transaction',
+    simulate: false,
   })
 }
 
@@ -469,15 +515,29 @@ export type TransactionData<T extends Transaction | VersionedTransaction> = {
   signers: (Wallet | Keypair | Signer)[]
 }
 
-export type SplitAndExecuteTxReturn<
-  T extends Transaction | VersionedTransaction,
-> = ExecuteTxReturn & TransactionData<T>
+export type SplitAndExecuteTxData = TransactionData<Transaction>
 
 /**
  * Split tx into multiple transactions if it exceeds the transaction size limit.
- * TODO: this is a bit hacky, we should use a better approach to split the tx
- *       and support VersionedTransactions
  */
+export async function splitAndExecuteTx(
+  args: Omit<ExecuteTxParams, 'simulate'> & { simulate: true }
+): Promise<(ExecuteTxReturnSimulated & SplitAndExecuteTxData)[]>
+export async function splitAndExecuteTx(
+  args: Omit<ExecuteTxParams, 'simulate' | 'printOnly'> & {
+    simulate?: false
+    printOnly?: false
+  }
+): Promise<(ExecuteTxReturnExecuted & SplitAndExecuteTxData)[]>
+export async function splitAndExecuteTx(
+  args: Omit<ExecuteTxParams, 'simulate' | 'printOnly'> & {
+    simulate?: false
+    printOnly: true
+  }
+): Promise<[]>
+export async function splitAndExecuteTx(
+  args: ExecuteTxParams
+): Promise<(ExecuteTxReturnExecuted & SplitAndExecuteTxData)[]>
 export async function splitAndExecuteTx({
   connection,
   transaction,
@@ -491,12 +551,15 @@ export async function splitAndExecuteTx({
   confirmOpts,
   computeUnitLimit,
   computeUnitPrice,
-}: ExecuteTxParams): Promise<SplitAndExecuteTxReturn<Transaction>[]> {
-  const result: SplitAndExecuteTxReturn<Transaction>[] = []
+}: ExecuteTxParams): Promise<(ExecuteTxReturn & SplitAndExecuteTxData)[]> {
+  const result: (ExecuteTxReturn & SplitAndExecuteTxData)[] = []
+  if (transaction.instructions.length === 0) {
+    return result
+  }
 
-  // only to print in base64
   if (!simulate && printOnly) {
-    const resultExecuteTx = await executeTx({
+    // only to print in base64, returning empty array -> no execution
+    await executeTx({
       connection,
       transaction,
       errMessage,
@@ -507,15 +570,6 @@ export async function splitAndExecuteTx({
       sendOpts,
       confirmOpts,
     })
-    if (resultExecuteTx !== undefined) {
-      // printOnly is NOT true
-      result.push({
-        ...resultExecuteTx,
-        transaction,
-        instructions: transaction.instructions,
-        signers,
-      })
-    }
   } else {
     feePayer = feePayer || transaction.feePayer
     if (feePayer === undefined && instanceOfProviderWithWallet(connection)) {
@@ -561,12 +615,17 @@ export async function splitAndExecuteTx({
       }
     }
     let checkingTransaction = await getTransaction(feePayerDefined, blockhash)
-    let lastValidTransaction = await getTransaction(feePayerDefined, blockhash)
     addComputeBudgetIxes({
       transaction: checkingTransaction,
       computeUnitLimit,
       computeUnitPrice,
     })
+    let lastValidTransaction = await getLastValidTransaction(
+      checkingTransaction,
+      blockhash,
+      feePayerDefined
+    )
+
     for (const ix of transaction.instructions) {
       checkingTransaction.add(ix)
       const filteredSigners = filterSignersForInstruction(
@@ -586,13 +645,16 @@ export async function splitAndExecuteTx({
         logDebug(logger, 'Transaction size calculation failed: ' + e)
       }
 
+      // we tried to add the instruction to checkingTransaction
+      // when it was already too big, so we need to split it
       if (
         txSize === undefined ||
         txSize + signaturesSize > TRANSACTION_SAFE_SIZE
       ) {
         // size was elapsed, need to split
         transactions.push(lastValidTransaction)
-        // nulling data of the checking transaction
+        // nulling data of the checking transaction, but using the latest ix from for cycle
+        // as it was kicked-off from the lastValidTransaction
         checkingTransaction = await getTransaction(feePayerDefined, blockhash)
         addComputeBudgetIxes({
           transaction: checkingTransaction,
@@ -601,9 +663,10 @@ export async function splitAndExecuteTx({
         })
         checkingTransaction.add(ix)
       }
-      lastValidTransaction = await getTransaction(feePayerDefined, blockhash)
-      checkingTransaction.instructions.forEach(ix =>
-        lastValidTransaction.add(ix)
+      lastValidTransaction = await getLastValidTransaction(
+        checkingTransaction,
+        blockhash,
+        feePayerDefined
       )
     }
     if (lastValidTransaction.instructions.length !== 0) {
@@ -634,8 +697,12 @@ export async function splitAndExecuteTx({
       priorTransaction = transaction
       logDebug(
         logger,
-        `Transaction ${executionCounter}/${transactions.length} ` +
-          `(${transaction.instructions.length} instructions) executed`
+        `Transaction [${
+          executeResult && 'signature' in executeResult
+            ? executeResult?.signature
+            : undefined
+        }] ` +
+          `${executionCounter}/${transactions.length} (${transaction.instructions.length} instructions) executed`
       )
 
       if (executeResult !== undefined) {
@@ -650,6 +717,19 @@ export async function splitAndExecuteTx({
   }
 
   return result
+}
+
+async function getLastValidTransaction(
+  checkingTransaction: Transaction,
+  blockhash: Readonly<{
+    blockhash: string
+    lastValidBlockHeight: number
+  }>,
+  feePayer: PublicKey
+): Promise<Transaction> {
+  const lastValidTransaction = await getTransaction(feePayer, blockhash)
+  checkingTransaction.instructions.forEach(ix => lastValidTransaction.add(ix))
+  return lastValidTransaction
 }
 
 /**
