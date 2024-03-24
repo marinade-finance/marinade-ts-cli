@@ -38,7 +38,6 @@
         "borsh": "^0.7.0",
         "bs58": "^4.0.1",
         "commander": "^11.0.0",
-        "expand-tilde": "^2.0.2",
         "pino": "^8.15.1",
         "pino-pretty": "^10.2.0",
         "@marinade.finance/ledger-utils": "^3.0.1",
