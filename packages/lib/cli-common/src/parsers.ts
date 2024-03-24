@@ -6,9 +6,8 @@ import {
   Cluster,
   Finality,
 } from '@solana/web3.js'
-import expandTilde from 'expand-tilde' // eslint-disable-line node/no-extraneous-import
 import { readFile } from 'fs/promises'
-import { doWithLock } from '@marinade.finance/ts-common'
+import { doWithLock, expandTilde } from '@marinade.finance/ts-common'
 import { parseLedgerWallet } from '@marinade.finance/ledger-utils'
 import { CliCommandError } from './error'
 import {
