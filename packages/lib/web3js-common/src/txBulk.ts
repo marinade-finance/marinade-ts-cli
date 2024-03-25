@@ -1,5 +1,7 @@
 import {
   LoggerPlaceholder,
+  checkErrorMessage,
+  logDebug,
   logError,
   logInfo,
 } from '@marinade.finance/ts-common'
@@ -22,6 +24,7 @@ import {
   splitAndExecuteTx,
 } from './tx'
 import { instanceOfProvider } from './provider'
+import { ExecutionError } from './error'
 
 export type ExecuteTxReturnExecutedUnknown = {
   signature?: string
@@ -69,26 +72,43 @@ export async function splitAndBulkExecuteTx({
   computeUnitLimit,
   computeUnitPrice,
   numberOfRetries = 0,
-}: BulkExecuteTxInput): Promise<
+}: Omit<BulkExecuteTxInput, 'confirmWaitTime'>): Promise<
   (BulkExecuteTxSimulatedReturn | BulkExecuteTxExecutedReturn)[]
 > {
   connection = instanceOfProvider(connection)
     ? connection.connection
     : connection
-  const resultSimulated = await splitAndExecuteTx({
-    connection,
-    transaction,
-    errMessage,
-    signers,
-    feePayer,
-    simulate: true,
-    printOnly,
-    logger,
-    sendOpts,
-    confirmOpts,
-    computeUnitLimit,
-    computeUnitPrice,
-  })
+
+  let resultSimulated: BulkExecuteTxSimulatedReturn[] = []
+  const numberOfSimulations = numberOfRetries < 5 ? 5 : numberOfRetries
+  for (let i = 1; i <= numberOfSimulations; i++) {
+    try {
+      resultSimulated = await splitAndExecuteTx({
+        connection,
+        transaction,
+        errMessage,
+        signers,
+        feePayer,
+        simulate: true,
+        printOnly,
+        logger,
+        sendOpts,
+        confirmOpts,
+        computeUnitLimit,
+        computeUnitPrice,
+      })
+      break
+    } catch (e) {
+      if (
+        i >= numberOfSimulations ||
+        !checkErrorMessage(e, 'Too many requests for a specific RPC call')
+      ) {
+        throw e
+      } else {
+        logDebug(logger, `Error to split and execute transactions: ${e}`)
+      }
+    }
+  }
   if (printOnly || simulate) {
     return resultSimulated
   }
@@ -113,21 +133,30 @@ export async function splitAndBulkExecuteTx({
     }
   )
 
+  let failures: ExecutionError[] = []
   // let's send to land the transaction on blockchain
   const numberOfSends = numberOfRetries + 1
   for (let i = 1; i <= numberOfSends; i++) {
-    try {
-      await bulkSend({
-        connection,
-        logger,
-        sendOpts,
-        confirmOpts,
-        data: resultExecuted,
-        retryAttempt: i,
-      })
-    } catch (e) {
-      logError(logger, `Bulk #${i} sending failed with error: ${e}`)
+    ;({ failures } = await bulkSend({
+      connection,
+      logger,
+      sendOpts,
+      confirmOpts,
+      data: resultExecuted,
+      retryAttempt: i,
+    }))
+    if (failures.length === 0) {
+      break
     }
+  }
+  if (failures.length > 0) {
+    for (const err of failures) {
+      logError(logger, err.messageWithCause())
+    }
+    throw new Error(
+      'splitAndBulkExecuteTx failed with errors, see logs above' +
+        `${failures.length} errors of ${resultExecuted.length} transactions`
+    )
   }
 
   return resultExecuted
@@ -149,7 +178,7 @@ async function bulkSend({
 } & {
   data: BulkExecuteTxExecutedReturn[]
   retryAttempt: number
-}): Promise<void> {
+}): Promise<{ failures: ExecutionError[] }> {
   // updating the recent blockhash of all transactions to be on top
   const workingTransactions: {
     index: number
@@ -165,6 +194,7 @@ async function bulkSend({
     }
   }
 
+  // --- SENDING ---
   logInfo(
     logger,
     `Bulk #${retryAttempt} sending ${workingTransactions.length} transactions`
@@ -177,23 +207,48 @@ async function bulkSend({
     })
     txSendPromises.push({ index, promise })
   }
+
+  // --- CONFIRMING ---
   const confirmationPromises: {
     promise: Promise<RpcResponseAndContext<SignatureResult>>
     index: number
   }[] = []
+  const rpcErrors: ExecutionError[] = []
   for (const { index, promise: signaturePromise } of txSendPromises) {
-    const signature = await signaturePromise
-    data[index].signature = signature
-    const promise = connection.confirmTransaction(
-      {
-        signature,
-        blockhash: currentBlockhash.blockhash,
-        lastValidBlockHeight: currentBlockhash.lastValidBlockHeight,
-      },
-      confirmOpts
-    )
-    confirmationPromises.push({ index, promise })
+    try {
+      const signature = await signaturePromise
+      data[index].signature = signature
+      const promise = connection.confirmTransaction(
+        {
+          signature,
+          blockhash: currentBlockhash.blockhash,
+          lastValidBlockHeight: currentBlockhash.lastValidBlockHeight,
+        },
+        confirmOpts
+      )
+      confirmationPromises.push({ index, promise })
+      promise.catch(e => {
+        // managing 'Promise rejection was handled asynchronously' error
+        rpcErrors.push(
+          new ExecutionError({
+            msg: `Transaction '${signature}' at [${index}] timed-out to be confirmed`,
+            cause: e as Error,
+            transaction: data[index].transaction,
+          })
+        )
+      })
+    } catch (e) {
+      rpcErrors.push(
+        new ExecutionError({
+          msg: `Transaction at [${index}] failed to be sent to blockchain`,
+          cause: e as Error,
+          transaction: data[index].transaction,
+        })
+      )
+    }
   }
+
+  // --- GETTING LOGS ---
   const responsePromises: {
     index: number
     promise: Promise<VersionedTransactionResponse | null>
@@ -215,17 +270,42 @@ async function bulkSend({
       responsePromises.push({ index, promise })
     } catch (e) {
       // transaction was not confirmed to be on blockchain
-      // by chance still can be landed but we do not care about it
-      // and considering it as not landed on chain
+      // by chance still can be landed but we do not know why we don't care
+      // we consider it as not landed on chain
       data[index].confirmationError = e as Error
       responsePromises.push({ index, promise: Promise.resolve(null) })
+      rpcErrors.push(
+        new ExecutionError({
+          msg: `Transaction '${data[index].signature}' at [${index}] failed to be confirmed`,
+          cause: e as Error,
+          transaction: data[index].transaction,
+        })
+      )
     }
   }
+
+  // --- RETRIEVING LOGS PROMISE AND FINISH ---
   for (const { index, promise: responsePromise } of responsePromises) {
-    const awaitedResponse = await responsePromise
-    if (awaitedResponse !== null) {
-      data[index].response = awaitedResponse
-      data[index].confirmationError = undefined
+    try {
+      const awaitedResponse = await responsePromise
+      if (awaitedResponse !== null) {
+        data[index].response = awaitedResponse
+        data[index].confirmationError = undefined
+      }
+    } catch (e) {
+      rpcErrors.push(
+        new ExecutionError({
+          msg: `Transaction ${data[index].signature} at [${index}]  failed to be found on-chain`,
+          cause: e as Error,
+          transaction: data[index].transaction,
+          logs: data[index].response?.meta?.logMessages || undefined,
+        })
+      )
     }
   }
+
+  for (const err of rpcErrors) {
+    logDebug(logger, err)
+  }
+  return { failures: rpcErrors }
 }
