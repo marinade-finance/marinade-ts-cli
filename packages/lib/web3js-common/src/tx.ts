@@ -26,6 +26,7 @@ import {
   isLevelEnabled,
   checkErrorMessage,
   sleep,
+  logError,
 } from '@marinade.finance/ts-common'
 import {
   Provider,
@@ -515,6 +516,49 @@ export type TransactionData<T extends Transaction | VersionedTransaction> = {
   signers: (Wallet | Keypair | Signer)[]
 }
 
+/**
+ * This is a special marker transaction for splitting instructions in a transaction
+ * for splitting execution. It is not meant to be executed on chain.
+ * It is used to mark that any following instructions should be executed in a separate
+ * transaction and not mixed with the previous instructions.
+ *
+ * If you want to use the marker and you need to setup some instructions
+ * cannot be splitted from each other then place this marker into the set
+ * of instructions before the instructions that should not be splitted.
+ *
+ * Using start marker means to finish the previous split block.
+ * Having the same meaning as use the end marker.
+ */
+export class TransactionInstructionSplitMarkerStart extends TransactionInstruction {
+  constructor() {
+    super({
+      keys: [],
+      programId: PublicKey.default,
+      data: Buffer.alloc(0),
+    })
+  }
+}
+export class TransactionInstructionSplitMarkerEnd extends TransactionInstruction {
+  constructor() {
+    super({
+      keys: [],
+      programId: PublicKey.default,
+      data: Buffer.alloc(0),
+    })
+  }
+}
+export const SPLIT_MARKER_START_INSTANCE =
+  new TransactionInstructionSplitMarkerStart()
+export const SPLIT_MARKER_END_INSTANCE =
+  new TransactionInstructionSplitMarkerEnd()
+
+function isSplitMarkerInstruction(ix: TransactionInstruction): boolean {
+  return (
+    ix instanceof TransactionInstructionSplitMarkerStart ||
+    ix instanceof TransactionInstructionSplitMarkerEnd
+  )
+}
+
 export type SplitAndExecuteTxData = TransactionData<Transaction>
 
 /**
@@ -553,11 +597,18 @@ export async function splitAndExecuteTx({
   computeUnitPrice,
 }: ExecuteTxParams): Promise<(ExecuteTxReturn & SplitAndExecuteTxData)[]> {
   const result: (ExecuteTxReturn & SplitAndExecuteTxData)[] = []
-  if (transaction.instructions.length === 0) {
+  const realInstructionNumber = transaction.instructions.filter(
+    ix => !isSplitMarkerInstruction(ix)
+  ).length
+  if (realInstructionNumber === 0) {
     return result
   }
 
   if (!simulate && printOnly) {
+    // remove non executable instructions
+    transaction.instructions = transaction.instructions.filter(
+      ix => !isSplitMarkerInstruction(ix)
+    )
     // only to print in base64, returning empty array -> no execution
     await executeTx({
       connection,
@@ -614,29 +665,39 @@ export async function splitAndExecuteTx({
         lastValidBlockHeight: transaction.lastValidBlockHeight,
       }
     }
-    let checkingTransaction = await getTransaction(feePayerDefined, blockhash)
-    addComputeBudgetIxes({
-      transaction: checkingTransaction,
+    let lastValidTransaction = await generateNewTransaction({
+      feePayer: feePayerDefined,
+      bh: blockhash,
       computeUnitLimit,
       computeUnitPrice,
     })
-    let lastValidTransaction = await getLastValidTransaction(
-      checkingTransaction,
-      blockhash,
-      feePayerDefined
-    )
 
-    for (const ix of transaction.instructions) {
-      checkingTransaction.add(ix)
+    let transactionStartIndex = 0
+    let splitMarkerStartIdx = Number.MAX_SAFE_INTEGER
+    for (let i = 0; i < transaction.instructions.length; i++) {
+      // TODO: delete me!
+      logInfo(logger, 'processing index: ' + i)
+      const ix = transaction.instructions[i]
+      if (ix instanceof TransactionInstructionSplitMarkerStart) {
+        splitMarkerStartIdx = i
+        continue
+      }
+      if (ix instanceof TransactionInstructionSplitMarkerEnd) {
+        splitMarkerStartIdx = Number.MAX_SAFE_INTEGER
+        continue
+      }
+      // TODO: delete me!
+      logInfo(logger, 'not split marker index: ' + i)
+      lastValidTransaction.add(ix)
       const filteredSigners = filterSignersForInstruction(
-        checkingTransaction.instructions,
+        lastValidTransaction.instructions,
         signers,
         feePayerDefined
       )
       const signaturesSize = filteredSigners.length * 64
       let txSize: number | undefined = undefined
       try {
-        txSize = checkingTransaction.serialize({
+        txSize = lastValidTransaction.serialize({
           verifySignatures: false,
           requireAllSignatures: false,
         }).byteLength
@@ -645,29 +706,76 @@ export async function splitAndExecuteTx({
         logDebug(logger, 'Transaction size calculation failed: ' + e)
       }
 
-      // we tried to add the instruction to checkingTransaction
+      // we tried to add the instruction to lastValidTransaction
       // when it was already too big, so we need to split it
       if (
         txSize === undefined ||
         txSize + signaturesSize > TRANSACTION_SAFE_SIZE
       ) {
         // size was elapsed, need to split
-        transactions.push(lastValidTransaction)
-        // nulling data of the checking transaction, but using the latest ix from for cycle
-        // as it was kicked-off from the lastValidTransaction
-        checkingTransaction = await getTransaction(feePayerDefined, blockhash)
-        addComputeBudgetIxes({
-          transaction: checkingTransaction,
+        // need to consider existence of nonPossibleToSplitMarker
+        const transactionAdd = await generateNewTransaction({
+          feePayer: feePayerDefined,
+          bh: blockhash,
           computeUnitLimit,
           computeUnitPrice,
         })
-        checkingTransaction.add(ix)
+        let addIdx: number
+        for (
+          addIdx = transactionStartIndex;
+          addIdx < i && addIdx <= splitMarkerStartIdx;
+          addIdx++
+        ) {
+          // TODO: delete me!
+          logInfo(
+            logger,
+            `Adding tx of index: ${addIdx}, i: ${i}, tx start index: ${transactionStartIndex}, marker: ${splitMarkerStartIdx}`
+          )
+          if (isSplitMarkerInstruction(transaction.instructions[addIdx])) {
+            continue
+          }
+          transactionAdd.add(transaction.instructions[addIdx])
+        }
+        if (transactionAdd.instructions.length === 0) {
+          logError(
+            logger,
+            `Working with instructions number: ${transaction.instructions}, ` +
+              `current instruction index: ${i}, last split marker index: ${splitMarkerStartIdx}` +
+              ` and transaction start index: ${transactionStartIndex}, last valid transaction: ${JSON.stringify(
+                lastValidTransaction
+              )}`
+          )
+          throw new Error(
+            'splitAndExecuteTx: no instructions to be added to the transaction, ' +
+              'most probably the transaction contains split markers ' +
+              TransactionInstructionSplitMarkerStart.name +
+              ' at indexes that the instructions cannot be split to executable chunks.'
+          )
+        }
+        transactions.push(transactionAdd)
+        // TODO: delete me!
+        logInfo(
+          logger,
+          `transactions size: ${transactions.length}, additional tx ixes: ${transactionAdd.instructions.length}`
+        )
+        // we processed until i minus one;
+        // next outer loop increases i and we need to start from the same instruction
+        // as the current position is
+        i = addIdx - 1
+        transactionStartIndex = addIdx
+        // TODO: delete me!
+        logInfo(
+          logger,
+          `after: addIdx: ${addIdx}, i: ${i}, tx start index: ${transactionStartIndex}`
+        )
+        // nulling data of the next transaction to check
+        lastValidTransaction = await generateNewTransaction({
+          feePayer: feePayerDefined,
+          bh: blockhash,
+          computeUnitLimit,
+          computeUnitPrice,
+        })
       }
-      lastValidTransaction = await getLastValidTransaction(
-        checkingTransaction,
-        blockhash,
-        feePayerDefined
-      )
     }
     if (lastValidTransaction.instructions.length !== 0) {
       transactions.push(lastValidTransaction)
@@ -719,17 +827,27 @@ export async function splitAndExecuteTx({
   return result
 }
 
-async function getLastValidTransaction(
-  checkingTransaction: Transaction,
-  blockhash: Readonly<{
+async function generateNewTransaction({
+  feePayer,
+  bh,
+  computeUnitLimit,
+  computeUnitPrice,
+}: {
+  feePayer: PublicKey
+  bh: Readonly<{
     blockhash: string
     lastValidBlockHeight: number
-  }>,
-  feePayer: PublicKey
-): Promise<Transaction> {
-  const lastValidTransaction = await getTransaction(feePayer, blockhash)
-  checkingTransaction.instructions.forEach(ix => lastValidTransaction.add(ix))
-  return lastValidTransaction
+  }>
+  computeUnitLimit?: number
+  computeUnitPrice?: number
+}): Promise<Transaction> {
+  const transaction = await getTransaction(feePayer, bh)
+  addComputeBudgetIxes({
+    transaction,
+    computeUnitLimit,
+    computeUnitPrice,
+  })
+  return transaction
 }
 
 /**
