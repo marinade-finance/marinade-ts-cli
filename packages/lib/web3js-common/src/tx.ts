@@ -103,7 +103,7 @@ export function isExecuteTxReturn(data: any): data is ExecuteTxReturn {
 export async function partialSign(
   transaction: Transaction | VersionedTransaction,
   signers: (Wallet | Keypair | Signer)[]
-) {
+): Promise<void> {
   for (const signer of signers) {
     if (instanceOfWallet(signer)) {
       // partial signing by this call, despite the name
@@ -114,6 +114,21 @@ export async function partialSign(
         : transaction.partialSign(signer)
     }
   }
+}
+
+export function unhandledRejection(
+  err: Error,
+  promise: Promise<unknown>,
+  logger?: LoggerPlaceholder
+) {
+  const stack = err instanceof Error ? err.stack : ''
+  const message = err instanceof Error ? err.message : err
+  logInfo(logger, {
+    msg: 'Unhandled promise rejection',
+    message,
+    stack,
+    promise,
+  })
 }
 
 export async function executeTx(
@@ -199,8 +214,17 @@ export async function executeTx({
   let txSignature: string | undefined = undefined
   try {
     if (simulate) {
+      const handler = (r: Error, p: Promise<unknown>) =>
+        unhandledRejection(r, p, logger)
+      process.on('unhandledRejection', handler)
       logDebug(logger, '[[Simulation mode]]')
+      // const p = connection.simulateTransaction(transaction)
+      // p.catch(() => {}) // ignore errors
+      // const txSimulation = await p
+      // logInfo(logger, 'simulate transaction processed')
       txResponse = (await connection.simulateTransaction(transaction)).value
+      process.removeListener('unhandledRejection', handler)
+      logInfo(logger, 'simulate transaction value extracted')
       logDebug(logger, txResponse)
       if (txResponse.err) {
         throw new SendTransactionError(
@@ -257,7 +281,9 @@ export async function updateTransactionBlockhash<
     lastValidBlockHeight: number
   }>
 ): Promise<T> {
-  currentBlockhash = currentBlockhash ?? (await connection.getLatestBlockhash())
+  if (currentBlockhash === undefined) {
+    currentBlockhash = await connection.getLatestBlockhash()
+  }
   if (transaction instanceof VersionedTransaction) {
     transaction.message.recentBlockhash = currentBlockhash.blockhash
   } else {
@@ -393,8 +419,10 @@ export async function executeTxWithExceededBlockhashRetry(
   txParams: ExecuteTxParams
 ): Promise<ExecuteTxReturn> {
   try {
+    logInfo(txParams.logger, 'Executing transaction')
     return await executeTx(txParams)
   } catch (e) {
+    logInfo(txParams.logger, 'Executing transaction catch exception')
     const txSig =
       e instanceof ExecutionError && e.txSignature !== undefined
         ? `${e.txSignature} `
@@ -789,6 +817,7 @@ export async function splitAndExecuteTx({
         signers
       ).filter(s => !s.publicKey.equals(feePayerDefined))
       txSigners.push(feePayerSigner)
+      logInfo(logger, 'Awaiting for tx execution ' + executionCounter)
       const executeResult = await executeTxWithExceededBlockhashRetry({
         connection,
         transaction,
@@ -808,7 +837,10 @@ export async function splitAndExecuteTx({
             ? executeResult?.signature
             : undefined
         }] ` +
-          `${executionCounter}(${transaction.instructions.length} ixes)/${transactions.length}  executed`
+          `${executionCounter}(${transaction.instructions.length} ixes)/${transactions.length} ` +
+          simulate
+          ? 'simulated'
+          : 'executed'
       )
 
       if (executeResult !== undefined) {

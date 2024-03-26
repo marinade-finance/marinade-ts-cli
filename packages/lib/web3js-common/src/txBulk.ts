@@ -21,6 +21,7 @@ import {
   TransactionData,
   partialSign,
   splitAndExecuteTx,
+  unhandledRejection,
 } from './tx'
 import { instanceOfProvider } from './provider'
 import { ExecutionError } from './error'
@@ -234,7 +235,9 @@ async function bulkSend({
   while (processed < workingTransactions.length) {
     await new Promise(resolve => setTimeout(resolve, 500))
   }
-  // await Promise.all(txSendPromises.map(ts => ts.promise))
+  // https://jakearchibald.com/2023/unhandled-rejections/
+  for (const promise of txSendPromises.map(r => r.promise))
+    promise.catch(() => {})
   logInfo(
     logger,
     `Sent all transactions ${processed}/${workingTransactions.length} [${data.length}]`
@@ -304,10 +307,9 @@ async function bulkSend({
     }
   }
 
-  // --- WAITING FOR ALL TO BE CONFIRMED ---
-  while (processed < txSendPromises.length) {
-    await new Promise(resolve => setTimeout(resolve, 500))
-  }
+  // fix
+  for (const promise of txSendPromises.map(r => r.promise))
+    promise.catch(() => {})
   logInfo(
     logger,
     `Confirmed all transactions ${processed}/${txSendPromises.length} [${data.length}]`
@@ -398,24 +400,28 @@ async function bulkSend({
     `Processed all transactions ${processed}/${confirmationPromises.length} [${data.length}]`
   )
 
+  const handler = (r: Error, p: Promise<unknown>) =>
+    unhandledRejection(r, p, logger)
+  process.on('unhandledRejection', handler)
   logDebug(logger, `Retrieving logs bulk #${retryAttempt}`)
   // --- RETRIEVING LOGS PROMISE AND FINISH ---
   for (const { index, promise: responsePromise } of responsePromises) {
     try {
-      responsePromise.catch(e => {
-        logInfo(
-          logger,
-          `Transaction at [${index}] failed to retrieve ` + (e as Error).message
-        )
-        rpcErrors.push(
-          new ExecutionError({
-            msg: `Transaction ${data[index].signature} at [${index}]  failed to be found on-chain`,
-            cause: e as Error,
-            transaction: data[index].transaction,
-            logs: data[index].response?.meta?.logMessages || undefined,
-          })
-        )
-      })
+      // TODO: delete me!
+      // responsePromise.catch(e => {
+      //   logInfo(
+      //     logger,
+      //     `Transaction at [${index}] failed to retrieve ` + (e as Error).message
+      //   )
+      //   rpcErrors.push(
+      //     new ExecutionError({
+      //       msg: `Transaction ${data[index].signature} at [${index}]  failed to be found on-chain`,
+      //       cause: e as Error,
+      //       transaction: data[index].transaction,
+      //       logs: data[index].response?.meta?.logMessages || undefined,
+      //     })
+      //   )
+      // })
       const awaitedResponse = await responsePromise
       if (awaitedResponse !== null) {
         data[index].response = awaitedResponse
@@ -437,6 +443,7 @@ async function bulkSend({
       )
     }
   }
+  process.removeListener('unhandledRejection', handler)
 
   // process.removeListener('unhandledRejection', handler)
   for (const err of rpcErrors) {
