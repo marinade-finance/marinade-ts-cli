@@ -393,12 +393,7 @@ export async function executeTxWithExceededBlockhashRetry(
   txParams: ExecuteTxParams
 ): Promise<ExecuteTxReturn> {
   try {
-    logInfo(txParams.logger, 'Executing transaction')
-    const promise = executeTx(txParams)
-    promise.catch(e => {
-      logInfo(txParams.logger, 'Fuck you! Failed transaction execution', e)
-    })
-    return await promise
+    return await executeTx(txParams)
   } catch (e) {
     const txSig =
       e instanceof ExecutionError && e.txSignature !== undefined
@@ -416,7 +411,6 @@ export async function executeTxWithExceededBlockhashRetry(
       return await executeTx(txParams)
     }
     if (checkErrorMessage(e, 'Too many requests')) {
-      logInfo(txParams.logger, 'too many requests execution')
       logDebug(
         txParams.logger,
         `Failed to execute transaction ${txSig}` +
@@ -428,7 +422,7 @@ export async function executeTxWithExceededBlockhashRetry(
       await sleep(3_000)
       return await executeTx(txParams)
     } else {
-      logInfo(
+      logDebug(
         txParams.logger,
         'Failed transaction execution',
         (e as Error).message
@@ -698,8 +692,6 @@ export async function splitAndExecuteTx({
     let transactionStartIndex = 0
     let splitMarkerStartIdx = Number.MAX_SAFE_INTEGER
     for (let i = 0; i < transaction.instructions.length; i++) {
-      // TODO: delete me!
-      // logInfo(logger, 'processing index: ' + i)
       const ix = transaction.instructions[i]
       if (ix instanceof TransactionInstructionSplitMarkerStart) {
         splitMarkerStartIdx = i
@@ -709,8 +701,6 @@ export async function splitAndExecuteTx({
         splitMarkerStartIdx = Number.MAX_SAFE_INTEGER
         continue
       }
-      // TODO: delete me!
-      // logInfo(logger, 'not split marker index: ' + i)
       lastValidTransaction.add(ix)
       const filteredSigners = filterSignersForInstruction(
         lastValidTransaction.instructions,
@@ -749,11 +739,6 @@ export async function splitAndExecuteTx({
           addIdx < i && addIdx <= splitMarkerStartIdx;
           addIdx++
         ) {
-          // TODO: delete me!
-          // logInfo(
-          //   logger,
-          //   `Adding tx of index: ${addIdx}, i: ${i}, tx start index: ${transactionStartIndex}, marker: ${splitMarkerStartIdx}`
-          // )
           if (isSplitMarkerInstruction(transaction.instructions[addIdx])) {
             continue
           }
@@ -776,21 +761,11 @@ export async function splitAndExecuteTx({
           )
         }
         transactions.push(transactionAdd)
-        // TODO: delete me!
-        // logInfo(
-        //   logger,
-        //   `transactions size: ${transactions.length}, additional tx ixes: ${transactionAdd.instructions.length}`
-        // )
         // we processed until i minus one;
         // next outer loop increases i and we need to start from the same instruction
         // as the current position is
         i = addIdx - 1
         transactionStartIndex = addIdx
-        // TODO: delete me!
-        // logInfo(
-        //   logger,
-        //   `after: addIdx: ${addIdx}, i: ${i}, tx start index: ${transactionStartIndex}`
-        // )
         // nulling data of the next transaction to check
         lastValidTransaction = await generateNewTransaction({
           feePayer: feePayerDefined,

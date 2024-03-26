@@ -1,10 +1,8 @@
 import {
   LoggerPlaceholder,
-  checkErrorMessage,
   logDebug,
   logError,
   logInfo,
-  logWarn,
 } from '@marinade.finance/ts-common'
 import {
   Connection,
@@ -83,20 +81,20 @@ export async function splitAndBulkExecuteTx({
   let resultSimulated: BulkExecuteTxSimulatedReturn[] = []
   const numberOfSimulations = numberOfRetries < 5 ? 5 : numberOfRetries
   for (let i = 1; i <= numberOfSimulations; i++) {
-      resultSimulated = await splitAndExecuteTx({
-        connection,
-        transaction,
-        errMessage,
-        signers,
-        feePayer,
-        simulate: true,
-        printOnly,
-        logger,
-        sendOpts,
-        confirmOpts,
-        computeUnitLimit,
-        computeUnitPrice,
-      })
+    resultSimulated = await splitAndExecuteTx({
+      connection,
+      transaction,
+      errMessage,
+      signers,
+      feePayer,
+      simulate: true,
+      printOnly,
+      logger,
+      sendOpts,
+      confirmOpts,
+      computeUnitLimit,
+      computeUnitPrice,
+    })
   }
   if (printOnly || simulate) {
     return resultSimulated
@@ -168,6 +166,21 @@ async function bulkSend({
   data: BulkExecuteTxExecutedReturn[]
   retryAttempt: number
 }): Promise<{ failures: ExecutionError[] }> {
+  let processed = 0
+  const rpcErrors: ExecutionError[] = []
+  const handler = (reason: unknown, promise: Promise<unknown>) => {
+    logInfo(
+      logger,
+      'Unhandled Rejection: ' +
+        `processed : ${processed}, rpc errors: ${rpcErrors.length}`
+    )
+    logDebug(
+      logger,
+      'Unhandled Rejection at: Promise ' + `${promise}, reason: ${reason}`
+    )
+  }
+  process.on('unhandledRejection', handler)
+
   // updating the recent blockhash of all transactions to be on top
   const workingTransactions: {
     index: number
@@ -188,7 +201,7 @@ async function bulkSend({
     logger,
     `Bulk #${retryAttempt} sending ${workingTransactions.length} transactions`
   )
-  let processed = 0
+  processed = 0
   const txSendPromises: { promise: Promise<string>; index: number }[] = []
   for (const { index, transaction } of workingTransactions) {
     const promise = connection.sendTransaction(transaction, {
@@ -218,13 +231,13 @@ async function bulkSend({
     await new Promise(resolve => setTimeout(resolve, 100))
   }
 
+  logInfo(logger, 'cofirming')
   // --- CONFIRMING ---
   processed = 0
   const confirmationPromises: {
     promise: Promise<RpcResponseAndContext<SignatureResult>>
     index: number
   }[] = []
-  const rpcErrors: ExecutionError[] = []
   for (const { index, promise: signaturePromise } of txSendPromises) {
     try {
       const signature = await signaturePromise
@@ -273,6 +286,7 @@ async function bulkSend({
     await new Promise(resolve => setTimeout(resolve, 100))
   }
 
+  logInfo(logger, 'getting logs')
   // --- GETTING LOGS ---
   processed = 0
   const responsePromises: {
@@ -331,6 +345,7 @@ async function bulkSend({
     await new Promise(resolve => setTimeout(resolve, 100))
   }
 
+  logInfo(logger, 'retrieving logs')
   // --- RETRIEVING LOGS PROMISE AND FINISH ---
   for (const { index, promise: responsePromise } of responsePromises) {
     try {
@@ -351,6 +366,7 @@ async function bulkSend({
     }
   }
 
+  process.removeListener('unhandledRejection', handler)
   for (const err of rpcErrors) {
     logDebug(logger, err)
   }
