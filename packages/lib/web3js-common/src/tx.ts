@@ -393,13 +393,18 @@ export async function executeTxWithExceededBlockhashRetry(
   txParams: ExecuteTxParams
 ): Promise<ExecuteTxReturn> {
   try {
-    return await executeTx(txParams)
+    logInfo(txParams.logger, 'Executing transaction')
+    const promise = executeTx(txParams)
+    promise.catch(e => {
+      logInfo(txParams.logger, 'Fuck you! Failed transaction execution', e)
+    })
+    return await promise
   } catch (e) {
+    const txSig =
+      e instanceof ExecutionError && e.txSignature !== undefined
+        ? `${e.txSignature} `
+        : ''
     if (checkErrorMessage(e, 'block height exceeded')) {
-      const txSig =
-        e instanceof ExecutionError && e.txSignature !== undefined
-          ? `${e.txSignature} `
-          : ''
       logDebug(
         txParams.logger,
         `Failed to execute transaction ${txSig}` +
@@ -409,7 +414,25 @@ export async function executeTxWithExceededBlockhashRetry(
       )
       txParams.transaction.recentBlockhash = undefined
       return await executeTx(txParams)
+    }
+    if (checkErrorMessage(e, 'Too many requests')) {
+      logInfo(txParams.logger, 'too many requests execution')
+      logDebug(
+        txParams.logger,
+        `Failed to execute transaction ${txSig}` +
+          'due too many requests on RPC, retrying, ' +
+          'original error: ' +
+          e
+      )
+      txParams.transaction.recentBlockhash = undefined
+      await sleep(3_000)
+      return await executeTx(txParams)
     } else {
+      logInfo(
+        txParams.logger,
+        'Failed transaction execution',
+        (e as Error).message
+      )
       throw e
     }
   }
@@ -676,7 +699,7 @@ export async function splitAndExecuteTx({
     let splitMarkerStartIdx = Number.MAX_SAFE_INTEGER
     for (let i = 0; i < transaction.instructions.length; i++) {
       // TODO: delete me!
-      logInfo(logger, 'processing index: ' + i)
+      // logInfo(logger, 'processing index: ' + i)
       const ix = transaction.instructions[i]
       if (ix instanceof TransactionInstructionSplitMarkerStart) {
         splitMarkerStartIdx = i
@@ -687,7 +710,7 @@ export async function splitAndExecuteTx({
         continue
       }
       // TODO: delete me!
-      logInfo(logger, 'not split marker index: ' + i)
+      // logInfo(logger, 'not split marker index: ' + i)
       lastValidTransaction.add(ix)
       const filteredSigners = filterSignersForInstruction(
         lastValidTransaction.instructions,
@@ -727,10 +750,10 @@ export async function splitAndExecuteTx({
           addIdx++
         ) {
           // TODO: delete me!
-          logInfo(
-            logger,
-            `Adding tx of index: ${addIdx}, i: ${i}, tx start index: ${transactionStartIndex}, marker: ${splitMarkerStartIdx}`
-          )
+          // logInfo(
+          //   logger,
+          //   `Adding tx of index: ${addIdx}, i: ${i}, tx start index: ${transactionStartIndex}, marker: ${splitMarkerStartIdx}`
+          // )
           if (isSplitMarkerInstruction(transaction.instructions[addIdx])) {
             continue
           }
@@ -754,20 +777,20 @@ export async function splitAndExecuteTx({
         }
         transactions.push(transactionAdd)
         // TODO: delete me!
-        logInfo(
-          logger,
-          `transactions size: ${transactions.length}, additional tx ixes: ${transactionAdd.instructions.length}`
-        )
+        // logInfo(
+        //   logger,
+        //   `transactions size: ${transactions.length}, additional tx ixes: ${transactionAdd.instructions.length}`
+        // )
         // we processed until i minus one;
         // next outer loop increases i and we need to start from the same instruction
         // as the current position is
         i = addIdx - 1
         transactionStartIndex = addIdx
         // TODO: delete me!
-        logInfo(
-          logger,
-          `after: addIdx: ${addIdx}, i: ${i}, tx start index: ${transactionStartIndex}`
-        )
+        // logInfo(
+        //   logger,
+        //   `after: addIdx: ${addIdx}, i: ${i}, tx start index: ${transactionStartIndex}`
+        // )
         // nulling data of the next transaction to check
         lastValidTransaction = await generateNewTransaction({
           feePayer: feePayerDefined,

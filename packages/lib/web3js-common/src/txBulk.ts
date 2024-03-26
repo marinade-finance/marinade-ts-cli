@@ -4,6 +4,7 @@ import {
   logDebug,
   logError,
   logInfo,
+  logWarn,
 } from '@marinade.finance/ts-common'
 import {
   Connection,
@@ -83,6 +84,7 @@ export async function splitAndBulkExecuteTx({
   const numberOfSimulations = numberOfRetries < 5 ? 5 : numberOfRetries
   for (let i = 1; i <= numberOfSimulations; i++) {
     try {
+      logWarn(logger, 'Simulating transactions: ' + i)
       resultSimulated = await splitAndExecuteTx({
         connection,
         transaction,
@@ -97,12 +99,22 @@ export async function splitAndBulkExecuteTx({
         computeUnitLimit,
         computeUnitPrice,
       })
+      logWarn(logger, 'Simulation was successful, proceeding to send')
       break
     } catch (e) {
       if (
         i >= numberOfSimulations ||
-        !checkErrorMessage(e, 'Too many requests for a specific RPC call')
+        !checkErrorMessage(e, 'Too many requests')
       ) {
+        logError(
+          logger,
+          'Too many retries for simulation, aborting... ' +
+            {
+              i,
+              numberOfSimulations,
+              tooMany: checkErrorMessage(e, 'Too many requests'),
+            }
+        )
         throw e
       } else {
         logDebug(logger, `Error to split and execute transactions: ${e}`)
@@ -199,16 +211,38 @@ async function bulkSend({
     logger,
     `Bulk #${retryAttempt} sending ${workingTransactions.length} transactions`
   )
+  let processed = 0
   const txSendPromises: { promise: Promise<string>; index: number }[] = []
   for (const { index, transaction } of workingTransactions) {
     const promise = connection.sendTransaction(transaction, {
       skipPreflight: true,
       ...sendOpts,
     })
-    txSendPromises.push({ index, promise })
+    promise
+      .then(() => {
+        txSendPromises.push({ index, promise })
+      })
+      .catch(e => {
+        rpcErrors.push(
+          new ExecutionError({
+            msg: `Transaction at [${index}] failed to be sent to blockchain`,
+            cause: e as Error,
+            transaction: data[index].transaction,
+          })
+        )
+      })
+      .finally(() => {
+        processed++
+      })
+  }
+
+  // --- WAITING FOR ALL TO BE SENT ---
+  while (processed < workingTransactions.length) {
+    await new Promise(resolve => setTimeout(resolve, 100))
   }
 
   // --- CONFIRMING ---
+  processed = 0
   const confirmationPromises: {
     promise: Promise<RpcResponseAndContext<SignatureResult>>
     index: number
@@ -226,17 +260,24 @@ async function bulkSend({
         },
         confirmOpts
       )
-      confirmationPromises.push({ index, promise })
-      promise.catch(e => {
-        // managing 'Promise rejection was handled asynchronously' error
-        rpcErrors.push(
-          new ExecutionError({
-            msg: `Transaction '${signature}' at [${index}] timed-out to be confirmed`,
-            cause: e as Error,
-            transaction: data[index].transaction,
-          })
-        )
-      })
+
+      promise
+        .then(() => {
+          confirmationPromises.push({ index, promise })
+        })
+        .catch(e => {
+          // managing 'Promise rejection was handled asynchronously' error
+          rpcErrors.push(
+            new ExecutionError({
+              msg: `Transaction '${signature}' at [${index}] timed-out to be confirmed`,
+              cause: e as Error,
+              transaction: data[index].transaction,
+            })
+          )
+        })
+        .finally(() => {
+          processed++
+        })
     } catch (e) {
       rpcErrors.push(
         new ExecutionError({
@@ -245,10 +286,18 @@ async function bulkSend({
           transaction: data[index].transaction,
         })
       )
+
+      processed++
     }
   }
 
+  // --- WAITING FOR ALL TO BE CONFIRMED ---
+  while (processed < txSendPromises.length) {
+    await new Promise(resolve => setTimeout(resolve, 100))
+  }
+
   // --- GETTING LOGS ---
+  processed = 0
   const responsePromises: {
     index: number
     promise: Promise<VersionedTransactionResponse | null>
@@ -267,7 +316,22 @@ async function bulkSend({
         commitment: confirmOpts,
         maxSupportedTransactionVersion: 0,
       })
-      responsePromises.push({ index, promise })
+      promise
+        .then(() => {
+          responsePromises.push({ index, promise })
+        })
+        .catch(e => {
+          rpcErrors.push(
+            new ExecutionError({
+              msg: `Transaction at [${index}] failed to be sent to blockchain`,
+              cause: e as Error,
+              transaction: data[index].transaction,
+            })
+          )
+        })
+        .finally(() => {
+          processed++
+        })
     } catch (e) {
       // transaction was not confirmed to be on blockchain
       // by chance still can be landed but we do not know why we don't care
@@ -281,7 +345,13 @@ async function bulkSend({
           transaction: data[index].transaction,
         })
       )
+      processed++
     }
+  }
+
+  // --- WAITING FOR ALL LOGS BEING FETCHED ---
+  while (processed < confirmationPromises.length) {
+    await new Promise(resolve => setTimeout(resolve, 100))
   }
 
   // --- RETRIEVING LOGS PROMISE AND FINISH ---
