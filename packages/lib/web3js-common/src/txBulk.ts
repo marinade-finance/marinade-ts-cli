@@ -208,10 +208,10 @@ async function bulkSend({
       skipPreflight: true,
       ...sendOpts,
     })
+    txSendPromises.push({ index, promise })
     promise
       .then(() => {
         logInfo(logger, `Transaction at [${index}] sent to blockchain`)
-        txSendPromises.push({ index, promise })
       })
       .catch(e => {
         logInfo(logger, `Transaction at [${index}] failed to send ` + e.message)
@@ -227,7 +227,7 @@ async function bulkSend({
         processed++
         logInfo(
           logger,
-          `Transaction at [${index}] sent ${processed}/${workingTransactions.length}, processed ${processed} of ${processed}`
+          `Transaction at [${index}] sent ${processed}/${workingTransactions.length}`
         )
       })
   }
@@ -236,6 +236,10 @@ async function bulkSend({
   while (processed < workingTransactions.length) {
     await new Promise(resolve => setTimeout(resolve, 500))
   }
+  logInfo(
+    logger,
+    `Sent all transactions ${processed}/${workingTransactions.length} [${data.length}]`
+  )
 
   logDebug(logger, `Confirming bulk #${retryAttempt}`)
   // --- CONFIRMING ---
@@ -257,10 +261,10 @@ async function bulkSend({
         confirmOpts
       )
 
+      confirmationPromises.push({ index, promise })
       promise
         .then(() => {
           logInfo(logger, `Transaction at [${index}] confirmed`)
-          confirmationPromises.push({ index, promise })
         })
         .catch(e => {
           logInfo(
@@ -277,11 +281,11 @@ async function bulkSend({
           )
         })
         .finally(() => {
+          processed++
           logInfo(
             logger,
             `Transaction at [${index}] confirmed ${processed}/${txSendPromises.length}`
           )
-          processed++
         })
     } catch (e) {
       processed++
@@ -305,6 +309,10 @@ async function bulkSend({
   while (processed < txSendPromises.length) {
     await new Promise(resolve => setTimeout(resolve, 500))
   }
+  logInfo(
+    logger,
+    `Confirmed all transactions ${processed}/${txSendPromises.length} [${data.length}]`
+  )
 
   logDebug(logger, `Getting logs bulk #${retryAttempt}`)
   // --- GETTING LOGS ---
@@ -327,16 +335,18 @@ async function bulkSend({
         commitment: confirmOpts,
         maxSupportedTransactionVersion: 0,
       })
+      responsePromises.push({ index, promise })
       promise
         .then(() => {
           logInfo(logger, `Transaction at [${index}] fetched`)
-          responsePromises.push({ index, promise })
         })
         .catch(e => {
           logInfo(
             logger,
             `Transaction at [${index}] failed to be fetched ` + e.message
           )
+          data[index].confirmationError = e as Error
+          responsePromises.push({ index, promise: Promise.resolve(null) })
           rpcErrors.push(
             new ExecutionError({
               msg: `Transaction at [${index}] failed to be sent to blockchain`,
@@ -379,6 +389,10 @@ async function bulkSend({
   while (processed < confirmationPromises.length) {
     await new Promise(resolve => setTimeout(resolve, 500))
   }
+  logInfo(
+    logger,
+    `Processed all transactions ${processed}/${confirmationPromises.length} [${data.length}]`
+  )
 
   logDebug(logger, `Retrieving logs bulk #${retryAttempt}`)
   // --- RETRIEVING LOGS PROMISE AND FINISH ---

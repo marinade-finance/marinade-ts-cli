@@ -808,7 +808,7 @@ export async function splitAndExecuteTx({
             ? executeResult?.signature
             : undefined
         }] ` +
-          `${executionCounter}/${transactions.length} (${transaction.instructions.length} instructions) executed`
+          `${executionCounter}(${transaction.instructions.length} ixes)/${transactions.length}  executed`
       )
 
       if (executeResult !== undefined) {
