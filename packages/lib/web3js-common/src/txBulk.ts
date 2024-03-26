@@ -78,10 +78,8 @@ export async function splitAndBulkExecuteTx({
     ? connection.connection
     : connection
 
-  let resultSimulated: BulkExecuteTxSimulatedReturn[] = []
-  const numberOfSimulations = numberOfRetries < 5 ? 5 : numberOfRetries
-  for (let i = 1; i <= numberOfSimulations; i++) {
-    resultSimulated = await splitAndExecuteTx({
+  const resultSimulated: BulkExecuteTxSimulatedReturn[] =
+    await splitAndExecuteTx({
       connection,
       transaction,
       errMessage,
@@ -95,7 +93,7 @@ export async function splitAndBulkExecuteTx({
       computeUnitLimit,
       computeUnitPrice,
     })
-  }
+
   if (printOnly || simulate) {
     return resultSimulated
   }
@@ -168,18 +166,18 @@ async function bulkSend({
 }): Promise<{ failures: ExecutionError[] }> {
   let processed = 0
   const rpcErrors: ExecutionError[] = []
-  const handler = (reason: unknown, promise: Promise<unknown>) => {
-    logInfo(
-      logger,
-      'Unhandled Rejection: ' +
-        `processed : ${processed}, rpc errors: ${rpcErrors.length}`
-    )
-    logDebug(
-      logger,
-      'Unhandled Rejection at: Promise ' + `${promise}, reason: ${reason}`
-    )
-  }
-  process.on('unhandledRejection', handler)
+  // const handler = (reason: unknown, promise: Promise<unknown>) => {
+  //   logInfo(
+  //     logger,
+  //     'Unhandled Rejection: ' +
+  //       `processed : ${processed}, rpc errors: ${rpcErrors.length}`
+  //   )
+  //   logDebug(
+  //     logger,
+  //     'Unhandled Rejection at: Promise ' + `${promise}, reason: ${reason}`
+  //   )
+  // }
+  // process.on('unhandledRejection', handler)
 
   // updating the recent blockhash of all transactions to be on top
   const workingTransactions: {
@@ -208,9 +206,9 @@ async function bulkSend({
       skipPreflight: true,
       ...sendOpts,
     })
-    txSendPromises.push({ index, promise })
     promise
       .then(() => {
+        txSendPromises.push({ index, promise })
         logInfo(logger, `Transaction at [${index}] sent to blockchain`)
       })
       .catch(e => {
@@ -236,6 +234,7 @@ async function bulkSend({
   while (processed < workingTransactions.length) {
     await new Promise(resolve => setTimeout(resolve, 500))
   }
+  // await Promise.all(txSendPromises.map(ts => ts.promise))
   logInfo(
     logger,
     `Sent all transactions ${processed}/${workingTransactions.length} [${data.length}]`
@@ -248,7 +247,7 @@ async function bulkSend({
     promise: Promise<RpcResponseAndContext<SignatureResult>>
     index: number
   }[] = []
-  for (const { index, promise: signaturePromise } of txSendPromises) {
+  for await (const { index, promise: signaturePromise } of txSendPromises) {
     try {
       const signature = await signaturePromise
       data[index].signature = signature
@@ -261,9 +260,9 @@ async function bulkSend({
         confirmOpts
       )
 
-      confirmationPromises.push({ index, promise })
       promise
         .then(() => {
+          confirmationPromises.push({ index, promise })
           logInfo(logger, `Transaction at [${index}] confirmed`)
         })
         .catch(e => {
@@ -335,10 +334,13 @@ async function bulkSend({
         commitment: confirmOpts,
         maxSupportedTransactionVersion: 0,
       })
-      responsePromises.push({ index, promise })
       promise
-        .then(() => {
-          logInfo(logger, `Transaction at [${index}] fetched`)
+        .then(r => {
+          responsePromises.push({ index, promise })
+          logInfo(
+            logger,
+            `Transaction at [${index}] fetched ` + JSON.stringify(r)
+          )
         })
         .catch(e => {
           logInfo(
@@ -389,6 +391,8 @@ async function bulkSend({
   while (processed < confirmationPromises.length) {
     await new Promise(resolve => setTimeout(resolve, 500))
   }
+  for (const promise of responsePromises.map(r => r.promise))
+    promise.catch(() => {})
   logInfo(
     logger,
     `Processed all transactions ${processed}/${confirmationPromises.length} [${data.length}]`
@@ -398,6 +402,20 @@ async function bulkSend({
   // --- RETRIEVING LOGS PROMISE AND FINISH ---
   for (const { index, promise: responsePromise } of responsePromises) {
     try {
+      responsePromise.catch(e => {
+        logInfo(
+          logger,
+          `Transaction at [${index}] failed to retrieve ` + (e as Error).message
+        )
+        rpcErrors.push(
+          new ExecutionError({
+            msg: `Transaction ${data[index].signature} at [${index}]  failed to be found on-chain`,
+            cause: e as Error,
+            transaction: data[index].transaction,
+            logs: data[index].response?.meta?.logMessages || undefined,
+          })
+        )
+      })
       const awaitedResponse = await responsePromise
       if (awaitedResponse !== null) {
         data[index].response = awaitedResponse
@@ -420,7 +438,7 @@ async function bulkSend({
     }
   }
 
-  process.removeListener('unhandledRejection', handler)
+  // process.removeListener('unhandledRejection', handler)
   for (const err of rpcErrors) {
     logDebug(logger, err)
   }

@@ -325,11 +325,11 @@ export async function confirmTransaction(
       commitment: confirmFinality,
       maxSupportedTransactionVersion: 0, // TODO: configurable?
     })
-  const confirmBlockhash = connection.getLatestBlockhash(confirmFinality)
+  const confirmBlockhash = await connection.getLatestBlockhash(confirmFinality)
   while (
     txRes === null &&
     (
-      await connection.isBlockhashValid((await confirmBlockhash).blockhash, {
+      await connection.isBlockhashValid(confirmBlockhash.blockhash, {
         commitment: confirmFinality,
       })
     ).value
@@ -484,13 +484,13 @@ export function filterSignersForInstruction(
   return signers.filter(s => signersRequired.find(rs => rs.equals(s.publicKey)))
 }
 
-async function getTransaction(
+function getNewTransaction(
   feePayer: PublicKey,
   bh: Readonly<{
     blockhash: string
     lastValidBlockHeight: number
   }>
-): Promise<Transaction> {
+): Transaction {
   return new Transaction({
     feePayer,
     blockhash: bh.blockhash,
@@ -682,7 +682,7 @@ export async function splitAndExecuteTx({
         lastValidBlockHeight: transaction.lastValidBlockHeight,
       }
     }
-    let lastValidTransaction = await generateNewTransaction({
+    let lastValidTransaction = generateNewTransaction({
       feePayer: feePayerDefined,
       bh: blockhash,
       computeUnitLimit,
@@ -727,7 +727,7 @@ export async function splitAndExecuteTx({
       ) {
         // size was elapsed, need to split
         // need to consider existence of nonPossibleToSplitMarker
-        const transactionAdd = await generateNewTransaction({
+        const transactionAdd = generateNewTransaction({
           feePayer: feePayerDefined,
           bh: blockhash,
           computeUnitLimit,
@@ -767,7 +767,7 @@ export async function splitAndExecuteTx({
         i = addIdx - 1
         transactionStartIndex = addIdx
         // nulling data of the next transaction to check
-        lastValidTransaction = await generateNewTransaction({
+        lastValidTransaction = generateNewTransaction({
           feePayer: feePayerDefined,
           bh: blockhash,
           computeUnitLimit,
@@ -825,7 +825,7 @@ export async function splitAndExecuteTx({
   return result
 }
 
-async function generateNewTransaction({
+function generateNewTransaction({
   feePayer,
   bh,
   computeUnitLimit,
@@ -838,8 +838,8 @@ async function generateNewTransaction({
   }>
   computeUnitLimit?: number
   computeUnitPrice?: number
-}): Promise<Transaction> {
-  const transaction = await getTransaction(feePayer, bh)
+}): Transaction {
+  const transaction = getNewTransaction(feePayer, bh)
   addComputeBudgetIxes({
     transaction,
     computeUnitLimit,
