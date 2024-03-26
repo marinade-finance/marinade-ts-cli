@@ -121,6 +121,7 @@ export function unhandledRejection(
   promise: Promise<unknown>,
   logger?: LoggerPlaceholder
 ) {
+  promise.then(() => {}).catch(() => {}) // ignore errors
   let stack = ''
   if (err instanceof Error) {
     stack = err.stack || ''
@@ -532,7 +533,7 @@ function getNewTransaction(
   })
 }
 
-async function addComputeBudgetIxes({
+export async function addComputeBudgetIxes({
   transaction,
   computeUnitLimit,
   computeUnitPrice,
@@ -549,7 +550,7 @@ async function addComputeBudgetIxes({
   }
 }
 
-function setComputeUnitLimitIx(units: number): TransactionInstruction {
+export function setComputeUnitLimitIx(units: number): TransactionInstruction {
   return ComputeBudgetProgram.setComputeUnitLimit({ units })
 }
 
@@ -557,7 +558,9 @@ function setComputeUnitLimitIx(units: number): TransactionInstruction {
  * Priority fee that is calculated in micro lamports (0.000001 SOL)
  * Every declared CU for the transaction is paid with this additional payment.
  */
-function setComputeUnitPriceIx(microLamports: number): TransactionInstruction {
+export function setComputeUnitPriceIx(
+  microLamports: number
+): TransactionInstruction {
   return ComputeBudgetProgram.setComputeUnitPrice({ microLamports })
 }
 

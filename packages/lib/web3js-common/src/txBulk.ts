@@ -20,6 +20,7 @@ import {
   ExecuteTxReturnSimulated,
   TransactionData,
   partialSign,
+  setComputeUnitLimitIx,
   splitAndExecuteTx,
   unhandledRejection,
 } from './tx'
@@ -103,11 +104,17 @@ export async function splitAndBulkExecuteTx({
   const currentBlockhash = await connection.getLatestBlockhash()
   const resultExecuted: BulkExecuteTxExecutedReturn[] = resultSimulated.map(
     r => {
+      const instructions = []
+      if (r.response?.unitsConsumed) {
+        const computeUnitPrice = Math.floor(r.response.unitsConsumed * 1.2)
+        instructions.push(setComputeUnitLimitIx(computeUnitPrice))
+      }
+      instructions.push(...r.transaction.instructions)
       const messageV0 = new TransactionMessage({
         payerKey: r.transaction.feePayer ?? r.signers[0].publicKey,
         recentBlockhash:
           r.transaction.recentBlockhash ?? currentBlockhash.blockhash,
-        instructions: r.transaction.instructions,
+        instructions,
       }).compileToV0Message()
       const transaction = new VersionedTransaction(messageV0)
       return {
@@ -244,6 +251,7 @@ async function bulkSend({
     await new Promise(resolve => setTimeout(resolve, 500))
   }
   // https://jakearchibald.com/2023/unhandled-rejections/
+  await Promise.allSettled(txSendPromises.map(r => r.promise))
   for (const promise of txSendPromises.map(r => r.promise)) {
     promise.catch(() => {})
   }
@@ -324,7 +332,7 @@ async function bulkSend({
   while (processed < txSendPromises.length) {
     await new Promise(resolve => setTimeout(resolve, 500))
   }
-  Promise.allSettled(txSendPromises.map(r => r.promise))
+  await Promise.allSettled(txSendPromises.map(r => r.promise))
   for (const promise of txSendPromises.map(r => r.promise)) {
     promise.catch(() => {})
   }
@@ -363,7 +371,7 @@ async function bulkSend({
           responsePromises.push({ index, promise })
           logInfo(
             logger,
-            `Transaction at [${index}] fetched ` + JSON.stringify(r)
+            `Transaction at [${index}] fetched ` + r?.meta?.computeUnitsConsumed
           )
         })
         .catch(e => {
@@ -415,6 +423,7 @@ async function bulkSend({
   while (processed < confirmationPromises.length) {
     await new Promise(resolve => setTimeout(resolve, 500))
   }
+  await Promise.allSettled(responsePromises.map(r => r.promise))
   for (const promise of responsePromises.map(r => r.promise)) {
     promise.catch(() => {})
   }
