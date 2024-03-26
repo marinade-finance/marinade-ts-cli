@@ -83,8 +83,6 @@ export async function splitAndBulkExecuteTx({
   let resultSimulated: BulkExecuteTxSimulatedReturn[] = []
   const numberOfSimulations = numberOfRetries < 5 ? 5 : numberOfRetries
   for (let i = 1; i <= numberOfSimulations; i++) {
-    try {
-      logWarn(logger, 'Simulating transactions: ' + i)
       resultSimulated = await splitAndExecuteTx({
         connection,
         transaction,
@@ -99,27 +97,6 @@ export async function splitAndBulkExecuteTx({
         computeUnitLimit,
         computeUnitPrice,
       })
-      logWarn(logger, 'Simulation was successful, proceeding to send')
-      break
-    } catch (e) {
-      if (
-        i >= numberOfSimulations ||
-        !checkErrorMessage(e, 'Too many requests')
-      ) {
-        logError(
-          logger,
-          'Too many retries for simulation, aborting... ' +
-            {
-              i,
-              numberOfSimulations,
-              tooMany: checkErrorMessage(e, 'Too many requests'),
-            }
-        )
-        throw e
-      } else {
-        logDebug(logger, `Error to split and execute transactions: ${e}`)
-      }
-    }
   }
   if (printOnly || simulate) {
     return resultSimulated
