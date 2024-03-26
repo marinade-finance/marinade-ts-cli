@@ -320,7 +320,11 @@ async function bulkSend({
     }
   }
 
-  // fix
+  logInfo(logger, 'txSendPromises: hacking catch all unhandled rejections')
+  while (processed < txSendPromises.length) {
+    await new Promise(resolve => setTimeout(resolve, 500))
+  }
+  Promise.allSettled(txSendPromises.map(r => r.promise))
   for (const promise of txSendPromises.map(r => r.promise)) {
     promise.catch(() => {})
   }
@@ -419,6 +423,9 @@ async function bulkSend({
     `Processed all transactions ${processed}/${confirmationPromises.length} [${data.length}]`
   )
 
+  // const handler = (r: Error, p: Promise<unknown>) =>
+  //   unhandledRejection(r, p, logger)
+  // process.on('unhandledRejection', handler)
   logDebug(
     logger,
     `Retrieving logs bulk #${retryAttempt}/` +
