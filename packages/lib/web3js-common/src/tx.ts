@@ -121,7 +121,13 @@ export function unhandledRejection(
   promise: Promise<unknown>,
   logger?: LoggerPlaceholder
 ) {
-  const stack = err instanceof Error ? err.stack : ''
+  let stack = ''
+  if (err instanceof Error) {
+    stack = err.stack || ''
+    if (checkErrorMessage(err, 'Too many requests')) {
+      setTimeout(() => {}, 5000).unref()
+    }
+  }
   const message = err instanceof Error ? err.message : err
   logInfo(logger, {
     msg: 'Unhandled promise rejection',
