@@ -223,7 +223,7 @@ export async function executeTx({
       // const txSimulation = await p
       // logInfo(logger, 'simulate transaction processed')
       txResponse = (await connection.simulateTransaction(transaction)).value
-      process.removeListener('unhandledRejection', handler)
+      process.off('unhandledRejection', handler)
       logInfo(logger, 'simulate transaction value extracted')
       logDebug(logger, txResponse)
       if (txResponse.err) {

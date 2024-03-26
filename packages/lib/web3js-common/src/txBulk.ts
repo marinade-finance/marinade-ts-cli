@@ -119,6 +119,12 @@ export async function splitAndBulkExecuteTx({
     }
   )
 
+  // unhandled rejections handler; this is a strange trouble
+  // that no catch patterns work with web3.js(?)
+  const handler = (r: Error, p: Promise<unknown>) =>
+    unhandledRejection(r, p, logger)
+  process.on('unhandledRejection', handler)
+
   let failures: ExecutionError[] = []
   // let's send to land the transaction on blockchain
   const numberOfSends = numberOfRetries + 1
@@ -144,6 +150,8 @@ export async function splitAndBulkExecuteTx({
         `${failures.length} errors of ${resultExecuted.length} transactions`
     )
   }
+
+  process.off('unhandledRejection', handler)
 
   return resultExecuted
 }
@@ -236,14 +244,19 @@ async function bulkSend({
     await new Promise(resolve => setTimeout(resolve, 500))
   }
   // https://jakearchibald.com/2023/unhandled-rejections/
-  for (const promise of txSendPromises.map(r => r.promise))
+  for (const promise of txSendPromises.map(r => r.promise)) {
     promise.catch(() => {})
+  }
   logInfo(
     logger,
     `Sent all transactions ${processed}/${workingTransactions.length} [${data.length}]`
   )
 
-  logDebug(logger, `Confirming bulk #${retryAttempt}`)
+  logDebug(
+    logger,
+    `Confirming bulk #${retryAttempt}/` +
+      `${processed}/${workingTransactions.length} [${data.length}]`
+  )
   // --- CONFIRMING ---
   processed = 0
   const confirmationPromises: {
@@ -308,14 +321,19 @@ async function bulkSend({
   }
 
   // fix
-  for (const promise of txSendPromises.map(r => r.promise))
+  for (const promise of txSendPromises.map(r => r.promise)) {
     promise.catch(() => {})
+  }
   logInfo(
     logger,
     `Confirmed all transactions ${processed}/${txSendPromises.length} [${data.length}]`
   )
 
-  logDebug(logger, `Getting logs bulk #${retryAttempt}`)
+  logDebug(
+    logger,
+    `Getting logs bulk #${retryAttempt}/` +
+      `${processed}/${txSendPromises.length} [${data.length}]`
+  )
   // --- GETTING LOGS ---
   processed = 0
   const responsePromises: {
@@ -393,17 +411,19 @@ async function bulkSend({
   while (processed < confirmationPromises.length) {
     await new Promise(resolve => setTimeout(resolve, 500))
   }
-  for (const promise of responsePromises.map(r => r.promise))
+  for (const promise of responsePromises.map(r => r.promise)) {
     promise.catch(() => {})
+  }
   logInfo(
     logger,
     `Processed all transactions ${processed}/${confirmationPromises.length} [${data.length}]`
   )
 
-  const handler = (r: Error, p: Promise<unknown>) =>
-    unhandledRejection(r, p, logger)
-  process.on('unhandledRejection', handler)
-  logDebug(logger, `Retrieving logs bulk #${retryAttempt}`)
+  logDebug(
+    logger,
+    `Retrieving logs bulk #${retryAttempt}/` +
+      `${processed}/${confirmationPromises.length} [${data.length}]`
+  )
   // --- RETRIEVING LOGS PROMISE AND FINISH ---
   for (const { index, promise: responsePromise } of responsePromises) {
     try {
@@ -424,6 +444,10 @@ async function bulkSend({
       // })
       const awaitedResponse = await responsePromise
       if (awaitedResponse !== null) {
+        logInfo(
+          logger,
+          `Transaction at [${index}] awaited response with no error`
+        )
         data[index].response = awaitedResponse
         data[index].confirmationError = undefined
       }
@@ -443,9 +467,7 @@ async function bulkSend({
       )
     }
   }
-  process.removeListener('unhandledRejection', handler)
 
-  // process.removeListener('unhandledRejection', handler)
   for (const err of rpcErrors) {
     logDebug(logger, err)
   }
