@@ -31,8 +31,8 @@ export function verifyError(
   }
   if (errMessage !== undefined && !anchorErrorMsg.includes(errMessage)) {
     throw new Error(
-      `Error ${errCode} with message ${anchorErrorMsg} ` +
-        `does not match expected errMessage ${errMessage}`
+      `Error code ${errCode} belongs to Anchor error message '${anchorErrorMsg}' ` +
+        `which does not match expected text '${errMessage}'`
     )
   }
   let decNum: number
