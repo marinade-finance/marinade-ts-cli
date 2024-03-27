@@ -15,7 +15,7 @@ const logger: Logger = configureLogger()
 
 const program = new Command('marinade')
 program
-  .version('5.1.2')
+  .version('5.1.9')
   .allowExcessArguments(false)
   .option(
     '-u, --url <url-or-moniker>',

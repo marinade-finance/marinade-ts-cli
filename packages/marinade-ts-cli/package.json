@@ -1,6 +1,6 @@
 {
     "name": "@marinade.finance/marinade-ts-cli",
-    "version": "5.1.8",
+    "version": "5.1.9",
     "description": "Marinade typescript-based CLI",
     "license": "ISC",
     "author": "Marinade.Finance",
@@ -41,12 +41,12 @@
         "pino": "^8.15.1",
         "pino-pretty": "^10.2.0",
         "@marinade.finance/ledger-utils": "^3.0.1",
-        "@marinade.finance/cli-common": "^2.4.1",
-        "@marinade.finance/web3js-common": "^2.4.1",
+        "@marinade.finance/cli-common": "^2.4.2",
+        "@marinade.finance/web3js-common": "^2.4.2",
         "@marinade.finance/marinade-ts-sdk": "5.0.7"
     },
     "devDependencies": {
-        "@marinade.finance/jest-utils": "^2.4.1",
+        "@marinade.finance/jest-utils": "^2.4.2",
         "@types/bn.js": "^5.1.5",
         "@solana/spl-token-3.x": "npm:@solana/spl-token@^0.3.8"
     },
