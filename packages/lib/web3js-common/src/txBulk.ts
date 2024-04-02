@@ -208,7 +208,7 @@ async function bulkSend({
   // --- SENDING ---
   logInfo(
     logger,
-    `Bulk #${retryAttempt} sending ${workingTransactions.length} transactions`
+    `Bulk #${retryAttempt} sending ${workingTransactions.length} from ${data.length} transactions`
   )
   const rpcErrors: ExecutionError[] = []
   const txSendPromises: { promise: Promise<string>; index: number }[] = []
