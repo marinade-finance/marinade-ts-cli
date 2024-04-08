@@ -409,6 +409,24 @@ export async function executeTxSimple(
 }
 
 export async function executeTxWithExceededBlockhashRetry(
+  args: Omit<ExecuteTxParams, 'simulate'> & { simulate: true }
+): Promise<ExecuteTxReturnSimulated>
+export async function executeTxWithExceededBlockhashRetry(
+  args: Omit<ExecuteTxParams, 'simulate' | 'printOnly'> & {
+    simulate?: false
+    printOnly?: false
+  }
+): Promise<ExecuteTxReturnExecuted>
+export async function executeTxWithExceededBlockhashRetry(
+  args: Omit<ExecuteTxParams, 'simulate' | 'printOnly'> & {
+    simulate?: false
+    printOnly: true
+  }
+): Promise<undefined>
+export async function executeTxWithExceededBlockhashRetry(
+  args: ExecuteTxParams
+): Promise<ExecuteTxReturnExecuted>
+export async function executeTxWithExceededBlockhashRetry(
   txParams: ExecuteTxParams
 ): Promise<ExecuteTxReturn> {
   try {
