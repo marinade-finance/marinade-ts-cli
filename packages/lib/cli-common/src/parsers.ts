@@ -6,8 +6,9 @@ import {
   Cluster,
   Finality,
 } from '@solana/web3.js'
+import { readFileSync } from 'fs'
 import { readFile } from 'fs/promises'
-import { doWithLock, expandTilde } from '@marinade.finance/ts-common'
+import { doWithLock, expandTilde, logDebug } from '@marinade.finance/ts-common'
 import { parseLedgerWallet } from '@marinade.finance/ledger-utils'
 import { CliCommandError } from './error'
 import {
@@ -19,8 +20,11 @@ import {
 import { Logger } from 'pino'
 import { getContext } from './context'
 import { PINO_CONFIGURED_LOGGER } from './pinoLogging'
+import YAML from 'yaml'
 
-const DEFAULT_KEYPAIR_PATH = '~/.config/solana/id.json'
+export const DEFAULT_CONFIG_PATH = '~/.config/solana/cli/config.yml'
+export const DEFAULT_KEYPAIR_PATH = '~/.config/solana/id.json'
+export const DEFAULT_CLUSTER_URL = 'http://127.0.0.1:8899'
 
 export async function parsePubkey(pubkeyOrPath: string): Promise<PublicKey> {
   try {
@@ -64,6 +68,10 @@ export async function parseKeypair(pathOrPrivKey: string): Promise<Keypair> {
 
 export async function parseFile(path: string): Promise<string> {
   return await readFile(expandTilde(path), 'utf-8')
+}
+
+export function parseFileSync(path: string): string {
+  return readFileSync(expandTilde(path), 'utf-8')
 }
 
 async function parsePubkeyWithPath(pubkeyOrPath: string): Promise<PublicKey> {
@@ -142,18 +150,24 @@ export async function parsePubkeyOrPubkeyFromWallet(
  * For other commands we need a working wallet, when cannot be parsed then Error.
  */
 export async function parseWalletFromOpts(
-  keypairArg: string,
+  keypairArg: string | undefined,
   printOnly: boolean,
   commandArgs: string[],
   logger: Logger,
-  defaultKeypair: string = DEFAULT_KEYPAIR_PATH
+  defaultKeypair?: string,
+  solanaConfigPath?: string
 ): Promise<Wallet> {
   const wallet = keypairArg
   let walletInterface: Wallet
   try {
-    walletInterface = wallet
-      ? await parseWallet(wallet, logger)
-      : await parseWallet(defaultKeypair, logger)
+    if (wallet) {
+      walletInterface = await parseWallet(wallet, logger)
+    } else {
+      defaultKeypair =
+        defaultKeypair ??
+        resolveSolanaConfig({ logger, solanaConfigPath }).keypairPath
+      walletInterface = await parseWallet(defaultKeypair, logger)
+    }
   } catch (err) {
     if (
       commandArgs.find(arg => arg.startsWith('show')) !== undefined ||
@@ -180,7 +194,65 @@ export async function parseWalletFromOpts(
   return walletInterface
 }
 
-export function parseClusterUrl(url: string | undefined): string {
+export function resolveSolanaConfig({
+  solanaConfigPath = DEFAULT_CONFIG_PATH,
+  defaultKeypair = DEFAULT_KEYPAIR_PATH,
+  defaultRpcUrl = DEFAULT_CLUSTER_URL,
+  logger,
+}: {
+  solanaConfigPath?: string
+  defaultKeypair?: string
+  defaultRpcUrl?: string
+  logger?: Logger
+}): {
+  keypairPath: string
+  jsonRpcUrl: string
+  commitment?: Commitment
+} {
+  let configFromFile
+  try {
+    configFromFile = parseFileSync(solanaConfigPath)
+  } catch (err) {
+    logDebug(
+      logger,
+      `Failed to load Solana config file ${solanaConfigPath}: ${err}`
+    )
+    return {
+      keypairPath: defaultKeypair,
+      jsonRpcUrl: defaultRpcUrl,
+    }
+  }
+
+  const configData: {
+    json_rpc_url?: string
+    websocket_url?: string
+    keypair_path?: string
+    commitment?: string
+  } = YAML.parse(configFromFile)
+  let parsedCommitment: Commitment | undefined = undefined
+  if (configData.commitment !== undefined) {
+    try {
+      parsedCommitment = parseCommitment(configData.commitment)
+    } catch (err) {
+      logDebug(
+        logger,
+        `Failed to parse commitment ${configData.commitment} ` +
+          `from Solana config file ${solanaConfigPath}: ${err}`
+      )
+    }
+  }
+
+  return {
+    keypairPath: configData.keypair_path ?? defaultKeypair,
+    jsonRpcUrl: configData.json_rpc_url ?? defaultRpcUrl,
+    commitment: parsedCommitment,
+  }
+}
+
+export function parseClusterUrl(
+  url: string | undefined,
+  solanaConfigPath?: string
+): string {
   const localhost = 'http://127.0.0.1:8899'
   let clusterUrl =
     url === 'd'
@@ -198,7 +270,10 @@ export function parseClusterUrl(url: string | undefined): string {
   } catch (e) {
     // ignore
   }
-  return clusterUrl || localhost
+  if (!clusterUrl) {
+    clusterUrl = resolveSolanaConfig({ solanaConfigPath }).jsonRpcUrl
+  }
+  return clusterUrl
 }
 
 export function parseCommitment(commitment: string): Commitment {
