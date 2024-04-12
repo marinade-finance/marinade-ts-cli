@@ -276,23 +276,29 @@ export function parseClusterUrl(
   return clusterUrl
 }
 
-export function parseCommitment(commitment: string): Commitment {
+export function parseCommitment(commitment: string | undefined): Commitment {
+  let parsedCommitment: Commitment | undefined = undefined
   if (commitment === 'processed') {
-    return 'processed'
+    parsedCommitment = 'processed'
   } else if (commitment === 'confirmed') {
-    return 'confirmed'
+    parsedCommitment = 'confirmed'
   } else if (commitment === 'finalized') {
-    return 'finalized'
+    parsedCommitment = 'finalized'
   } else if (commitment === 'recent') {
-    return 'recent'
+    parsedCommitment = 'recent'
   } else if (commitment === 'single') {
-    return 'single'
+    parsedCommitment = 'single'
   } else if (commitment === 'singleGossip') {
-    return 'singleGossip'
+    parsedCommitment = 'singleGossip'
   } else if (commitment === 'root') {
-    return 'root'
+    parsedCommitment = 'root'
   } else if (commitment === 'max') {
-    return 'max'
+    parsedCommitment = 'max'
+  } else {
+    parsedCommitment = resolveSolanaConfig({}).commitment
+  }
+  if (parsedCommitment !== undefined) {
+    return parsedCommitment
   } else {
     throw new Error(
       'Invalid value of --commitment: ' +
