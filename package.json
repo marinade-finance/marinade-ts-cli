@@ -22,7 +22,7 @@
         "publish:jest-utils": "pnpm build && pnpm publish build/packages/lib/jest-utils",
         "publish:spl-gov-utils": "pnpm build && pnpm publish build/packages/lib/spl-gov-utils",
         "publish:marinade-ts-cli": "pnpm build && pnpm publish build/packages/marinade-ts-cli",
-        "publish:libs": "pnpm lint && pnpm install && pnpm publish:ts-common && pnpm publish:web3js-common && pnpm publish:umi-utils && pnpm publish:bankrun-utils && pnpm publish:cli-common && pnpm publish:anchor-common && pnpm publish:jest-utils && pnpm publish:spl-gov-utils",
+        "publish:libs": "pnpm publish:ts-common && pnpm publish:web3js-common && pnpm publish:umi-utils && pnpm publish:bankrun-utils && pnpm publish:cli-common && pnpm publish:anchor-common && pnpm publish:jest-utils && pnpm publish:spl-gov-utils",
         "publish:all": "pnpm publish:libs && pnpm publish:marinade-ts-cli"
     },
     "devDependencies": {
