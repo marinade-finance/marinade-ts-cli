@@ -28,13 +28,13 @@
     "@solana/web3.js": "^1.91.1",
     "@metaplex-foundation/umi-bundle-defaults": "0.9.1",
     "@metaplex-foundation/umi": "0.9.1",
-    "@marinade.finance/web3js-common": "2.4.4"
+    "@marinade.finance/web3js-common": "workspace:2.4.4"
   },
   "peerDependencies": {
     "@solana/web3.js": "^1.91.1",
     "@metaplex-foundation/umi-bundle-defaults": "0.9.1",
     "@metaplex-foundation/umi": "0.9.1",
-    "@marinade.finance/web3js-common": "2.4.4"
+    "@marinade.finance/web3js-common": "workspace:2.4.4"
   },
   "engines": {
     "node": ">=16.0.0"
