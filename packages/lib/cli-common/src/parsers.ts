@@ -249,6 +249,7 @@ export function resolveSolanaConfig({
   }
 }
 
+// eslint-disable-next-line no-use-before-define
 export function parseClusterUrl(
   url: string | undefined,
   solanaConfigPath?: string
@@ -258,12 +259,12 @@ export function parseClusterUrl(
     url === 'd'
       ? 'devnet'
       : url === 't'
-      ? 'testnet'
-      : url === 'm' || url === 'mainnet'
-      ? 'mainnet-beta'
-      : url === 'l' || url === 'localnet' || url === 'localhost'
-      ? localhost
-      : url
+        ? 'testnet'
+        : url === 'm' || url === 'mainnet'
+          ? 'mainnet-beta'
+          : url === 'l' || url === 'localnet' || url === 'localhost'
+            ? localhost
+            : url
 
   try {
     clusterUrl = clusterApiUrl(clusterUrl as Cluster | undefined)
