@@ -220,10 +220,12 @@ export async function executeTx({
       txResponse = (await connection.simulateTransaction(transaction)).value
       process.off('unhandledRejection', handler)
       if (txResponse.err) {
-        throw new SendTransactionError(
-          txResponse.err as string,
-          txResponse.logs || undefined
-        )
+        throw new SendTransactionError({
+          action: 'simulate',
+          signature: '',
+          transactionMessage: txResponse.err as string,
+          logs: txResponse?.logs || undefined,
+        })
       }
     } else if (!printOnly) {
       // retry when not having recent blockhash
@@ -246,9 +248,7 @@ export async function executeTx({
       txSignature,
       msg: errMessage,
       cause: e as Error,
-      logs: (e as SendTransactionError).logs
-        ? (e as SendTransactionError).logs
-        : undefined,
+      logs: (e as SendTransactionError).logs,
       transaction: isLevelEnabled(logger, 'debug') ? transaction : undefined,
     })
   }

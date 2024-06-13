@@ -33,13 +33,13 @@
         "@coral-xyz/anchor": "0.28",
         "@solana/web3.js": "^1.93.0",
         "@solana/spl-governance": "^0.3.28",
-        "@solana/spl-token": "^0.3.8",
+        "@solana/spl-token": "^0.3.11",
         "bn.js": "^5.2.1",
         "borsh": "^0.7.0",
         "bs58": "^4.0.1",
         "commander": "^11.0.0",
-        "pino": "^8.15.1",
-        "pino-pretty": "^10.2.0",
+        "pino": "^8.21.0",
+        "pino-pretty": "^11.2.1",
         "@marinade.finance/ledger-utils": "^3.0.1",
         "@marinade.finance/cli-common": "workspace:2.4.4",
         "@marinade.finance/web3js-common": "workspace:2.4.4",
@@ -48,7 +48,7 @@
     "devDependencies": {
         "@marinade.finance/jest-utils": "workspace:2.4.4",
         "@types/bn.js": "^5.1.5",
-        "@solana/spl-token-3.x": "npm:@solana/spl-token@^0.3.8"
+        "@solana/spl-token-3.x": "npm:@solana/spl-token@^0.3.11"
     },
     "engines": {
         "node": ">=16.0.0"
