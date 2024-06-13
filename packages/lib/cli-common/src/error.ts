@@ -31,9 +31,9 @@ export class CliCommandError extends ExecutionError {
     }
     let errorMessage: string
     if (valueName) {
-      errorMessage = format('%s[%s=%s]: %s', commandName, valueName, value, msg)
+      errorMessage = format('%s [%s=%s]: %s', commandName, valueName, value, msg)
     } else {
-      errorMessage = format('%s:%s', commandName, msg)
+      errorMessage = format('%s: %s', commandName, msg)
     }
     super({ msg: errorMessage, cause, logs, transaction })
   }
