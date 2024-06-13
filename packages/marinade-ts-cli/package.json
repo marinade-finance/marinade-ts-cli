@@ -31,7 +31,7 @@
     ],
     "dependencies": {
         "@coral-xyz/anchor": "0.28",
-        "@solana/web3.js": "^1.91.1",
+        "@solana/web3.js": "^1.93.0",
         "@solana/spl-governance": "^0.3.28",
         "@solana/spl-token": "^0.3.8",
         "bn.js": "^5.2.1",

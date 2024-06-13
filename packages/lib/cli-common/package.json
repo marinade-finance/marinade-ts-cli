@@ -25,26 +25,26 @@
     "src"
   ],
   "devDependencies": {
-    "@solana/web3.js": "^1.91.1",
+    "@solana/web3.js": "^1.93.0",
     "@marinade.finance/web3js-common": "workspace:2.4.4",
     "@marinade.finance/ts-common": "workspace:2.4.4",
     "@marinade.finance/ledger-utils": "^3.0.1",
     "bn.js": "^5.2.1",
     "borsh": "^0.7.0",
     "bs58": "^5.0.0",
-    "pino": "^8.15.1",
-    "yaml": "^2.3.2"
+    "pino": "^9.2.0",
+    "yaml": "^2.4.5"
   },
   "peerDependencies": {
-    "@solana/web3.js": "^1.91.1",
+    "@solana/web3.js": "^1.93.0",
     "@marinade.finance/web3js-common": "workspace:2.4.4",
     "@marinade.finance/ts-common": "workspace:2.4.4",
     "@marinade.finance/ledger-utils": "^3.0.1",
     "bn.js": "^5.2.1",
     "borsh": "^0.7.0",
     "bs58": "^5.0.0",
-    "pino": "^8.15.1",
-    "yaml": "^2.3.2"
+    "pino": "^9.2.0",
+    "yaml": "^2.4.5"
   },
   "engines": {
     "node": ">=16.0.0"

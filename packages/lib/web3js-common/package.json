@@ -25,7 +25,7 @@
   ],
   "devDependencies": {
     "@marinade.finance/ts-common": "workspace:2.4.4",
-    "@solana/web3.js": "^1.91.1",
+    "@solana/web3.js": "^1.93.0",
     "@solana/buffer-layout": "^4.0.1",
     "bn.js": "^5.2.1",
     "borsh": "^0.7.0",
@@ -33,7 +33,7 @@
   },
   "peerDependencies": {
     "@marinade.finance/ts-common": "workspace:2.4.4",
-    "@solana/web3.js": "^1.91.1",
+    "@solana/web3.js": "^1.93.0",
     "@solana/buffer-layout": "^4.0.1",
     "bn.js": "^5.2.1",
     "borsh": "^0.7.0",
