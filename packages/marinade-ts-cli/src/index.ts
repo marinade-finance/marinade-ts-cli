@@ -9,6 +9,7 @@ import {
   configureLogger,
   parseWalletFromOpts,
 } from '@marinade.finance/cli-common'
+import { ExecutionError } from '@marinade.finance/web3js-common'
 
 const DEFAULT_KEYPAIR_PATH = '~/.config/solana/id.json'
 const logger: Logger = configureLogger()
@@ -77,9 +78,16 @@ program
 installCommands(program)
 
 program.parseAsync(process.argv).then(
-  () => process.exit(),
-  (err: unknown) => {
-    logger.error(err)
-    process.exit(1)
+  () => {
+    logger.debug({ resolution: 'Success', args: process.argv })
+  },
+  (err: Error) => {
+    logger.error(
+      err instanceof ExecutionError
+        ? err.messageWithTransactionError()
+        : err.message
+    )
+    logger.debug({ resolution: 'Failure', err, args: process.argv })
+    process.exitCode = 1
   }
 )
