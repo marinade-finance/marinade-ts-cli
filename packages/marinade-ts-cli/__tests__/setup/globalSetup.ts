@@ -20,7 +20,7 @@ import path from 'path'
 import { tmpdir } from 'os'
 import { Wallet } from '@coral-xyz/anchor/dist/cjs/provider'
 
-// eslint-disable-next-line n/no-extraneous-require
+// eslint-disable-next-line node/no-extraneous-require
 require('ts-node/register')
 
 // 6LHBDKtwo69UKxWgY15vE3QykP4uf5DzZUgBiMzhEWpf

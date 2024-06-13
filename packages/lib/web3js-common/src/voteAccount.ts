@@ -33,10 +33,10 @@ export async function getVoteAccount(
   return await getVoteAccountFromData(address, voteAccountInfo)
 }
 
-export async function getVoteAccountFromData(
+export function getVoteAccountFromData(
   address: PublicKey,
   voteAccountInfo: AccountInfo<Buffer>
-): Promise<ProgramAccountInfo<VoteAccount>> {
+): ProgramAccountInfo<VoteAccount> {
   const versionOffset = 4
   const version = VoteAccountVersionLayout.decode(
     toBuffer(voteAccountInfo.data),
