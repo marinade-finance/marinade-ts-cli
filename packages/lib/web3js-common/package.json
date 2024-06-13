@@ -24,7 +24,7 @@
     "src"
   ],
   "devDependencies": {
-    "@marinade.finance/ts-common": "2.4.5",
+    "@marinade.finance/ts-common": "workspace: 2.4.5",
     "@solana/web3.js": "^1.93.0",
     "@solana/buffer-layout": "^4.0.1",
     "bn.js": "^5.2.1",
@@ -32,7 +32,7 @@
     "bs58": "^5.0.0"
   },
   "peerDependencies": {
-    "@marinade.finance/ts-common": "2.4.5",
+    "@marinade.finance/ts-common": "workspace: 2.4.5",
     "@solana/web3.js": "^1.93.0",
     "@solana/buffer-layout": "^4.0.1",
     "bn.js": "^5.2.1",
