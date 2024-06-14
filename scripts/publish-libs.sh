@@ -33,6 +33,9 @@ find -name package.json | xargs -I file sed -i "s/${VERSION}/${NEW_VERSION}/" fi
 echo "Going to publish the packages/libs to npm registry, from version ${VERSION} to ${NEW_VERSION}"
 read -p "Press enter to continue"
 
+git add .
+git ci -m "[chore] bump version to ${NEW_VERSION}"
+
 pnpm publish:libs
 
 find -name package.json | xargs -I file sed -i 's/\(@marinade.finance[^:]*: "\)'"${NEW_VERSION}"'/\1workspace: '"${NEW_VERSION}"'/' file
