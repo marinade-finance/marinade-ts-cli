@@ -1,6 +1,6 @@
 {
   "name": "@marinade.finance/web3js-common",
-  "version": "2.4.6",
+  "version": "2.4.7",
   "description": "Web3 JS reusable utilities",
   "repository": {
     "type": "git",
@@ -24,7 +24,7 @@
     "src"
   ],
   "devDependencies": {
-    "@marinade.finance/ts-common": "2.4.6",
+    "@marinade.finance/ts-common": "2.4.7",
     "@solana/web3.js": "^1.93.0",
     "@solana/buffer-layout": "^4.0.1",
     "bn.js": "^5.2.1",
@@ -32,7 +32,7 @@
     "bs58": "^5.0.0"
   },
   "peerDependencies": {
-    "@marinade.finance/ts-common": "2.4.6",
+    "@marinade.finance/ts-common": "2.4.7",
     "@solana/web3.js": "^1.93.0",
     "@solana/buffer-layout": "^4.0.1",
     "bn.js": "^5.2.1",
