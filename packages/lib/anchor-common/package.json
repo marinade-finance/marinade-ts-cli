@@ -29,15 +29,15 @@
     "@solana/web3.js": "^1.93.0",
     "bn.js": "^5.2.1",
     "@coral-xyz/anchor": "^0.29.0",
-    "@marinade.finance/ts-common": "2.4.7",
-    "@marinade.finance/web3js-common": "2.4.7"
+    "@marinade.finance/ts-common": "workspace: 2.4.7",
+    "@marinade.finance/web3js-common": "workspace: 2.4.7"
   },
   "peerDependencies": {
     "@solana/web3.js": "^1.93.0",
     "bn.js": "^5.2.1",
     "@coral-xyz/anchor": "^0.29.0",
-    "@marinade.finance/ts-common": "2.4.7",
-    "@marinade.finance/web3js-common": "2.4.7"
+    "@marinade.finance/ts-common": "workspace: 2.4.7",
+    "@marinade.finance/web3js-common": "workspace: 2.4.7"
   },
   "engines": {
     "node": ">=16"
