@@ -232,7 +232,8 @@ export async function executeTx({
       txSignature = await sendRawTransactionWithRetry(
         connection,
         transaction,
-        sendOpts
+        sendOpts,
+        logger,
       )
       // Checking if executed
       txResponse = await confirmTransaction(
@@ -289,7 +290,8 @@ export async function updateTransactionBlockhash<
 async function sendRawTransactionWithRetry(
   connection: Connection,
   transaction: Transaction,
-  sendOpts?: SendOptions
+  sendOpts?: SendOptions,
+  logger?: LoggerPlaceholder
 ): Promise<TransactionSignature> {
   try {
     return await connection.sendRawTransaction(
@@ -299,7 +301,7 @@ async function sendRawTransactionWithRetry(
   } catch (e) {
     if (checkErrorMessage(e, 'blockhash not found')) {
       logDebug(
-        undefined,
+        logger,
         'Blockhash not found, retrying to update transaction blockhash, reason: ' +
           e
       )

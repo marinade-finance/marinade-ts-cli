@@ -49,7 +49,7 @@ export class ExecutionError extends Error {
   messageWithTransactionError(): string {
     const txCauseErrMessage = this.transactionCauseError
       ? '; transaction error: ' + this.transactionCauseError
-      : ''
+      : '; caused: ' + this.cause?.message
     return this.message + txCauseErrMessage
   }
 
