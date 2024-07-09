@@ -129,7 +129,11 @@ importers:
         specifier: ^1.0.2
         version: 1.0.2(jest@29.7.0(@types/node@18.19.24)(node-notifier@5.4.5)(ts-node@10.9.2(@types/node@18.19.24)(typescript@5.4.5)))
 
-  packages/lib/spl-gov-utils: {}
+  packages/lib/spl-gov-utils:
+    devDependencies:
+      '@solana/web3.js':
+        specifier: ^1.93.0
+        version: 1.93.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
   packages/lib/ts-common: {}
 
@@ -448,10 +452,6 @@ packages:
     engines: {node: '>=6.9.0'}
     peerDependencies:
       '@babel/core': ^7.0.0-0
-
-  '@babel/runtime@7.24.0':
-    resolution: {integrity: sha512-Chk32uHMg6TnQdvw2e9IlqPpFX/6NLuK0Ys2PqLb7/gL5uFn9mXvK715FGLlOLQrcO4qIkNHkvPGktzzXexsFw==}
-    engines: {node: '>=6.9.0'}
 
   '@babel/runtime@7.24.7':
     resolution: {integrity: sha512-UwgBRMjJP+xv857DCngvqXI3Iq6J4v0wXmwc6sapg+zyhbwmQX67LUEFrkK5tbyJ30jGuG3ZvWpBiB9LCy1kWw==}
@@ -3511,10 +3511,6 @@ snapshots:
       '@babel/core': 7.22.5
       '@babel/helper-plugin-utils': 7.22.5
 
-  '@babel/runtime@7.24.0':
-    dependencies:
-      regenerator-runtime: 0.14.0
-
   '@babel/runtime@7.24.7':
     dependencies:
       regenerator-runtime: 0.14.0
@@ -4263,7 +4259,7 @@ snapshots:
 
   '@solana/spl-token@0.1.8(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
-      '@babel/runtime': 7.24.0
+      '@babel/runtime': 7.24.7
       '@solana/web3.js': 1.93.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       bn.js: 5.2.1
       buffer: 6.0.3
