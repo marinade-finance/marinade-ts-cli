@@ -233,7 +233,7 @@ export async function executeTx({
         connection,
         transaction,
         sendOpts,
-        logger,
+        logger
       )
       // Checking if executed
       txResponse = await confirmTransaction(

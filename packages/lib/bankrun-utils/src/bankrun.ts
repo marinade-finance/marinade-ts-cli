@@ -10,15 +10,16 @@ export async function assertNotExist(
 }
 
 // https://github.com/solana-labs/solana/blob/v1.17.7/sdk/program/src/epoch_schedule.rs#L29C1-L29C45
-export const MINIMUM_SLOTS_PER_EPOCH = 32
+export const MINIMUM_SLOTS_PER_EPOCH = BigInt(32)
 // https://github.com/solana-labs/solana/blob/v1.17.7/sdk/program/src/epoch_schedule.rs#L167
-export function warpToEpoch(provider: BankrunProvider, epoch: number) {
+export function warpToEpoch(provider: BankrunProvider, epoch: number | bigint) {
   const epochBigInt = BigInt(epoch)
   const { slotsPerEpoch, firstNormalEpoch, firstNormalSlot } =
     provider.context.genesisConfig.epochSchedule
   let warpToSlot: bigint
   if (epochBigInt <= firstNormalEpoch) {
-    warpToSlot = BigInt((2 ** epoch - 1) * MINIMUM_SLOTS_PER_EPOCH)
+    warpToSlot =
+      (BigInt(2) ** epochBigInt - BigInt(1)) * MINIMUM_SLOTS_PER_EPOCH
   } else {
     warpToSlot =
       (epochBigInt - firstNormalEpoch) * slotsPerEpoch + firstNormalSlot
@@ -26,23 +27,35 @@ export function warpToEpoch(provider: BankrunProvider, epoch: number) {
   provider.context.warpToSlot(warpToSlot)
 }
 
-export async function warpToNextEpoch(provider: BankrunProvider) {
-  await warpOffsetEpoch(provider, 1)
+export async function currentEpoch(provider: BankrunProvider): Promise<bigint> {
+  return (await provider.context.banksClient.getClock()).epoch
 }
 
 export async function warpOffsetEpoch(
   provider: BankrunProvider,
-  plusEpochs: number
+  plusEpochs: number | bigint
 ) {
-  const nextEpoch = (await currentEpoch(provider)) + plusEpochs
+  const nextEpoch = (await currentEpoch(provider)) + BigInt(plusEpochs)
   warpToEpoch(provider, nextEpoch)
 }
 
-export async function currentEpoch(provider: BankrunProvider): Promise<number> {
-  return Number((await provider.context.banksClient.getClock()).epoch)
+export async function warpToNextEpoch(provider: BankrunProvider) {
+  await warpOffsetEpoch(provider, 1)
+}
+
+export async function currentSlot(provider: BankrunProvider): Promise<bigint> {
+  return (await provider.context.banksClient.getClock()).slot
+}
+
+export async function warpOffsetSlot(
+  provider: BankrunProvider,
+  plusSlots: number | bigint
+) {
+  const nextSlot = (await currentSlot(provider)) + BigInt(plusSlots)
+  warpOffsetSlot(provider, nextSlot)
+  provider.context.warpToSlot(nextSlot)
 }
 
 export async function warpToNextSlot(provider: BankrunProvider) {
-  const currentSlot = (await provider.context.banksClient.getClock()).slot
-  provider.context.warpToSlot(currentSlot + BigInt(1))
+  await warpOffsetSlot(provider, 1)
 }
