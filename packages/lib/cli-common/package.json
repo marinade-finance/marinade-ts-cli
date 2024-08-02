@@ -26,8 +26,8 @@
   ],
   "devDependencies": {
     "@solana/web3.js": "^1.93.0",
-    "@marinade.finance/web3js-common": "2.4.8",
-    "@marinade.finance/ts-common": "2.4.8",
+    "@marinade.finance/web3js-common": "workspace: 2.4.8",
+    "@marinade.finance/ts-common": "workspace: 2.4.8",
     "@marinade.finance/ledger-utils": "^3.0.1",
     "bn.js": "^5.2.1",
     "borsh": "^0.7.0",
@@ -37,8 +37,8 @@
   },
   "peerDependencies": {
     "@solana/web3.js": "^1.93.0",
-    "@marinade.finance/web3js-common": "2.4.8",
-    "@marinade.finance/ts-common": "2.4.8",
+    "@marinade.finance/web3js-common": "workspace: 2.4.8",
+    "@marinade.finance/ts-common": "workspace: 2.4.8",
     "@marinade.finance/ledger-utils": "^3.0.1",
     "bn.js": "^5.2.1",
     "borsh": "^0.7.0",
