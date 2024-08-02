@@ -1,6 +1,6 @@
 {
   "name": "@marinade.finance/bankrun-utils",
-  "version": "2.4.7",
+  "version": "2.4.8",
   "description": "Bankrun library utilities",
   "repository": {
     "type": "git",
@@ -26,14 +26,14 @@
   ],
   "devDependencies": {
     "@solana/web3.js": "^1.93.0",
-    "@marinade.finance/web3js-common": "workspace: 2.4.7",
+    "@marinade.finance/web3js-common": "2.4.8",
     "solana-bankrun": "^0.2.0",
     "anchor-bankrun": "^0.2.0",
     "class-transformer": "^0.5.1"
   },
   "peerDependencies": {
     "@solana/web3.js": "^1.93.0",
-    "@marinade.finance/web3js-common": "workspace: 2.4.7",
+    "@marinade.finance/web3js-common": "2.4.8",
     "solana-bankrun": "^0.2.0",
     "anchor-bankrun": "^0.2.0",
     "class-transformer": "^0.5.1"
