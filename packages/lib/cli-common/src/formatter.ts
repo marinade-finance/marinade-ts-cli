@@ -17,7 +17,7 @@ export function print_data(
   } else if (format === 'yaml') {
     console.log(YAML.stringify(data, { lineWidth: 0 }).trimEnd())
   } else if (format === 'json') {
-    console.log(JSON.stringify(data).trimEnd())
+    console.log(JSON.stringify(data, undefined, 2).trimEnd())
   } else {
     throw new CliCommandError({
       valueName,
