@@ -41,12 +41,12 @@
         "pino": "^8.21.0",
         "pino-pretty": "^11.2.1",
         "@marinade.finance/ledger-utils": "^3.0.1",
-        "@marinade.finance/cli-common": "workspace: 2.4.8",
-        "@marinade.finance/web3js-common": "workspace: 2.4.8",
+        "@marinade.finance/cli-common": "2.4.9",
+        "@marinade.finance/web3js-common": "2.4.9",
         "@marinade.finance/marinade-ts-sdk": "5.0.7"
     },
     "devDependencies": {
-        "@marinade.finance/jest-utils": "workspace: 2.4.8",
+        "@marinade.finance/jest-utils": "2.4.9",
         "@types/bn.js": "^5.1.5",
         "@solana/spl-token-3.x": "npm:@solana/spl-token@^0.3.11"
     },
