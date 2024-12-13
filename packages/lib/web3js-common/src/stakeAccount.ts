@@ -84,7 +84,7 @@ function isAccountInfoParsedData(
   return (
     data.data &&
     !(data.data instanceof Buffer) &&
-    data.data.parsed !== undefined
+    ('parsed' in data.data)
   )
 }
 
