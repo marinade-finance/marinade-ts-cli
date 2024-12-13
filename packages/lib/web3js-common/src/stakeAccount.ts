@@ -81,11 +81,7 @@ function isAccountInfoParsedData(
   if (data === null) {
     return false
   }
-  return (
-    data.data &&
-    !(data.data instanceof Buffer) &&
-    ('parsed' in data.data)
-  )
+  return data.data && !(data.data instanceof Buffer) && 'parsed' in data.data
 }
 
 export async function getStakeAccount(
