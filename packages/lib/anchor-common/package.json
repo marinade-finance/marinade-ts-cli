@@ -37,7 +37,8 @@
     "bn.js": "^5.2.1",
     "@coral-xyz/anchor": "^0.29.0",
     "@marinade.finance/ts-common": "workspace: 2.4.9",
-    "@marinade.finance/web3js-common": "workspace: 2.4.9"
+    "@marinade.finance/web3js-common": "workspace: 2.4.9",
+    "@anza-xyz/solana-rpc-get-stake-activation": "1.0.1"
   },
   "engines": {
     "node": ">=16"

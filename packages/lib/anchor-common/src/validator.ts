@@ -4,6 +4,7 @@ import fs from 'fs'
 import { sleep } from '@marinade.finance/ts-common'
 import { getStakeAccount } from '@marinade.finance/web3js-common'
 import { waitForEpoch } from '@marinade.finance/web3js-common'
+import { getStakeActivation } from '@anza-xyz/solana-rpc-get-stake-activation'
 
 export async function getAnchorValidatorInfo(
   connection: Connection,
@@ -87,10 +88,10 @@ export async function waitForStakeAccountActivation({
   // 1. waiting for the stake account to be activated
   {
     const startTime = Date.now()
-    let stakeStatus = await connection.getStakeActivation(stakeAccount)
-    while (stakeStatus.state !== 'active') {
+    let stakeStatus = await getStakeActivation(connection, stakeAccount)
+    while (stakeStatus.status !== 'active') {
       await sleep(1000)
-      stakeStatus = await connection.getStakeActivation(stakeAccount)
+      stakeStatus = await getStakeActivation(connection, stakeAccount)
       if (Date.now() - startTime > timeoutSeconds * 1000) {
         throw new Error(
           `Stake account ${stakeAccount.toBase58()} was not activated in timeout of ${timeoutSeconds} seconds`
