@@ -73,7 +73,9 @@ describe('Order unstake and claim using CLI', () => {
     )
     expect(tickets.size).toBe(1)
     const startTime = Date.now()
-    let ticket: [PublicKey, TicketAccount] = tickets.entries().next().value
+    let ticket: [PublicKey, TicketAccount, undefined] = tickets
+      .entries()
+      .next().value
     while (
       !ticket[1].ticketDueDate ||
       isNaN(ticket[1].ticketDueDate.getTime())
