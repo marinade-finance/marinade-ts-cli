@@ -73,10 +73,13 @@ describe('Order unstake and claim using CLI', () => {
     )
     expect(tickets.size).toBe(1)
     const startTime = Date.now()
-    let ticket: [PublicKey, TicketAccount] = tickets.entries().next().value
+    let ticket: [PublicKey, TicketAccount] | undefined = tickets
+      .entries()
+      .next().value
+
     while (
-      !ticket[1].ticketDueDate ||
-      isNaN(ticket[1].ticketDueDate.getTime())
+      ticket &&
+      (!ticket[1].ticketDueDate || isNaN(ticket[1].ticketDueDate.getTime()))
     ) {
       console.log(
         'Waiting for ticket',
@@ -91,11 +94,15 @@ describe('Order unstake and claim using CLI', () => {
       )
         .entries()
         .next().value
-      if (Date.now() - startTime > timeoutSeconds * 1000) {
+      if (ticket && Date.now() - startTime > timeoutSeconds * 1000) {
         throw new Error(
           `Ticket ${ticket[0]} was not available for claiming in timeout of ${timeoutSeconds} seconds`
         )
       }
+    }
+
+    if (!ticket) {
+      throw new Error('Ticket is undefined')
     }
 
     await (
