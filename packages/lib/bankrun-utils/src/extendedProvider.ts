@@ -37,7 +37,7 @@ export class BankrunExtendedProvider
 }
 
 export async function bankrunTransaction(
-  provider: BankrunProvider
+  provider: BankrunProvider,
 ): Promise<Transaction> {
   const bh = await provider.context.banksClient.getLatestBlockhash()
   const lastValidBlockHeight = (
@@ -67,7 +67,7 @@ export async function bankrunExecuteIx(
 export async function bankrunExecute(
   provider: BankrunProvider,
   signers: (Wallet | Signer | Keypair)[],
-  tx: Transaction
+  tx: Transaction,
 ): Promise<BanksTransactionMeta> {
   for (const signer of signers) {
     if (instanceOfWallet(signer)) {
@@ -76,7 +76,7 @@ export async function bankrunExecute(
       tx.partialSign(signer)
     } else {
       throw new Error(
-        'bankrunExecute: provided signer parameter is not a signer: ' + signer
+        'bankrunExecute: provided signer parameter is not a signer: ' + signer,
       )
     }
   }

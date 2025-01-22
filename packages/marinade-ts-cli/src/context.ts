@@ -73,7 +73,7 @@ export function setMarinadeCLIContext({
 }) {
   const connection = new Connection(
     parseClusterUrl(url),
-    parseCommitment(commitment)
+    parseCommitment(commitment),
   )
   setContext(
     new MarinadeCLIContext({
@@ -86,7 +86,7 @@ export function setMarinadeCLIContext({
       confirmationFinality: parseConfirmationFinality(confirmationFinality),
       commandName: command,
       marinadeDefaults: new MarinadeConfig(),
-    })
+    }),
   )
 }
 

@@ -4,10 +4,6 @@ import { Transaction, VersionedTransaction } from '@solana/web3.js'
 import { ExecutionError } from '@marinade.finance/web3js-common'
 
 export class CliCommandError extends ExecutionError {
-  readonly cause?: Error
-  readonly logs?: string[]
-  readonly transaction?: Transaction | VersionedTransaction
-
   constructor({
     commandName,
     valueName,
@@ -36,7 +32,7 @@ export class CliCommandError extends ExecutionError {
         commandName,
         valueName,
         value,
-        msg
+        msg,
       )
     } else {
       errorMessage = format('%s: %s', commandName, msg)

@@ -35,19 +35,19 @@ async function parseStakeAccountData(
   connection: Connection,
   address: PublicKey,
   stakeAccountInfo: AccountInfo<ParsedAccountData>,
-  currentEpoch?: number
+  currentEpoch?: number,
 ): Promise<StakeAccountParsed> {
   const parsedData = stakeAccountInfo.data.parsed
   const activationEpoch = bnOrNull(
-    parsedData?.info?.stake?.delegation?.activationEpoch ?? null
+    parsedData?.info?.stake?.delegation?.activationEpoch ?? null,
   )
   const deactivationEpoch = bnOrNull(
-    parsedData?.info?.stake?.delegation?.deactivationEpoch ?? null
+    parsedData?.info?.stake?.delegation?.deactivationEpoch ?? null,
   )
   const lockup = parsedData?.info?.meta?.lockup
   const balanceLamports = bnOrNull(stakeAccountInfo.lamports)
   const stakedLamports = bnOrNull(
-    parsedData?.info?.stake?.delegation.stake ?? null
+    parsedData?.info?.stake?.delegation.stake ?? null,
   )
   if (currentEpoch === undefined) {
     ;({ epoch: currentEpoch } = await connection.getEpochInfo())
@@ -76,7 +76,7 @@ async function parseStakeAccountData(
 }
 
 function isAccountInfoParsedData(
-  data: AccountInfo<Buffer | ParsedAccountData> | null
+  data: AccountInfo<Buffer | ParsedAccountData> | null,
 ): data is AccountInfo<ParsedAccountData> {
   if (data === null) {
     return false
@@ -87,7 +87,7 @@ function isAccountInfoParsedData(
 export async function getStakeAccount(
   connection: Provider | Connection | HasProvider,
   address: PublicKey,
-  currentEpoch?: number
+  currentEpoch?: number,
 ): Promise<StakeAccountParsed> {
   connection = getConnection(connection)
   const { value: stakeAccountInfo } =
@@ -96,20 +96,20 @@ export async function getStakeAccount(
   if (!stakeAccountInfo) {
     throw new Error(
       `Failed to find the stake account ${address.toBase58()}` +
-        `at ${connection.rpcEndpoint}`
+        `at ${connection.rpcEndpoint}`,
     )
   }
   if (!stakeAccountInfo.owner.equals(StakeProgram.programId)) {
     throw new Error(
       `${address.toBase58()} is not a stake account because owner is ${
         stakeAccountInfo.owner
-      } at ${connection.rpcEndpoint}`
+      } at ${connection.rpcEndpoint}`,
     )
   }
   if (!isAccountInfoParsedData(stakeAccountInfo)) {
     throw new Error(
       `Failed to parse the stake account ${address.toBase58()} data` +
-        `at ${connection.rpcEndpoint}`
+        `at ${connection.rpcEndpoint}`,
     )
   }
 
@@ -117,18 +117,18 @@ export async function getStakeAccount(
     connection,
     address,
     stakeAccountInfo,
-    currentEpoch
+    currentEpoch,
   )
 }
 
 function pubkeyOrNull(
-  value?: ConstructorParameters<typeof PublicKey>[0] | null
+  value?: ConstructorParameters<typeof PublicKey>[0] | null,
 ): PublicKey | null {
   return value === null || value === undefined ? null : new PublicKey(value)
 }
 
 function bnOrNull(
-  value?: ConstructorParameters<typeof BN>[0] | null
+  value?: ConstructorParameters<typeof BN>[0] | null,
 ): BN | null {
   return value === null || value === undefined ? null : new BN(value)
 }

@@ -40,7 +40,7 @@ export class InstructionData {
 
 // Serializes sdk instruction into InstructionData and encodes it as base64 which then can be entered into the UI form
 export const serializeInstructionToBase64 = (
-  instruction: TransactionInstruction
+  instruction: TransactionInstruction,
 ) => {
   extendBorsh()
   const data = createInstructionData(instruction)
@@ -59,7 +59,7 @@ export const createInstructionData = (instruction: TransactionInstruction) => {
           pubkey: k.pubkey,
           isSigner: k.isSigner,
           isWritable: k.isWritable,
-        })
+        }),
     ),
   })
 }

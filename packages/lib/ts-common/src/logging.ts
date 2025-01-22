@@ -52,7 +52,7 @@ export function logError(logger: object | undefined, ...data: any) {
 
 export function isLevelEnabled(
   logger: any | undefined,
-  level: string
+  level: string,
 ): boolean | undefined {
   if (logger === undefined) {
     return undefined
@@ -69,14 +69,14 @@ export function isLevelEnabled(
 
 function checkIfFunction<T>(
   logger: any | undefined,
-  functionName: string
+  functionName: string,
 ): logger is T {
   return logger !== undefined && typeof logger[functionName] === 'function'
 }
 
 function searchIfLabelIsEnabled(
   currentLevel: string,
-  desiredLevel: string
+  desiredLevel: string,
 ): boolean {
   const levels = ['error', 'warn', 'info', 'debug', 'trace']
   currentLevel = currentLevel.toLowerCase()

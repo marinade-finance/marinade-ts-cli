@@ -19,14 +19,14 @@ import {
 
 export async function getVoteAccount(
   providerOrConnection: Provider | Connection | HasProvider,
-  address: PublicKey
+  address: PublicKey,
 ): Promise<ProgramAccountInfo<VoteAccount>> {
   const connection = getConnection(providerOrConnection)
   const voteAccountInfo = await connection.getAccountInfo(address)
   if (voteAccountInfo === null) {
     throw new Error(
       `Vote account ${address.toBase58()} not found at endpoint ` +
-        `${connection.rpcEndpoint}`
+        `${connection.rpcEndpoint}`,
     )
   }
 
@@ -35,12 +35,12 @@ export async function getVoteAccount(
 
 export function getVoteAccountFromData(
   address: PublicKey,
-  voteAccountInfo: AccountInfo<Buffer>
+  voteAccountInfo: AccountInfo<Buffer>,
 ): ProgramAccountInfo<VoteAccount> {
   const versionOffset = 4
   const version = VoteAccountVersionLayout.decode(
     toBuffer(voteAccountInfo.data),
-    0
+    0,
   ) as VoteAccountVersion
 
   let voteAccountData: VoteAccount
@@ -49,18 +49,18 @@ export function getVoteAccountFromData(
   } else if (version.V1_14_11) {
     voteAccountData = fromAccount1_14_11Data(
       voteAccountInfo.data,
-      versionOffset
+      versionOffset,
     )
   } else if (version.CURRENT) {
     voteAccountData = fromAccountCURRENTData(
       toBuffer(voteAccountInfo.data),
-      versionOffset
+      versionOffset,
     )
   } else {
     throw new Error(
       `Unknown vote account version: ${JSON.stringify(
-        version
-      )} at ${address.toBase58()}`
+        version,
+      )} at ${address.toBase58()}`,
     )
   }
   return programAccountInfo(address, voteAccountInfo, voteAccountData)
@@ -110,17 +110,17 @@ export class VoteAccount {
  */
 function fromAccountCURRENTData(
   buffer: Buffer | Uint8Array | Array<number>,
-  versionOffset: number
+  versionOffset: number,
 ): VoteAccount {
   const voteAccountCURRENT = VoteAccountCURRENTLayout.decode(
     toBuffer(buffer),
-    versionOffset
+    versionOffset,
   )
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return new (VoteAccount as any)({
     nodePubkey: new PublicKey(voteAccountCURRENT.nodePubkey),
     authorizedWithdrawer: new PublicKey(
-      voteAccountCURRENT.authorizedWithdrawer
+      voteAccountCURRENT.authorizedWithdrawer,
     ),
     commission: voteAccountCURRENT.commission,
     votes: voteAccountCURRENT.votes,
@@ -138,17 +138,17 @@ function fromAccountCURRENTData(
  */
 function fromAccount1_14_11Data(
   buffer: Buffer | Uint8Array | Array<number>,
-  versionOffset: number
+  versionOffset: number,
 ): VoteAccount {
   const voteAccount1_14_11 = VoteAccount1_14_11Layout.decode(
     toBuffer(buffer),
-    versionOffset
+    versionOffset,
   )
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return new (VoteAccount as any)({
     nodePubkey: new PublicKey(voteAccount1_14_11.nodePubkey),
     authorizedWithdrawer: new PublicKey(
-      voteAccount1_14_11.authorizedWithdrawer
+      voteAccount1_14_11.authorizedWithdrawer,
     ),
     commission: voteAccount1_14_11.commission,
     votes: voteAccount1_14_11.votes.map(vote => {
@@ -168,11 +168,11 @@ function fromAccount1_14_11Data(
  */
 function fromAccount0_23_5Data(
   buffer: Buffer | Uint8Array | Array<number>,
-  versionOffset: number
+  versionOffset: number,
 ): VoteAccount {
   const voteAccount0_23_5 = VoteAccount0_23_5Layout.decode(
     toBuffer(buffer),
-    versionOffset
+    versionOffset,
   )
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return new (VoteAccount as any)({
@@ -222,7 +222,7 @@ export function publicKey(property = 'publicKey'): BufferLayout.Blob {
  */
 export function option<T>(
   layout: BufferLayout.Layout<T>,
-  property?: string
+  property?: string,
 ): BufferLayout.Layout<T | null> {
   return new OptionLayout<T>(layout, property)
 }
@@ -258,7 +258,7 @@ class OptionLayout<T> extends BufferLayout.Layout<T | null> {
     }
 
     throw new Error(
-      `decode: Invalid option; option value: ${discriminator} : ${this.property}`
+      `decode: Invalid option; option value: ${discriminator} : ${this.property}`,
     )
   }
 
@@ -280,7 +280,7 @@ type VoteAccountVersion = Readonly<Record<VoteAccountVersions, {}>>
 // https://github.com/solana-labs/solana/blob/v1.17/sdk/program/src/vote/state/vote_state_versions.rs#L4
 const VoteAccountVersionLayout = BufferLayout.union(
   BufferLayout.u32(),
-  BufferLayout.struct([BufferLayout.u32()])
+  BufferLayout.struct([BufferLayout.u32()]),
 )
 VoteAccountVersionLayout.addVariant(0, BufferLayout.struct([]), 'V0_23_5')
 VoteAccountVersionLayout.addVariant(1, BufferLayout.struct([]), 'V1_14_11')
@@ -307,12 +307,12 @@ const VoteAccount0_23_5Layout = BufferLayout.struct<VoteAccountData0_23_5>([
           BufferLayout.nu64('targetEpoch'),
         ]),
         32,
-        'buf'
+        'buf',
       ),
       BufferLayout.nu64('idx'),
       BufferLayout.u8('isEmpty'),
     ],
-    'priorVoters'
+    'priorVoters',
   ),
   publicKey('authorizedWithdrawer'),
   BufferLayout.u8('commission'),
@@ -323,7 +323,7 @@ const VoteAccount0_23_5Layout = BufferLayout.struct<VoteAccountData0_23_5>([
       BufferLayout.u32('confirmationCount'),
     ]),
     BufferLayout.offset(BufferLayout.u32(), -8),
-    'votes'
+    'votes',
   ),
   option(BufferLayout.nu64(), 'rootSlot'),
   BufferLayout.nu64(), // epochCredits.length
@@ -334,11 +334,11 @@ const VoteAccount0_23_5Layout = BufferLayout.struct<VoteAccountData0_23_5>([
       BufferLayout.nu64('prevCredits'),
     ]),
     BufferLayout.offset(BufferLayout.u32(), -8),
-    'epochCredits'
+    'epochCredits',
   ),
   BufferLayout.struct<BlockTimestamp>(
     [BufferLayout.nu64('slot'), BufferLayout.nu64('timestamp')],
-    'lastTimestamp'
+    'lastTimestamp',
   ),
 ])
 
@@ -353,7 +353,7 @@ const VoteAccount1_14_11Layout = BufferLayout.struct<VoteAccountData0_14_11>([
       BufferLayout.u32('confirmationCount'),
     ]),
     BufferLayout.offset(BufferLayout.u32(), -8),
-    'votes'
+    'votes',
   ),
   option(BufferLayout.nu64(), 'rootSlot'),
   BufferLayout.nu64(), // authorizedVoters.length
@@ -363,7 +363,7 @@ const VoteAccount1_14_11Layout = BufferLayout.struct<VoteAccountData0_14_11>([
       publicKey('authorizedVoter'),
     ]),
     BufferLayout.offset(BufferLayout.u32(), -8),
-    'authorizedVoters'
+    'authorizedVoters',
   ),
   BufferLayout.struct<PriorVoters>(
     [
@@ -374,12 +374,12 @@ const VoteAccount1_14_11Layout = BufferLayout.struct<VoteAccountData0_14_11>([
           BufferLayout.nu64('targetEpoch'),
         ]),
         32,
-        'buf'
+        'buf',
       ),
       BufferLayout.nu64('idx'),
       BufferLayout.u8('isEmpty'),
     ],
-    'priorVoters'
+    'priorVoters',
   ),
   BufferLayout.nu64(), // epochCredits.length
   BufferLayout.seq<EpochCredits>(
@@ -389,11 +389,11 @@ const VoteAccount1_14_11Layout = BufferLayout.struct<VoteAccountData0_14_11>([
       BufferLayout.nu64('prevCredits'),
     ]),
     BufferLayout.offset(BufferLayout.u32(), -8),
-    'epochCredits'
+    'epochCredits',
   ),
   BufferLayout.struct<BlockTimestamp>(
     [BufferLayout.nu64('slot'), BufferLayout.nu64('timestamp')],
-    'lastTimestamp'
+    'lastTimestamp',
   ),
 ])
 
@@ -409,7 +409,7 @@ const VoteAccountCURRENTLayout = BufferLayout.struct<VoteAccountDataCURRENT>([
       BufferLayout.u32('confirmationCount'),
     ]),
     BufferLayout.offset(BufferLayout.u32(), -8),
-    'votes'
+    'votes',
   ),
   option(BufferLayout.nu64(), 'rootSlot'),
   BufferLayout.nu64(), // authorizedVoters.length
@@ -419,7 +419,7 @@ const VoteAccountCURRENTLayout = BufferLayout.struct<VoteAccountDataCURRENT>([
       publicKey('authorizedVoter'),
     ]),
     BufferLayout.offset(BufferLayout.u32(), -8),
-    'authorizedVoters'
+    'authorizedVoters',
   ),
   BufferLayout.struct<PriorVoters>(
     [
@@ -430,12 +430,12 @@ const VoteAccountCURRENTLayout = BufferLayout.struct<VoteAccountDataCURRENT>([
           BufferLayout.nu64('targetEpoch'),
         ]),
         32,
-        'buf'
+        'buf',
       ),
       BufferLayout.nu64('idx'),
       BufferLayout.u8('isEmpty'),
     ],
-    'priorVoters'
+    'priorVoters',
   ),
   BufferLayout.nu64(), // epochCredits.length
   BufferLayout.seq<EpochCredits>(
@@ -445,11 +445,11 @@ const VoteAccountCURRENTLayout = BufferLayout.struct<VoteAccountDataCURRENT>([
       BufferLayout.nu64('prevCredits'),
     ]),
     BufferLayout.offset(BufferLayout.u32(), -8),
-    'epochCredits'
+    'epochCredits',
   ),
   BufferLayout.struct<BlockTimestamp>(
     [BufferLayout.nu64('slot'), BufferLayout.nu64('timestamp')],
-    'lastTimestamp'
+    'lastTimestamp',
   ),
 ])
 

@@ -5,7 +5,7 @@ import { Connection } from '@solana/web3.js'
 export async function waitForEpoch(
   connection: Connection | Provider,
   targetEpoch: number,
-  timeoutSeconds: number
+  timeoutSeconds: number,
 ) {
   connection = instanceOfProvider(connection)
     ? connection.connection
@@ -14,13 +14,13 @@ export async function waitForEpoch(
   let currentEpoch = (await connection.getEpochInfo()).epoch
   if (currentEpoch < targetEpoch) {
     console.debug(
-      `Waiting for the epoch ${targetEpoch}, current epoch is ${currentEpoch}`
+      `Waiting for the epoch ${targetEpoch}, current epoch is ${currentEpoch}`,
     )
   }
   while (currentEpoch < targetEpoch) {
     if (Date.now() - startTime > timeoutSeconds * 1000) {
       throw new Error(
-        `Timeout ${timeoutSeconds} elapsed when waiting for epoch ${targetEpoch} (current epoch: ${currentEpoch})`
+        `Timeout ${timeoutSeconds} elapsed when waiting for epoch ${targetEpoch} (current epoch: ${currentEpoch})`,
       )
     }
     await sleep(1000)
@@ -30,7 +30,7 @@ export async function waitForEpoch(
 
 export async function waitForNextEpoch(
   connection: Connection | Provider,
-  timeoutSeconds: number
+  timeoutSeconds: number,
 ) {
   connection = instanceOfProvider(connection)
     ? connection.connection

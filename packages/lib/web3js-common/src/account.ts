@@ -31,7 +31,7 @@ export type HasProvider = {
 
 export function isWithPublicKey(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  account: any
+  account: any,
 ): account is { publicKey: PublicKey } {
   return (
     account !== undefined &&
@@ -42,7 +42,7 @@ export function isWithPublicKey(
 
 // ------- TYPE HELPERS
 export function getConnection(
-  providerOrConnection: Provider | Connection | HasProvider
+  providerOrConnection: Provider | Connection | HasProvider,
 ): Connection {
   const connection =
     'provider' in providerOrConnection
@@ -54,7 +54,7 @@ export function getConnection(
 export function programAccountInfo<T>(
   publicKey: PublicKey,
   account: AccountInfo<Buffer | ParsedAccountData>,
-  data: T
+  data: T,
 ): ProgramAccountInfo<T> {
   return { publicKey, account: { ...account, data } }
 }

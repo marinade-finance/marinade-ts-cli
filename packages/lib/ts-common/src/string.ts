@@ -2,6 +2,6 @@
 export function makeStr(repetitionOfChar: number, baseChar?: any) {
   return Array.prototype.join.call(
     { length: (repetitionOfChar || -1) + 1 },
-    (baseChar as string) || 'x'
+    (baseChar as string) || 'x',
   )
 }

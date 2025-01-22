@@ -3,7 +3,7 @@ import { BankrunProvider } from 'anchor-bankrun'
 
 export async function assertNotExist(
   provider: BankrunProvider,
-  account: PublicKey
+  account: PublicKey,
 ) {
   const accountInfo = await provider.context.banksClient.getAccount(account)
   expect(accountInfo).toBeNull()
@@ -33,7 +33,7 @@ export async function currentEpoch(provider: BankrunProvider): Promise<bigint> {
 
 export async function warpOffsetEpoch(
   provider: BankrunProvider,
-  plusEpochs: number | bigint
+  plusEpochs: number | bigint,
 ) {
   const nextEpoch = (await currentEpoch(provider)) + BigInt(plusEpochs)
   warpToEpoch(provider, nextEpoch)
@@ -49,10 +49,9 @@ export async function currentSlot(provider: BankrunProvider): Promise<bigint> {
 
 export async function warpOffsetSlot(
   provider: BankrunProvider,
-  plusSlots: number | bigint
+  plusSlots: number | bigint,
 ) {
   const nextSlot = (await currentSlot(provider)) + BigInt(plusSlots)
-  warpOffsetSlot(provider, nextSlot)
   provider.context.warpToSlot(nextSlot)
 }
 

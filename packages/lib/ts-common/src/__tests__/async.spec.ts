@@ -9,12 +9,12 @@ describe('async-utils', () => {
     it('prevents multiple tasks from completing out of order', async () => {
       const completed: string[] = []
 
-      doWithLock('MY_LOCK', async () => {
+      await doWithLock('MY_LOCK', async () => {
         await waitFor(0)
         completed.push('A')
       })
 
-      doWithLock('MY_LOCK', async () => {
+      await doWithLock('MY_LOCK', async () => {
         await waitFor(250)
         completed.push('B')
       })

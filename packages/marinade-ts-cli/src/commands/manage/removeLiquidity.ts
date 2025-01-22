@@ -37,7 +37,7 @@ export async function removeLiquidity({
   logger.info(
     'Removing liquidity: %s LP (lamports %s)',
     amountSol,
-    amountLamports.toString()
+    amountLamports.toString(),
   )
 
   const marinadeConfig = new MarinadeConfig({
@@ -55,7 +55,7 @@ export async function removeLiquidity({
   logger.info(
     'Using associated LP account: %s, associated mSOL account: %s',
     associatedLPTokenAccountAddress.toBase58(),
-    associatedMSolTokenAccountAddress.toBase58()
+    associatedMSolTokenAccountAddress.toBase58(),
   )
 
   await executeTx({
@@ -73,6 +73,6 @@ export async function removeLiquidity({
   logger.info(
     'Successfully removed liquidity of %d LPs, signed by %s',
     amountSol,
-    wallet.publicKey.toBase58()
+    wallet.publicKey.toBase58(),
   )
 }

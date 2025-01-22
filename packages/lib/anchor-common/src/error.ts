@@ -17,7 +17,7 @@ export function verifyError(
   idl: Idl | Map<number, string>,
   errCode: number,
   errMessage?: string,
-  logger: LoggerPlaceholder | undefined = undefined
+  logger: LoggerPlaceholder | undefined = undefined,
 ) {
   let anchorErrorMap: Map<number, string>
   if (idl instanceof Map) {
@@ -32,7 +32,7 @@ export function verifyError(
   if (errMessage !== undefined && !anchorErrorMsg.includes(errMessage)) {
     throw new Error(
       `Error code ${errCode} belongs to Anchor error message '${anchorErrorMsg}' ` +
-        `which does not match expected text '${errMessage}'`
+        `which does not match expected text '${errMessage}'`,
     )
   }
   let decNum: number

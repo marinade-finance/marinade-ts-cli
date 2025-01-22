@@ -8,7 +8,7 @@ import { getStakeActivation } from '@anza-xyz/solana-rpc-get-stake-activation'
 
 export async function getAnchorValidatorInfo(
   connection: Connection,
-  identityKeypairPath?: string
+  identityKeypairPath?: string,
 ): Promise<{
   votePubkey: PublicKey
   validatorIdentity: Keypair
@@ -21,7 +21,7 @@ export async function getAnchorValidatorInfo(
     process.cwd() + '/.anchor/test-ledger/validator-keypair.json'
   if (!fs.existsSync(identityKeypairPath)) {
     throw new Error(
-      `Expected test validator identity key pair at ${identityKeypairPath} but file not found`
+      `Expected test validator identity key pair at ${identityKeypairPath} but file not found`,
     )
   }
   const validatorIdentityPath = identityKeypairPath
@@ -30,11 +30,11 @@ export async function getAnchorValidatorInfo(
   // let's verify the leader schedule matches the validator identity
   const leaderSchedule = await connection.getLeaderSchedule()
   const isScheduledOnlyTestValidator = Object.keys(leaderSchedule).every(
-    address => address === validatorIdentity.publicKey.toBase58()
+    address => address === validatorIdentity.publicKey.toBase58(),
   )
   if (!isScheduledOnlyTestValidator) {
     throw new Error(
-      'Error on global setup: expected only test validator being run and scheduled as leader'
+      'Error on global setup: expected only test validator being run and scheduled as leader',
     )
   }
 
@@ -42,20 +42,20 @@ export async function getAnchorValidatorInfo(
   // expecting run on localhost and only one voting vote account is available
   // i.e., one validator solana-test-validator is voting and the validator identity is the same
   const anchorValidatorVoteAccounts = voteAccounts.current.filter(
-    v => v.nodePubkey === validatorIdentity.publicKey.toBase58()
+    v => v.nodePubkey === validatorIdentity.publicKey.toBase58(),
   )
   if (anchorValidatorVoteAccounts.length <= 0) {
     throw new Error(
       'Expected solana-test-validator to be voting. Cannot continue in global local test setup. ' +
         `No one with "nodePubkey" of validator ${validatorIdentity.publicKey.toBase58()}. ` +
-        `Number of all vote accounts found: ${voteAccounts.current.length}`
+        `Number of all vote accounts found: ${voteAccounts.current.length}`,
     )
   }
   if (anchorValidatorVoteAccounts.length > 1) {
     throw new Error(
       'Expected one vote account of solana-test-validator. Cannot continue in global local test setup.' +
         `More vote accounts of "nodePubkey" of validator ${validatorIdentity.publicKey.toBase58()}. ` +
-        ` Number of solana-test-validator vote accounts found: ${anchorValidatorVoteAccounts.length}`
+        ` Number of solana-test-validator vote accounts found: ${anchorValidatorVoteAccounts.length}`,
     )
   }
   const votePubkey = new PublicKey(anchorValidatorVoteAccounts[0].votePubkey)
@@ -94,20 +94,19 @@ export async function waitForStakeAccountActivation({
       stakeStatus = await getStakeActivation(connection, stakeAccount)
       if (Date.now() - startTime > timeoutSeconds * 1000) {
         throw new Error(
-          `Stake account ${stakeAccount.toBase58()} was not activated in timeout of ${timeoutSeconds} seconds`
+          `Stake account ${stakeAccount.toBase58()} was not activated in timeout of ${timeoutSeconds} seconds`,
         )
       }
     }
 
     // 2. the stake account is active, but it needs to be active for at least waitForEpochs epochs
     if (activatedAtLeastFor > 0) {
-      connection.getParsedAccountInfo(stakeAccount)
       const stakeAccountData = await getStakeAccount(connection, stakeAccount)
       const stakeAccountActivationEpoch = stakeAccountData.activationEpoch
       if (stakeAccountActivationEpoch === null) {
         throw new Error(
           'Expected stake account to be already activated. Unexpected setup error stake account:' +
-            stakeAccountData
+            stakeAccountData,
         )
       }
 
@@ -120,13 +119,13 @@ export async function waitForStakeAccountActivation({
           `Waiting for the stake account ${stakeAccount.toBase58()} to be active at least for ${activatedAtLeastFor} epochs ` +
             `currently active for ${
               currentEpoch - stakeAccountActivationEpoch.toNumber()
-            } epoch(s)`
+            } epoch(s)`,
         )
         try {
           await waitForEpoch(
             connection,
             stakeAccountActivationEpoch.toNumber() + activatedAtLeastFor,
-            timeoutSeconds
+            timeoutSeconds,
           )
         } catch (err) {
           console.error(
@@ -134,7 +133,7 @@ export async function waitForStakeAccountActivation({
               `for ${activatedAtLeastFor} epochs the account to be activated, it's activated only for ` +
               `${
                 currentEpoch - stakeAccountActivationEpoch.toNumber()
-              } epochs at this time`
+              } epochs at this time`,
           )
           throw err
         }

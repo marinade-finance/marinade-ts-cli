@@ -39,25 +39,25 @@ export type BulkExecuteTxExecutedReturn =
     ExecuteTxReturnExecutedUnknown & { confirmationError?: Error }
 
 export async function splitAndBulkExecuteTx(
-  args: Omit<BulkExecuteTxInput, 'simulate'> & { simulate: true }
+  args: Omit<BulkExecuteTxInput, 'simulate'> & { simulate: true },
 ): Promise<BulkExecuteTxSimulatedReturn[]>
 export async function splitAndBulkExecuteTx(
-  args: Omit<BulkExecuteTxInput, 'simulate' | 'printOnly'> & { simulate: true }
+  args: Omit<BulkExecuteTxInput, 'simulate' | 'printOnly'> & { simulate: true },
 ): Promise<BulkExecuteTxSimulatedReturn[]>
 export async function splitAndBulkExecuteTx(
   args: Omit<BulkExecuteTxInput, 'simulate' | 'printOnly'> & {
     simulate?: false
     printOnly?: false
-  }
+  },
 ): Promise<BulkExecuteTxExecutedReturn[]>
 export async function splitAndBulkExecuteTx(
-  args: BulkExecuteTxInput
+  args: BulkExecuteTxInput,
 ): Promise<BulkExecuteTxExecutedReturn[]>
 export async function splitAndBulkExecuteTx(
   args: Omit<BulkExecuteTxInput, 'simulate' | 'printOnly'> & {
     simulate?: false
     printOnly: true
-  }
+  },
 ): Promise<[]>
 export async function splitAndBulkExecuteTx({
   connection,
@@ -123,7 +123,7 @@ export async function splitAndBulkExecuteTx({
         response: undefined,
         transaction,
       }
-    }
+    },
   )
 
   // unhandled rejections handler; this is a strange trouble
@@ -154,7 +154,7 @@ export async function splitAndBulkExecuteTx({
         new ExecutionError({
           msg: `Error on bulkSend at attempt #${i}`,
           cause: e as Error,
-        })
+        }),
       )
     }
   }
@@ -164,7 +164,7 @@ export async function splitAndBulkExecuteTx({
     }
     throw new Error(
       'splitAndBulkExecuteTx failed with errors, see logs above' +
-        `${failures.length} errors of ${resultExecuted.length} transactions`
+        `${failures.length} errors of ${resultExecuted.length} transactions`,
     )
   }
 
@@ -208,7 +208,7 @@ async function bulkSend({
   // --- SENDING ---
   logInfo(
     logger,
-    `Bulk #${retryAttempt} sending ${workingTransactions.length} from ${data.length} transactions`
+    `Bulk #${retryAttempt} sending ${workingTransactions.length} from ${data.length} transactions`,
   )
   const rpcErrors: ExecutionError[] = []
   const txSendPromises: { promise: Promise<string>; index: number }[] = []
@@ -249,7 +249,7 @@ async function bulkSend({
   logDebug(
     logger,
     `Confirming bulk #${retryAttempt}/` +
-      `${workingTransactions.length} [${data.length}]`
+      `${workingTransactions.length} [${data.length}]`,
   )
   // --- CONFIRMING ---
   const confirmationPromises: {
@@ -266,7 +266,7 @@ async function bulkSend({
           blockhash: currentBlockhash.blockhash,
           lastValidBlockHeight: currentBlockhash.lastValidBlockHeight,
         },
-        confirmOpts
+        confirmOpts,
       )
       confirmationPromises.push({ index, promise })
       // promise
@@ -300,7 +300,7 @@ async function bulkSend({
           msg: `Transaction at [${index}] failed to be sent to blockchain`,
           cause: e as Error,
           transaction: data[index].transaction,
-        })
+        }),
       )
     }
   }
@@ -309,7 +309,7 @@ async function bulkSend({
   logDebug(
     logger,
     `Getting logs bulk #${retryAttempt}/` +
-      `${txSendPromises.length} [${data.length}]`
+      `${txSendPromises.length} [${data.length}]`,
   )
   // --- GETTING LOGS ---
   const responsePromises: {
@@ -323,7 +323,7 @@ async function bulkSend({
       if (data[index]?.signature === undefined) {
         throw new Error(
           `Signature is not set but it has to be index: ${index}: ` +
-            JSON.stringify(data[index])
+            JSON.stringify(data[index]),
         )
       }
       const promise = connection.getTransaction(data[index].signature!, {
@@ -371,7 +371,7 @@ async function bulkSend({
           msg: `Transaction '${data[index].signature}' at [${index}] failed to be confirmed`,
           cause: e as Error,
           transaction: data[index].transaction,
-        })
+        }),
       )
     }
   }
@@ -381,7 +381,7 @@ async function bulkSend({
   logDebug(
     logger,
     `Retrieving logs bulk #${retryAttempt}/` +
-      `${confirmationPromises.length} [${data.length}]`
+      `${confirmationPromises.length} [${data.length}]`,
   )
   // --- RETRIEVING LOGS PROMISE AND FINISH ---
   for (const { index, promise: responsePromise } of responsePromises) {
@@ -413,7 +413,7 @@ async function bulkSend({
           cause: e as Error,
           transaction: data[index].transaction,
           logs: data[index].response?.meta?.logMessages || undefined,
-        })
+        }),
       )
     }
   }

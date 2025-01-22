@@ -43,7 +43,7 @@ const locksByName: Record<string, Promise<any>[]> = {}
  */
 export async function doWithLock<T>(
   lockName: string,
-  task: () => Promise<T>
+  task: () => Promise<T>,
 ): Promise<T> {
   // Ensure array present for the given lock name.
   if (!locksByName[lockName]) {

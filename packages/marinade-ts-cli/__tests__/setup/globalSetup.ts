@@ -31,7 +31,7 @@ export const STAKE_ACCOUNT: Keypair = Keypair.fromSecretKey(
     61, 87, 180, 155, 178, 178, 146, 241, 198, 208, 91, 79, 219, 120, 107, 79,
     58, 194, 166, 138, 20, 154, 53, 107, 169, 158, 49, 96, 130, 207, 101, 203,
     106, 176, 103, 94, 13, 170, 98, 66, 69, 124, 209, 44, 76, 190, 136,
-  ])
+  ]),
 )
 // EHNgTdy16497UC6Eq4pri9WicTwzPEDSj3U4Ge6nMVfr
 export const STAKE_ACCOUNT_TO_WITHDRAW: Keypair = Keypair.fromSecretKey(
@@ -40,7 +40,7 @@ export const STAKE_ACCOUNT_TO_WITHDRAW: Keypair = Keypair.fromSecretKey(
     248, 98, 187, 168, 237, 65, 224, 211, 214, 171, 205, 10, 22, 95, 103, 128,
     197, 89, 188, 173, 45, 161, 99, 206, 234, 23, 24, 32, 235, 19, 255, 72, 224,
     137, 72, 42, 71, 129, 22, 126, 255, 66, 205, 84, 246, 238, 233, 141,
-  ])
+  ]),
 )
 // 46RP4bjtjzDWRZvCYfGJCLdZ1XxD8ZwQkEQqXUd4qde6
 export const STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY: Keypair =
@@ -51,11 +51,11 @@ export const STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY: Keypair =
       45, 246, 136, 36, 148, 255, 253, 159, 67, 36, 224, 144, 151, 228, 139,
       242, 110, 177, 170, 210, 59, 130, 106, 153, 101, 15, 250, 68, 32, 158, 64,
       103,
-    ])
+    ]),
   )
 export const STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY_PATH = writeKeypairToFile(
   'stake-account-to-withdraw-keypair.json',
-  STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY
+  STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY,
 )
 // 2APsntHoKXCeHWfxZ49ADwc5XrdB8GGmxK34jVXRYZyV
 export const TEST_MARINADE_STATE_ADMIN = Keypair.fromSecretKey(
@@ -64,7 +64,7 @@ export const TEST_MARINADE_STATE_ADMIN = Keypair.fromSecretKey(
     203, 36, 231, 178, 221, 92, 234, 200, 208, 114, 32, 230, 251, 217, 17, 67,
     199, 164, 137, 164, 176, 85, 236, 29, 246, 150, 180, 35, 94, 120, 30, 17,
     18, 138, 253, 155, 218, 23, 84, 125, 225, 110, 37, 142, 253, 100,
-  ])
+  ]),
 )
 // 9wmxMQ2TFxYh918RzESjiA1dUXbdRAsXBd12JA1vwWQq
 export const SDK_USER = Keypair.fromSecretKey(
@@ -73,15 +73,15 @@ export const SDK_USER = Keypair.fromSecretKey(
     47, 169, 251, 128, 65, 185, 237, 41, 47, 64, 53, 158, 124, 64, 2, 132, 229,
     176, 107, 25, 190, 28, 223, 58, 136, 95, 237, 236, 176, 26, 160, 11, 12,
     131, 129, 21, 8, 221, 100, 249, 221, 177, 114, 143, 231, 102, 250,
-  ])
+  ]),
 )
 export const SDK_USER_PATH = writeKeypairToFile(
   'skd-user-keypair.json',
-  SDK_USER
+  SDK_USER,
 )
 
 export const REFERRAL_CODE = new PublicKey(
-  '2Q7u7ndBhSJpTNpDzkjvRyRvuzRLZSovkNRQ5SEUb64g'
+  '2Q7u7ndBhSJpTNpDzkjvRyRvuzRLZSovkNRQ5SEUb64g',
 )
 // const VOTE_ACCOUNT_PRECREATED = new PublicKey(
 //   '2YnuNkxgJFUR6rJDGRh3cgc17bjtYUWqCVc6Bc7JRpp4'
@@ -97,7 +97,7 @@ export const PROVIDER = new AnchorProvider(
   new NodeWallet(SDK_USER),
   {
     commitment: CONNECTION_COMMITMENT /*, skipPreflight: true*/,
-  }
+  },
 )
 
 export default async (): Promise<void> => {
@@ -113,7 +113,7 @@ export default async (): Promise<void> => {
     STAKE_ACCOUNT_TO_WITHDRAW,
     votePubkey,
     STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY,
-    333 * LAMPORTS_PER_SOL
+    333 * LAMPORTS_PER_SOL,
   )
 
   // --- WAITING FOR STAKE ACCOUNT to be READY ---
@@ -125,7 +125,7 @@ export default async (): Promise<void> => {
   console.log(
     `Waiting for stake accounts ${stakeAccounts
       .map(sa => sa.toBase58())
-      .join(', ')} to be activated`
+      .join(', ')} to be activated`,
   )
   for (const stakeAccountToWait of stakeAccounts) {
     await waitForStakeAccountActivation({
@@ -135,8 +135,8 @@ export default async (): Promise<void> => {
   }
   console.log(
     `Stake account(s) ${stakeAccounts.map(sa =>
-      sa.toBase58()
-    )} are activated after ${(Date.now() - startTime) / 1000} s`
+      sa.toBase58(),
+    )} are activated after ${(Date.now() - startTime) / 1000} s`,
   )
 
   // --- ADDING solana-test-validator under MARINADE ---
@@ -148,22 +148,22 @@ export default async (): Promise<void> => {
   const marinadeState = await marinade.getMarinadeState()
   if (
     !marinadeState.state.validatorSystem.managerAuthority.equals(
-      TEST_MARINADE_STATE_ADMIN.publicKey
+      TEST_MARINADE_STATE_ADMIN.publicKey,
     )
   ) {
     throw new Error(
-      'Jest global setup error: Marinade state expected to be configured with the TestWorld admin authority.'
+      'Jest global setup error: Marinade state expected to be configured with the TestWorld admin authority.',
     )
   }
   // check if the validator is part of Marinade already
   const validators = await marinadeState.getValidatorRecords()
   if (
     validators.validatorRecords.findIndex(
-      v => v.validatorAccount.toBase58() === votePubkey.toBase58()
+      v => v.validatorAccount.toBase58() === votePubkey.toBase58(),
     ) === -1
   ) {
     console.log(
-      `Solana Test Validator vote account ${votePubkey.toBase58()} is not part of Marinade yet, adding it.`
+      `Solana Test Validator vote account ${votePubkey.toBase58()} is not part of Marinade yet, adding it.`,
     )
     const addIx = await addValidatorInstructionBuilder({
       marinade,
@@ -237,7 +237,7 @@ export async function waitForStakeAccountActivation({
       stakeStatus = await getStakeActivation(connection, stakeAccount)
       if (Date.now() - startTime > timeoutSeconds * 1000) {
         throw new Error(
-          `Stake account ${stakeAccount.toBase58()} was not activated in timeout of ${timeoutSeconds} seconds`
+          `Stake account ${stakeAccount.toBase58()} was not activated in timeout of ${timeoutSeconds} seconds`,
         )
       }
     }
@@ -247,13 +247,13 @@ export async function waitForStakeAccountActivation({
   if (activatedAtLeastFor > 0) {
     const stakeAccountData = await getParsedStakeAccountInfo(
       provider,
-      stakeAccount
+      stakeAccount,
     )
     const stakeAccountActivationEpoch = stakeAccountData.activationEpoch
     if (stakeAccountActivationEpoch === null) {
       throw new Error(
         'Expected stake account to be already activated. Unexpected setup error stake account:' +
-          stakeAccountData
+          stakeAccountData,
       )
     }
 
@@ -267,7 +267,7 @@ export async function waitForStakeAccountActivation({
         `Waiting for the stake account ${stakeAccount.toBase58()} to be active at least for ${activatedAtLeastFor} epochs ` +
           `currently active for ${
             currentEpoch - stakeAccountActivationEpoch.toNumber()
-          } epoch(s)`
+          } epoch(s)`,
       )
     }
     while (
@@ -280,7 +280,7 @@ export async function waitForStakeAccountActivation({
             `for ${activatedAtLeastFor} epochs the account to be activated, it's activated only for ` +
             `${
               currentEpoch - stakeAccountActivationEpoch.toNumber()
-            } epochs at this time`
+            } epochs at this time`,
         )
       }
       await sleep(1000)
@@ -301,11 +301,11 @@ export async function getSolanaTestValidatorVoteAccountPubkey(): Promise<PublicK
     if (voteAccounts.current.length !== 1) {
       throw new Error(
         'Expected one vote account of solana-test-validator. Cannot continue in global local test setup.' +
-          ` Number of vote accounts found: ${voteAccounts.current.length}`
+          ` Number of vote accounts found: ${voteAccounts.current.length}`,
       )
     }
     solanaTestValidatorVotePubkey = new PublicKey(
-      voteAccounts.current[0].votePubkey
+      voteAccounts.current[0].votePubkey,
     )
   }
 
@@ -316,7 +316,7 @@ async function createAndDelegateStake(
   stakeAccountKeypair: Keypair,
   votePubkey: PublicKey,
   authority: Keypair | Wallet = PROVIDER.wallet,
-  lamports: number = 42 * LAMPORTS_PER_SOL
+  lamports: number = 42 * LAMPORTS_PER_SOL,
 ) {
   // create a stake account that will be used later in all tests
   const tx = new Transaction()
@@ -343,17 +343,17 @@ async function createAndDelegateStake(
   if (authority instanceof Keypair) {
     tx.partialSign(authority)
   } else {
-    authority.signTransaction(tx)
+    await authority.signTransaction(tx)
   }
   await PROVIDER.sendAndConfirm(tx, [stakeAccountKeypair])
 
   const stakeBalance = await CONNECTION.getBalance(
-    stakeAccountKeypair.publicKey
+    stakeAccountKeypair.publicKey,
   )
   await CONNECTION.getAccountInfo(stakeAccountKeypair.publicKey)
   if (!stakeBalance) {
     throw new Error(
-      `Jest setup error: no balance of stake account ${stakeAccountKeypair.publicKey.toBase58()}`
+      `Jest setup error: no balance of stake account ${stakeAccountKeypair.publicKey.toBase58()}`,
     )
   }
 }
@@ -375,7 +375,7 @@ export async function transfer({
       fromPubkey: from.publicKey,
       toPubkey: to,
       lamports,
-    })
+    }),
   )
   await provider.sendAndConfirm(tx, [from])
 }

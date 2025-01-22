@@ -11,7 +11,7 @@ export function installWithdrawStakeAccount(program: Command) {
     .requiredOption(
       '-s, --stake-account <stake-account-address>',
       'Stake account to withdraw',
-      parsePubkey
+      parsePubkey,
     )
     .action(
       async (
@@ -20,13 +20,13 @@ export function installWithdrawStakeAccount(program: Command) {
           stakeAccount,
         }: {
           stakeAccount: Promise<PublicKey>
-        }
+        },
       ) => {
         await withdrawStakeAccount({
           amountMsol,
           stakeAccount: await stakeAccount,
         })
-      }
+      },
     )
 }
 
@@ -45,16 +45,16 @@ export async function withdrawStakeAccount({
     'Withdrawing %d MSOLs from stake account: %s with wallet key %s',
     amountMsol,
     stakeAccount.toBase58(),
-    wallet.publicKey.toBase58()
+    wallet.publicKey.toBase58(),
   )
 
   logger.debug(
     'A workaround could be (not sure if working in future) ' +
-      'to use version 5.0.6-beta of @marinade.finance/marinade-ts-sdk'
+      'to use version 5.0.6-beta of @marinade.finance/marinade-ts-sdk',
   )
   logger.debug(
     'The SDK call was removed as it was decided not to be part of SDK' +
-      'and to be used only within contract interaction'
+      'and to be used only within contract interaction',
   )
   throw new Error('Not implemented in marinade-ts-sdk')
 

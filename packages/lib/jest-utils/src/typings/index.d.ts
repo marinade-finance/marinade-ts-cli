@@ -18,7 +18,7 @@ declare global {
               stdout?: string | RegExp
               // The stderr from the process
               stderr?: string | RegExp
-            }
+            },
       ): Promise<R>
     }
   }

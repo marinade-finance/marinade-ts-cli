@@ -35,14 +35,14 @@ export async function parsePubkey(pubkeyOrPath: string): Promise<PublicKey> {
       return keypair.publicKey
     } catch (err2) {
       return new PublicKey(
-        new Uint8Array(JSON.parse(await parseFile(pubkeyOrPath)))
+        new Uint8Array(JSON.parse(await parseFile(pubkeyOrPath))),
       )
     }
   }
 }
 
 export async function parseKeypairOrPubkey(
-  pubkeyOrPath: string
+  pubkeyOrPath: string,
 ): Promise<PublicKey | Keypair> {
   try {
     return await parseKeypair(pubkeyOrPath)
@@ -61,7 +61,7 @@ export async function parseKeypair(pathOrPrivKey: string): Promise<Keypair> {
     return Keypair.fromSecretKey(privateKey)
   } catch (err) {
     return Keypair.fromSecretKey(
-      new Uint8Array(JSON.parse(await parseFile(pathOrPrivKey)))
+      new Uint8Array(JSON.parse(await parseFile(pathOrPrivKey))),
     )
   }
 }
@@ -80,8 +80,8 @@ async function parsePubkeyWithPath(pubkeyOrPath: string): Promise<PublicKey> {
   } catch (err) {
     return new PublicKey(
       new Uint8Array(
-        JSON.parse(await readFile(expandTilde(pubkeyOrPath), 'utf-8'))
-      )
+        JSON.parse(await readFile(expandTilde(pubkeyOrPath), 'utf-8')),
+      ),
     )
   }
 }
@@ -92,12 +92,12 @@ const PARSE_SIGNER_LOCK = 'parseSignerLock'
 
 export async function parseWallet(
   pathOrLedger: string,
-  logger: Logger | undefined
+  logger: Logger | undefined,
 ): Promise<Wallet> {
   let wallet
   try {
     wallet = await doWithLock(PARSE_SIGNER_LOCK, async () =>
-      parseLedgerWallet(pathOrLedger, logger)
+      parseLedgerWallet(pathOrLedger, logger),
     )
   } catch (err) {
     throw new CliCommandError({
@@ -116,7 +116,7 @@ export async function parseWallet(
 }
 
 export async function parseWalletOrPubkey(
-  pubkeyOrPathOrLedger: string
+  pubkeyOrPathOrLedger: string,
 ): Promise<Wallet | PublicKey> {
   let logger: Logger | undefined = undefined
   try {
@@ -138,7 +138,7 @@ export async function parseWalletOrPubkey(
 }
 
 export async function parsePubkeyOrPubkeyFromWallet(
-  pubkeyOrPathOrLedger: string
+  pubkeyOrPathOrLedger: string,
 ): Promise<PublicKey> {
   return pubkey(await parseWalletOrPubkey(pubkeyOrPathOrLedger))
 }
@@ -155,7 +155,7 @@ export async function parseWalletFromOpts(
   commandArgs: string[],
   logger: Logger,
   defaultKeypair?: string,
-  solanaConfigPath?: string
+  solanaConfigPath?: string,
 ): Promise<Wallet> {
   const wallet = keypairArg
   let walletInterface: Wallet
@@ -179,7 +179,7 @@ export async function parseWalletFromOpts(
       logger.debug(
         `Cannot load --keypair wallet '${
           wallet || defaultKeypair
-        }' but it's show or --print-only command, using NullWallet`
+        }' but it's show or --print-only command, using NullWallet`,
       )
       walletInterface = new NullWallet()
     } else {
@@ -215,7 +215,7 @@ export function resolveSolanaConfig({
   } catch (err) {
     logDebug(
       logger,
-      `Failed to load Solana config file ${solanaConfigPath}: ${err}`
+      `Failed to load Solana config file ${solanaConfigPath}: ${err}`,
     )
     return {
       keypairPath: defaultKeypair,
@@ -237,7 +237,7 @@ export function resolveSolanaConfig({
       logDebug(
         logger,
         `Failed to parse commitment ${configData.commitment} ` +
-          `from Solana config file ${solanaConfigPath}: ${err}`
+          `from Solana config file ${solanaConfigPath}: ${err}`,
       )
     }
   }
@@ -252,7 +252,7 @@ export function resolveSolanaConfig({
 // eslint-disable-next-line no-use-before-define
 export function parseClusterUrl(
   url: string | undefined,
-  solanaConfigPath?: string
+  solanaConfigPath?: string,
 ): string {
   const localhost = 'http://127.0.0.1:8899'
   let clusterUrl =
@@ -304,13 +304,13 @@ export function parseCommitment(commitment: string | undefined): Commitment {
     throw new Error(
       'Invalid value of --commitment: ' +
         commitment +
-        '. Permitted values: processed, confirmed, finalized, recent, single, singleGossip, root, max'
+        '. Permitted values: processed, confirmed, finalized, recent, single, singleGossip, root, max',
     )
   }
 }
 
 export function parseConfirmationFinality(
-  confirmationFinality: string
+  confirmationFinality: string,
 ): Finality {
   if (confirmationFinality === 'confirmed') {
     return 'confirmed'
@@ -320,7 +320,7 @@ export function parseConfirmationFinality(
     throw new Error(
       'Invalid value of --confirmation-finality: ' +
         confirmationFinality +
-        '. Permitted values: confirmed and finalized'
+        '. Permitted values: confirmed and finalized',
     )
   }
 }

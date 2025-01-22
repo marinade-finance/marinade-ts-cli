@@ -22,7 +22,7 @@ export function extendBorsh() {
     return base58.encode(array) as StringPublicKey
   }
   ;(BinaryWriter.prototype as any).writePubkeyAsString = function (
-    value: StringPublicKey
+    value: StringPublicKey,
   ) {
     const writer = this as unknown as BinaryWriter
     writer.writeFixedArray(base58.decode(value))

@@ -14,7 +14,7 @@ export function getContext(): Context {
 export function setContext(newContext: Context) {
   if (context) {
     throw new Error(
-      'Context already initialized, context can be initialized only once'
+      'Context already initialized, context can be initialized only once',
     )
   }
   context = newContext
