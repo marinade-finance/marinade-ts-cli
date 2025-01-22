@@ -65,7 +65,7 @@ export class ExecutionError extends Error {
   }
 
   private extractTransactionCauseError(
-    error: Error | undefined
+    error: Error | undefined,
   ): string | undefined {
     if (!error || !(error instanceof SendTransactionError)) {
       return undefined

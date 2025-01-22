@@ -17,7 +17,7 @@ export function installShowBalance(program: Command) {
     .argument(
       '[account-pubkey]',
       'Account to show balance for (default: wallet pubkey)',
-      parsePubkey
+      parsePubkey,
     )
     .action(async (accountPubkey: Promise<PublicKey>) => {
       await showBalance({
@@ -37,7 +37,7 @@ export async function showBalance({
   logger.info(
     'Main account: %s (%s)',
     accountPubkey.toBase58(),
-    'Note: transactions can take up to a minute to be reflected here'
+    'Note: transactions can take up to a minute to be reflected here',
   )
 
   const config = new MarinadeConfig({ connection })
@@ -51,7 +51,7 @@ export async function showBalance({
 
   const userMSolATA = await getAssociatedTokenAccountAddress(
     mSolMintAddress,
-    accountPubkey
+    accountPubkey,
   )
   try {
     const {
@@ -62,14 +62,14 @@ export async function showBalance({
   } catch (e) {
     logger.error(
       `MSOL ATA of the account ${accountPubkey.toBase58()} does not exist`,
-      e
+      e,
     )
   }
 
   try {
     const userLpATA = await getAssociatedTokenAccountAddress(
       lpMint.address,
-      accountPubkey
+      accountPubkey,
     )
     const {
       value: { amount: amountLP },
@@ -79,7 +79,7 @@ export async function showBalance({
   } catch (e) {
     logger.error(
       `LP ATA of the account ${accountPubkey.toBase58()} does not exist`,
-      e
+      e,
     )
   }
 }

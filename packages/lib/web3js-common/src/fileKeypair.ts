@@ -6,7 +6,7 @@ import * as path from 'path'
 
 export async function createTempFileKeypair(
   seed?: Keypair,
-  tmpPathPrefix = 'tmp-keypair'
+  tmpPathPrefix = 'tmp-keypair',
 ): Promise<{
   path: string
   cleanup: () => Promise<void>

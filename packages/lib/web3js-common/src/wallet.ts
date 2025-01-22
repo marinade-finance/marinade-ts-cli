@@ -14,10 +14,10 @@ import { isVersionedTransaction } from './tx'
  */
 export interface Wallet {
   signTransaction<T extends Transaction | VersionedTransaction>(
-    tx: T
+    tx: T,
   ): Promise<T>
   signAllTransactions<T extends Transaction | VersionedTransaction>(
-    txs: T[]
+    txs: T[],
   ): Promise<T[]>
   publicKey: PublicKey
 }
@@ -26,13 +26,13 @@ export class NullWallet implements Wallet {
   readonly publicKey: PublicKey = PublicKey.default
 
   async signTransaction<T extends Transaction | VersionedTransaction>(
-    tx: T
+    tx: T,
   ): Promise<T> {
     return tx
   }
 
   async signAllTransactions<T extends Transaction | VersionedTransaction>(
-    txs: T[]
+    txs: T[],
   ): Promise<T[]> {
     return txs
   }
@@ -42,13 +42,13 @@ export class PubkeyWallet implements Wallet {
   constructor(readonly publicKey: PublicKey) {}
 
   async signTransaction<T extends Transaction | VersionedTransaction>(
-    tx: T
+    tx: T,
   ): Promise<T> {
     return tx
   }
 
   async signAllTransactions<T extends Transaction | VersionedTransaction>(
-    txs: T[]
+    txs: T[],
   ): Promise<T[]> {
     return txs
   }
@@ -62,7 +62,7 @@ export class KeypairWallet implements Wallet {
   }
 
   async signTransaction<T extends Transaction | VersionedTransaction>(
-    tx: T
+    tx: T,
   ): Promise<T> {
     if (isVersionedTransaction(tx)) {
       tx.sign([this.keypair])
@@ -73,7 +73,7 @@ export class KeypairWallet implements Wallet {
   }
 
   async signAllTransactions<T extends Transaction | VersionedTransaction>(
-    txs: T[]
+    txs: T[],
   ): Promise<T[]> {
     return txs.map(tx => {
       if (isVersionedTransaction(tx)) {
@@ -97,7 +97,7 @@ export function instanceOfWallet(object: any): object is Wallet {
 }
 
 export function isSigner(
-  key: PublicKey | Signer | Keypair | Wallet | undefined
+  key: PublicKey | Signer | Keypair | Wallet | undefined,
 ): key is Signer | Keypair | Wallet {
   return (
     key !== undefined &&
@@ -107,7 +107,7 @@ export function isSigner(
 }
 
 export function signer(
-  key: PublicKey | Signer | Keypair | Wallet | undefined
+  key: PublicKey | Signer | Keypair | Wallet | undefined,
 ): Signer | Keypair | Wallet {
   if (isSigner(key)) {
     return key
@@ -115,13 +115,13 @@ export function signer(
     throw new Error(
       `signer: expected signer but it's not: ${
         key === undefined ? undefined : key.toBase58()
-      }`
+      }`,
     )
   }
 }
 
 export function pubkey(
-  key: PublicKey | Signer | Keypair | Wallet | undefined
+  key: PublicKey | Signer | Keypair | Wallet | undefined,
 ): PublicKey {
   if (key === undefined) {
     throw new Error("pubkey: expected pubkey or signer but it's undefined")
@@ -130,16 +130,16 @@ export function pubkey(
 }
 
 export function signerWithPubkey(
-  key: PublicKey | Signer | Keypair | Wallet | undefined
+  key: PublicKey | Signer | Keypair | Wallet | undefined,
 ): [Signer | Keypair | Wallet, PublicKey] {
   if (key === undefined) {
     throw new Error(
-      "signerWithPubkey: expected pubkey or signer but it's undefined"
+      "signerWithPubkey: expected pubkey or signer but it's undefined",
     )
   }
   if (!isSigner(key)) {
     throw new Error(
-      `signerWithPubkey: expected signer but it's not: ${key.toBase58()}`
+      `signerWithPubkey: expected signer but it's not: ${key.toBase58()}`,
     )
   }
   return [key, key.publicKey]

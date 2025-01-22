@@ -37,7 +37,7 @@ export async function orderUnstake({
   logger.info(
     'Order unstake: %d mSOL (lamports %s)',
     amountMsol,
-    amountLamports.toString()
+    amountLamports.toString(),
   )
 
   const marinadeConfig = new MarinadeConfig({
@@ -53,7 +53,7 @@ export async function orderUnstake({
   } = await marinade.orderUnstake(amountLamports)
   logger.info(
     'Using associated mSOL account: %s',
-    associatedMSolTokenAccountAddress.toBase58()
+    associatedMSolTokenAccountAddress.toBase58(),
   )
 
   await executeTx({
@@ -70,6 +70,6 @@ export async function orderUnstake({
     'Successfully ordered unstake %d mSOLs (signed by %s). Ticket: %s',
     amountMsol,
     wallet.publicKey.toBase58(),
-    ticketAccountKeypair.publicKey.toBase58()
+    ticketAccountKeypair.publicKey.toBase58(),
   )
 }

@@ -35,10 +35,10 @@ describe('Liquid unstake using CLI', () => {
     })
     const marinade = new Marinade(marinadeConfig)
     const { transaction } = await marinade.deposit(
-      new BN(500 * LAMPORTS_PER_SOL)
+      new BN(500 * LAMPORTS_PER_SOL),
     )
     const { transaction: transaction2 } = await marinade.addLiquidity(
-      new BN(500 * LAMPORTS_PER_SOL)
+      new BN(500 * LAMPORTS_PER_SOL),
     )
     await PROVIDER.sendAndConfirm(transaction.add(transaction2), [
       walletKeypair,

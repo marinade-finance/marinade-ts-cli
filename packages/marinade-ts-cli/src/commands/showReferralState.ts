@@ -15,7 +15,7 @@ export function installShowReferralState(program: Command) {
     .argument(
       '<referral-code>',
       'Address of referral partner state to show',
-      parsePubkey
+      parsePubkey,
     )
     .action(async (referralCode: Promise<PublicKey>) => {
       await showReferralState({ referralCode: await referralCode })
@@ -42,7 +42,7 @@ export async function showReferralState({
   console.log('Partner Main Account:', referralState.partnerAccount.toBase58())
   console.log(
     'Partner mSOL Token Account:',
-    referralState.msolTokenPartnerAccount.toBase58()
+    referralState.msolTokenPartnerAccount.toBase58(),
   )
   if (referralState.validatorVoteKey) {
     console.log()
@@ -56,32 +56,32 @@ export async function showReferralState({
   console.log('Deposit SOL')
   console.log(
     ' -- SOL amount:',
-    MarinadeUtils.lamportsToSol(referralState.depositSolAmount)
+    MarinadeUtils.lamportsToSol(referralState.depositSolAmount),
   )
   console.log(' -- operations:', referralState.depositSolOperations.toNumber())
   console.log()
   console.log('Deposit Stake Account')
   console.log(
     ' -- SOL amount:',
-    MarinadeUtils.lamportsToSol(referralState.depositStakeAccountAmount)
+    MarinadeUtils.lamportsToSol(referralState.depositStakeAccountAmount),
   )
   console.log(
     ' -- operations:',
-    referralState.depositStakeAccountOperations.toNumber()
+    referralState.depositStakeAccountOperations.toNumber(),
   )
   console.log()
   console.log('Liquid Unstake')
   console.log(
     ' -- SOL amount:',
-    MarinadeUtils.lamportsToSol(referralState.liqUnstakeSolAmount)
+    MarinadeUtils.lamportsToSol(referralState.liqUnstakeSolAmount),
   )
   console.log(
     ' --mSOL amount:',
-    MarinadeUtils.lamportsToSol(referralState.liqUnstakeMsolAmount)
+    MarinadeUtils.lamportsToSol(referralState.liqUnstakeMsolAmount),
   )
   console.log(
     ' --mSOL fees  :',
-    MarinadeUtils.lamportsToSol(referralState.liqUnstakeMsolFees)
+    MarinadeUtils.lamportsToSol(referralState.liqUnstakeMsolFees),
   )
   console.log(' -- operations:', referralState.liqUnstakeOperations.toNumber())
 

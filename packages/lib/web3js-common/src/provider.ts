@@ -25,25 +25,25 @@ export interface Provider {
   send?(
     tx: Transaction | VersionedTransaction,
     signers?: Signer[],
-    opts?: SendOptions
+    opts?: SendOptions,
   ): Promise<TransactionSignature>
   sendAndConfirm?(
     tx: Transaction | VersionedTransaction,
     signers?: Signer[],
-    opts?: ConfirmOptions
+    opts?: ConfirmOptions,
   ): Promise<TransactionSignature>
   sendAll?<T extends Transaction | VersionedTransaction>(
     txWithSigners: {
       tx: T
       signers?: Signer[]
     }[],
-    opts?: ConfirmOptions
+    opts?: ConfirmOptions,
   ): Promise<Array<TransactionSignature>>
   simulate?(
     tx: Transaction | VersionedTransaction,
     signers?: Signer[],
     commitment?: Commitment,
-    includeAccounts?: boolean | PublicKey[]
+    includeAccounts?: boolean | PublicKey[],
   ): Promise<SuccessfulTxSimulationResponse>
 }
 
@@ -61,7 +61,7 @@ export function instanceOfProvider(object: any): object is Provider {
 
 export function instanceOfProviderWithWallet(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  object: any
+  object: any,
 ): object is Provider & { wallet: Wallet | Signer | Keypair } {
   return (
     object &&
@@ -79,7 +79,7 @@ export function providerPubkey(provider: Provider): PublicKey {
   if (provider.publicKey === undefined) {
     throw new Error(
       `Provider instance ${JSON.stringify(provider)} ` +
-        'does not specify public key'
+        'does not specify public key',
     )
   }
   return provider.publicKey
@@ -87,7 +87,7 @@ export function providerPubkey(provider: Provider): PublicKey {
 
 export function providerOrConnection(
   provider: Provider | Connection,
-  feePayer?: PublicKey
+  feePayer?: PublicKey,
 ): [Connection, PublicKey] {
   if (feePayer === undefined && instanceOfProvider(provider)) {
     feePayer = providerPubkey(provider)
@@ -95,7 +95,7 @@ export function providerOrConnection(
   if (feePayer === undefined) {
     throw new Error(
       'providerOrConnection: feePayer or instance of Provider has to be passed in to ' +
-        'find the transaction fee payer'
+        'find the transaction fee payer',
     )
   }
   const connection = instanceOfProvider(provider)
@@ -106,7 +106,7 @@ export function providerOrConnection(
 
 export function walletProviderOrConnection(
   provider: Provider | Connection,
-  feePayer?: Wallet | Signer | Keypair
+  feePayer?: Wallet | Signer | Keypair,
 ): [Connection, Wallet | Signer | Keypair] {
   if (feePayer === undefined && instanceOfProviderWithWallet(provider)) {
     feePayer = provider.wallet
@@ -114,7 +114,7 @@ export function walletProviderOrConnection(
   if (feePayer === undefined) {
     throw new Error(
       'walletProviderOrConnection: feePayer or instance of Wallet Provider has to be passed in to ' +
-        'find the signer of transaction fee payer'
+        'find the signer of transaction fee payer',
     )
   }
   const connection = instanceOfProvider(provider)
@@ -134,20 +134,20 @@ export class NullProvider implements Provider {
   send(
     tx: Transaction | VersionedTransaction,
     signers?: Signer[] | undefined,
-    opts?: SendOptions | undefined
+    opts?: SendOptions | undefined,
   ): Promise<string> {
     throw new Error('Method not implemented.')
   }
   sendAndConfirm(
     tx: Transaction | VersionedTransaction,
     signers?: Signer[] | undefined,
-    opts?: ConfirmOptions | undefined
+    opts?: ConfirmOptions | undefined,
   ): Promise<string> {
     throw new Error('Method not implemented.')
   }
   sendAll<T extends Transaction | VersionedTransaction>(
     txWithSigners: { tx: T; signers?: Signer[] | undefined }[],
-    opts?: ConfirmOptions | undefined
+    opts?: ConfirmOptions | undefined,
   ): Promise<string[]> {
     throw new Error('Method not implemented.')
   }
@@ -155,7 +155,7 @@ export class NullProvider implements Provider {
     tx: Transaction | VersionedTransaction,
     signers?: Signer[] | undefined,
     commitment?: Commitment | undefined,
-    includeAccounts?: boolean | PublicKey[] | undefined
+    includeAccounts?: boolean | PublicKey[] | undefined,
   ): Promise<SuccessfulTxSimulationResponse> {
     throw new Error('Method not implemented.')
   }

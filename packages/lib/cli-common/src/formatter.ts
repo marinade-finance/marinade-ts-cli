@@ -10,7 +10,7 @@ export function print_data(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
   format: FormatType,
-  valueName = '--format'
+  valueName = '--format',
 ): void {
   if (format === 'text') {
     console.log(data)
@@ -111,7 +111,9 @@ export class ChainedKeyNameFormatter extends BaseObjectFormatter {
 export function reformat(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
-  formatter: ObjectFormatterFn | BaseObjectFormatter = new BaseObjectFormatter()
+  formatter:
+    | ObjectFormatterFn
+    | BaseObjectFormatter = new BaseObjectFormatter(),
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any {
   let result: any // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -149,7 +151,7 @@ export function reformat(
           formatterResult.records.forEach(
             ({ key: formattedKey, value: formattedValue }) => {
               result[formattedKey] = formattedValue
-            }
+            },
           )
           break
         }

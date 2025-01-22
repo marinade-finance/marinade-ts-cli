@@ -35,9 +35,9 @@ describe('Remove liquidity using CLI', () => {
     })
     const marinade = new Marinade(marinadeConfig)
     const { transaction } = await marinade.addLiquidity(
-      new BN(500 * LAMPORTS_PER_SOL)
+      new BN(500 * LAMPORTS_PER_SOL),
     )
-    PROVIDER.sendAndConfirm(transaction, [walletKeypair])
+    await PROVIDER.sendAndConfirm(transaction, [walletKeypair])
 
     await (
       expect([

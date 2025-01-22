@@ -41,7 +41,7 @@ describe('Deposit using CLI', () => {
   it('deposit', async () => {
     await transfer({ to: ownerKeypair.publicKey, amountSol: 33 })
     await expect(
-      CONNECTION.getBalance(ownerKeypair.publicKey)
+      CONNECTION.getBalance(ownerKeypair.publicKey),
     ).resolves.toStrictEqual(33 * LAMPORTS_PER_SOL)
 
     const solanaTestValidatorVotePubkey =

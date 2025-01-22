@@ -30,7 +30,7 @@ function runHooks(signal: string): void {
         // ignore error and go to next hook
         console.error(
           `Signal ${signal} hook ${index + 1}/${hooks.length} failed`,
-          e
+          e,
         )
       }
     })

@@ -118,26 +118,26 @@ export function loadPrograms(programs: ProgramInputData[]): AddedProgram[] {
     hookDeleteDir = true
   }
   for (const { pubkey, path, name } of programs.filter(
-    p => p.path !== undefined
+    p => p.path !== undefined,
   )) {
     const programPath = path!
     if (!existsSync(programPath)) {
       console.error(
-        `bankrun startup: program ${pubkey.toBase58()} at path ${programPath} does not exist cannot be loaded`
+        `bankrun startup: program ${pubkey.toBase58()} at path ${programPath} does not exist cannot be loaded`,
       )
       continue
     }
     const fixturesProgramSoPath = join(fixturesPath, `${name}.so`)
     if (existsSync(fixturesProgramSoPath)) {
       console.log(
-        `bankrun startup: skipping to upload the program ${pubkey.toBase58()} from path ${path} to ${fixturesProgramSoPath} as it already exists`
+        `bankrun startup: skipping to upload the program ${pubkey.toBase58()} from path ${path} to ${fixturesProgramSoPath} as it already exists`,
       )
     } else {
       console.debug(
         'bankrun startup: copying program',
         fixturesProgramSoPath,
         'to',
-        fixturesProgramSoPath
+        fixturesProgramSoPath,
       )
       cpSync(programPath, fixturesProgramSoPath)
       hookDeleteProgramNames.push(fixturesProgramSoPath)
@@ -167,7 +167,7 @@ export function loadPrograms(programs: ProgramInputData[]): AddedProgram[] {
 
 function registerCleanup(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  exitHandler: (options: any, exitCode: any) => void
+  exitHandler: (options: any, exitCode: any) => void,
 ): void {
   // do something when app is closing
   process.on('exit', exitHandler.bind(null, { cleanup: true }))
@@ -239,7 +239,7 @@ export async function testInit({
           accountData.address = acc.pubkey
         }
         return accountData
-      })
+      }),
     )
   }
   if (programs !== undefined) {
@@ -249,7 +249,7 @@ export async function testInit({
   const context = await startAnchor(
     './',
     additionalPrograms,
-    additionalAccounts
+    additionalAccounts,
   )
   return new BankrunExtendedProvider(context)
 }

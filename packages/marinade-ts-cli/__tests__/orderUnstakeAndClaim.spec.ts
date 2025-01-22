@@ -31,7 +31,7 @@ describe('Order unstake and claim using CLI', () => {
 
   it('order unstake and claim', async () => {
     console.log(
-      'WARN: this test takes about 1 minute to run. Claiming tickets requires waiting for the ticket to be ready.'
+      'WARN: this test takes about 1 minute to run. Claiming tickets requires waiting for the ticket to be ready.',
     )
 
     const marinadeConfig = new MarinadeConfig({
@@ -40,7 +40,7 @@ describe('Order unstake and claim using CLI', () => {
     })
     const marinade = new Marinade(marinadeConfig)
     const { transaction } = await marinade.deposit(
-      new BN(555 * LAMPORTS_PER_SOL)
+      new BN(555 * LAMPORTS_PER_SOL),
     )
     await PROVIDER.sendAndConfirm(transaction, [walletKeypair])
 
@@ -69,7 +69,7 @@ describe('Order unstake and claim using CLI', () => {
     // Waiting for the ticket to be ready; max time is now hardcoded
     const timeoutSeconds = 60
     const tickets = await marinade.getDelayedUnstakeTickets(
-      walletKeypair.publicKey
+      walletKeypair.publicKey,
     )
     expect(tickets.size).toBe(1)
     const startTime = Date.now()
@@ -86,7 +86,7 @@ describe('Order unstake and claim using CLI', () => {
         ticket[0].toBase58(),
         'elapsed time:',
         (Date.now() - startTime) / 1000,
-        'seconds'
+        'seconds',
       )
       await sleep(5000)
       ticket = (
@@ -96,7 +96,7 @@ describe('Order unstake and claim using CLI', () => {
         .next().value
       if (ticket && Date.now() - startTime > timeoutSeconds * 1000) {
         throw new Error(
-          `Ticket ${ticket[0]} was not available for claiming in timeout of ${timeoutSeconds} seconds`
+          `Ticket ${ticket[0]} was not available for claiming in timeout of ${timeoutSeconds} seconds`,
         )
       }
     }

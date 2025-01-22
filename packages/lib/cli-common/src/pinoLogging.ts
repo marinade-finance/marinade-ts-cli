@@ -20,7 +20,7 @@ export function configureLogger(level = 'info'): Logger {
       },
       level: level,
     },
-    pino.destination()
+    pino.destination(),
   )
   PINO_CONFIGURED_LOGGER = logger
   return logger

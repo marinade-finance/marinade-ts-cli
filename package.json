@@ -3,7 +3,7 @@
     "license": "ISC",
     "author": "Marinade.Finance",
     "scripts": {
-        "compile": "npx tsc -b -verbose",
+        "compile": "tsc --project tsconfig.build.json",
         "_copy-readme": "cp packages/lib/anchor-common/*.md build/packages/lib/anchor-common/ && cp packages/lib/cli-common/*.md build/packages/lib/cli-common/ && cp packages/lib/jest-utils/*.md build/packages/lib/jest-utils/ && cp packages/lib/spl-gov-utils/*.md build/packages/lib/spl-gov-utils/ && cp packages/lib/web3js-common/*.md build/packages/lib/web3js-common/ && cp packages/lib/umi-utils/*.md build/packages/lib/umi-utils/ && cp packages/lib/bankrun-utils/*.md build/packages/lib/bankrun-utils/ && cp packages/marinade-ts-cli/*.md build/packages/marinade-ts-cli/",
         "build": "pnpm compile && pnpm _copy-readme",
         "marinade": "pnpm cli",

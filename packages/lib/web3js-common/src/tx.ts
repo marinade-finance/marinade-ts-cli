@@ -39,7 +39,7 @@ export const TRANSACTION_SAFE_SIZE = 1280 - 40 - 8 - 1 // 1231
 
 export async function transaction(
   connection: Connection | Provider,
-  feePayer?: PublicKey | Wallet | Keypair | Signer
+  feePayer?: PublicKey | Wallet | Keypair | Signer,
 ): Promise<Transaction> {
   if (feePayer === undefined && instanceOfProvider(connection)) {
     feePayer = providerPubkey(connection)
@@ -47,7 +47,7 @@ export async function transaction(
   if (feePayer === undefined) {
     throw new Error(
       'transaction: feePayer or instance of Provider has to be passed in to ' +
-        'find the transaction fee payer'
+        'find the transaction fee payer',
     )
   }
   connection = instanceOfProvider(connection)
@@ -102,7 +102,7 @@ export function isExecuteTxReturn(data: any): data is ExecuteTxReturn {
 
 export async function partialSign(
   transaction: Transaction | VersionedTransaction,
-  signers: (Wallet | Keypair | Signer)[]
+  signers: (Wallet | Keypair | Signer)[],
 ): Promise<void> {
   for (const signer of signers) {
     if (instanceOfWallet(signer)) {
@@ -119,7 +119,7 @@ export async function partialSign(
 export function unhandledRejection(
   err: Error,
   promise: Promise<unknown>,
-  logger?: LoggerPlaceholder
+  logger?: LoggerPlaceholder,
 ) {
   promise.then(() => {}).catch(() => {}) // ignore errors
   logDebug(logger, {
@@ -131,22 +131,22 @@ export function unhandledRejection(
 }
 
 export async function executeTx(
-  args: Omit<ExecuteTxParams, 'simulate'> & { simulate: true }
+  args: Omit<ExecuteTxParams, 'simulate'> & { simulate: true },
 ): Promise<ExecuteTxReturnSimulated>
 export async function executeTx(
   args: Omit<ExecuteTxParams, 'simulate' | 'printOnly'> & {
     simulate?: false
     printOnly?: false
-  }
+  },
 ): Promise<ExecuteTxReturnExecuted>
 export async function executeTx(
   args: Omit<ExecuteTxParams, 'simulate' | 'printOnly'> & {
     simulate?: false
     printOnly: true
-  }
+  },
 ): Promise<undefined>
 export async function executeTx(
-  args: ExecuteTxParams
+  args: ExecuteTxParams,
 ): Promise<ExecuteTxReturnExecuted>
 export async function executeTx({
   connection,
@@ -196,7 +196,11 @@ export async function executeTx({
     ? connection.connection
     : connection
 
-  addComputeBudgetIxes({ transaction, computeUnitLimit, computeUnitPrice })
+  await addComputeBudgetIxes({
+    transaction,
+    computeUnitLimit,
+    computeUnitPrice,
+  })
 
   if (
     transaction.recentBlockhash === undefined ||
@@ -233,7 +237,7 @@ export async function executeTx({
         connection,
         transaction,
         sendOpts,
-        logger
+        logger,
       )
       // Checking if executed
       txResponse = await confirmTransaction(
@@ -241,7 +245,7 @@ export async function executeTx({
         txSignature,
         confirmOpts,
         logger,
-        confirmWaitTime
+        confirmWaitTime,
       )
     }
   } catch (e) {
@@ -273,7 +277,7 @@ export async function updateTransactionBlockhash<
   currentBlockhash?: Readonly<{
     blockhash: string
     lastValidBlockHeight: number
-  }>
+  }>,
 ): Promise<T> {
   if (currentBlockhash === undefined) {
     currentBlockhash = await connection.getLatestBlockhash()
@@ -291,24 +295,24 @@ async function sendRawTransactionWithRetry(
   connection: Connection,
   transaction: Transaction,
   sendOpts?: SendOptions,
-  logger?: LoggerPlaceholder
+  logger?: LoggerPlaceholder,
 ): Promise<TransactionSignature> {
   try {
     return await connection.sendRawTransaction(
       transaction.serialize(),
-      sendOpts
+      sendOpts,
     )
   } catch (e) {
     if (checkErrorMessage(e, 'blockhash not found')) {
       logDebug(
         logger,
         'Blockhash not found, retrying to update transaction blockhash, reason: ' +
-          e
+          e,
       )
       await updateTransactionBlockhash(transaction, connection)
       return await connection.sendRawTransaction(
         transaction.serialize(),
-        sendOpts
+        sendOpts,
       )
     } else {
       throw e
@@ -321,7 +325,7 @@ export async function confirmTransaction(
   txSig: TransactionSignature,
   confirmOpts?: Finality,
   logger?: LoggerPlaceholder,
-  confirmWaitTime = 0
+  confirmWaitTime = 0,
 ): Promise<VersionedTransactionResponse> {
   const MAX_WAIT_TIME = 10_000
   let confirmFinality: Finality | undefined = confirmOpts
@@ -339,7 +343,7 @@ export async function confirmTransaction(
   })
   logDebug(
     logger,
-    `Waiting to confirm transaction signature: ${txSig} (timeout ~2 minutes)`
+    `Waiting to confirm transaction signature: ${txSig} (timeout ~2 minutes)`,
   )
   let txRes: VersionedTransactionResponse | null =
     await txSearchConnection.getTransaction(txSig, {
@@ -379,12 +383,12 @@ export async function confirmTransaction(
 
   if (txRes === null) {
     throw new Error(
-      `Transaction ${txSig} not found, failed to get from ${connection.rpcEndpoint}`
+      `Transaction ${txSig} not found, failed to get from ${connection.rpcEndpoint}`,
     )
   }
   if (txRes.meta?.err) {
     throw new Error(
-      `Transaction ${txSig} failure, result: ${JSON.stringify(txRes)}`
+      `Transaction ${txSig} failure, result: ${JSON.stringify(txRes)}`,
     )
   }
   logDebug(logger, 'Transaction signature: ' + txSig)
@@ -397,7 +401,7 @@ export async function executeTxSimple(
   transaction: Transaction,
   signers?: (Wallet | Keypair | Signer)[],
   sendOpts?: SendOptions,
-  confirmOpts?: Finality
+  confirmOpts?: Finality,
 ): Promise<ExecuteTxReturnExecuted | undefined> {
   return await executeTx({
     connection,
@@ -411,25 +415,25 @@ export async function executeTxSimple(
 }
 
 export async function executeTxWithExceededBlockhashRetry(
-  args: Omit<ExecuteTxParams, 'simulate'> & { simulate: true }
+  args: Omit<ExecuteTxParams, 'simulate'> & { simulate: true },
 ): Promise<ExecuteTxReturnSimulated>
 export async function executeTxWithExceededBlockhashRetry(
   args: Omit<ExecuteTxParams, 'simulate' | 'printOnly'> & {
     simulate?: false
     printOnly?: false
-  }
+  },
 ): Promise<ExecuteTxReturnExecuted>
 export async function executeTxWithExceededBlockhashRetry(
   args: Omit<ExecuteTxParams, 'simulate' | 'printOnly'> & {
     simulate?: false
     printOnly: true
-  }
+  },
 ): Promise<undefined>
 export async function executeTxWithExceededBlockhashRetry(
-  args: ExecuteTxParams
+  args: ExecuteTxParams,
 ): Promise<ExecuteTxReturnExecuted>
 export async function executeTxWithExceededBlockhashRetry(
-  txParams: ExecuteTxParams
+  txParams: ExecuteTxParams,
 ): Promise<ExecuteTxReturn> {
   try {
     return await executeTx(txParams)
@@ -444,7 +448,7 @@ export async function executeTxWithExceededBlockhashRetry(
         `Failed to execute transaction ${txSig}` +
           'due to block height exceeded, retrying, ' +
           'original error: ' +
-          e
+          e,
       )
       txParams.transaction.recentBlockhash = undefined
       return await executeTx(txParams)
@@ -455,7 +459,7 @@ export async function executeTxWithExceededBlockhashRetry(
         `Failed to execute transaction ${txSig}` +
           'due too many requests on RPC, retrying, ' +
           'original error: ' +
-          e
+          e,
       )
       txParams.transaction.recentBlockhash = undefined
       await sleep(3_000)
@@ -464,7 +468,7 @@ export async function executeTxWithExceededBlockhashRetry(
       logDebug(
         txParams.logger,
         'Failed transaction execution',
-        (e as Error).message
+        (e as Error).message,
       )
       throw e
     }
@@ -481,11 +485,11 @@ export function isSimulatedTransactionResponse(
     | TransactionResponse
     | VersionedTransactionResponse
     | SimulatedTransactionResponse
-    | undefined
+    | undefined,
 ): response is SimulatedTransactionResponse {
   if (response === undefined) {
     throw new Error(
-      'internal error: response is undefined, this is not expected for the type guard function'
+      'internal error: response is undefined, this is not expected for the type guard function',
     )
   }
   return (
@@ -501,7 +505,7 @@ export function isSimulatedTransactionResponse(
  * Verified if object is the versioned transaction
  */
 export function isVersionedTransaction(
-  transaction: Transaction | VersionedTransaction
+  transaction: Transaction | VersionedTransaction,
 ): transaction is VersionedTransaction {
   return 'version' in transaction
 }
@@ -512,10 +516,10 @@ export function isVersionedTransaction(
 export function filterSignersForInstruction(
   instructions: TransactionInstruction[],
   signers: (Wallet | Keypair | Signer)[],
-  feePayer?: PublicKey
+  feePayer?: PublicKey,
 ): (Wallet | Keypair | Signer)[] {
   const signersRequired = instructions.flatMap(ix =>
-    ix.keys.filter(k => k.isSigner).map(k => k.pubkey)
+    ix.keys.filter(k => k.isSigner).map(k => k.pubkey),
   )
   if (feePayer !== undefined) {
     signersRequired.push(feePayer)
@@ -528,7 +532,7 @@ function getNewTransaction(
   bh: Readonly<{
     blockhash: string
     lastValidBlockHeight: number
-  }>
+  }>,
 ): Transaction {
   return new Transaction({
     feePayer,
@@ -563,7 +567,7 @@ export function setComputeUnitLimitIx(units: number): TransactionInstruction {
  * Every declared CU for the transaction is paid with this additional payment.
  */
 export function setComputeUnitPriceIx(
-  microLamports: number
+  microLamports: number,
 ): TransactionInstruction {
   return ComputeBudgetProgram.setComputeUnitPrice({ microLamports })
 }
@@ -623,22 +627,22 @@ export type SplitAndExecuteTxData = TransactionData<Transaction>
  * Split tx into multiple transactions if it exceeds the transaction size limit.
  */
 export async function splitAndExecuteTx(
-  args: Omit<ExecuteTxParams, 'simulate'> & { simulate: true }
+  args: Omit<ExecuteTxParams, 'simulate'> & { simulate: true },
 ): Promise<(ExecuteTxReturnSimulated & SplitAndExecuteTxData)[]>
 export async function splitAndExecuteTx(
   args: Omit<ExecuteTxParams, 'simulate' | 'printOnly'> & {
     simulate?: false
     printOnly?: false
-  }
+  },
 ): Promise<(ExecuteTxReturnExecuted & SplitAndExecuteTxData)[]>
 export async function splitAndExecuteTx(
   args: Omit<ExecuteTxParams, 'simulate' | 'printOnly'> & {
     simulate?: false
     printOnly: true
-  }
+  },
 ): Promise<[]>
 export async function splitAndExecuteTx(
-  args: ExecuteTxParams
+  args: ExecuteTxParams,
 ): Promise<(ExecuteTxReturnExecuted & SplitAndExecuteTxData)[]>
 export async function splitAndExecuteTx({
   connection,
@@ -656,7 +660,7 @@ export async function splitAndExecuteTx({
 }: ExecuteTxParams): Promise<(ExecuteTxReturn & SplitAndExecuteTxData)[]> {
   const result: (ExecuteTxReturn & SplitAndExecuteTxData)[] = []
   const realInstructionNumber = transaction.instructions.filter(
-    ix => !isSplitMarkerInstruction(ix)
+    ix => !isSplitMarkerInstruction(ix),
   ).length
   if (realInstructionNumber === 0) {
     return result
@@ -665,7 +669,7 @@ export async function splitAndExecuteTx({
   if (!simulate && printOnly) {
     // remove non executable instructions
     transaction.instructions = transaction.instructions.filter(
-      ix => !isSplitMarkerInstruction(ix)
+      ix => !isSplitMarkerInstruction(ix),
     )
     // only to print in base64, returning empty array -> no execution
     await executeTx({
@@ -687,7 +691,7 @@ export async function splitAndExecuteTx({
     }
     if (feePayer === undefined) {
       throw new Error(
-        'splitAndExecuteTx: transaction fee payer has to be defined, either in transaction or argument'
+        'splitAndExecuteTx: transaction fee payer has to be defined, either in transaction or argument',
       )
     }
     connection = instanceOfProvider(connection)
@@ -700,13 +704,13 @@ export async function splitAndExecuteTx({
     signers = Array.from(uniqueSigners.values())
     const feePayerDefined: PublicKey = feePayer
     const feePayerSigner = signers.find(s =>
-      s.publicKey.equals(feePayerDefined)
+      s.publicKey.equals(feePayerDefined),
     )
     if (feePayerSigner === undefined) {
       throw new Error(
         'splitAndExecuteTx: transaction fee payer ' +
           feePayerDefined.toBase58() +
-          ' has to be defined amongst signers'
+          ' has to be defined amongst signers',
       )
     }
 
@@ -723,7 +727,7 @@ export async function splitAndExecuteTx({
         lastValidBlockHeight: transaction.lastValidBlockHeight,
       }
     }
-    let lastValidTransaction = generateNewTransaction({
+    let lastValidTransaction = await generateNewTransaction({
       feePayer: feePayerDefined,
       bh: blockhash,
       computeUnitLimit,
@@ -746,7 +750,7 @@ export async function splitAndExecuteTx({
       const filteredSigners = filterSignersForInstruction(
         lastValidTransaction.instructions,
         signers,
-        feePayerDefined
+        feePayerDefined,
       )
       const signaturesSize = filteredSigners.length * 64
       let txSize: number | undefined = undefined
@@ -767,7 +771,7 @@ export async function splitAndExecuteTx({
       ) {
         // size was elapsed, need to split
         // need to consider existence of nonPossibleToSplitMarker
-        const transactionAdd = generateNewTransaction({
+        const transactionAdd = await generateNewTransaction({
           feePayer: feePayerDefined,
           bh: blockhash,
           computeUnitLimit,
@@ -790,14 +794,14 @@ export async function splitAndExecuteTx({
             `Working with instructions number: ${transaction.instructions}, ` +
               `current instruction index: ${i}, last split marker index: ${splitMarkerStartIdx}` +
               ` and transaction start index: ${transactionStartIndex}, last valid transaction: ${JSON.stringify(
-                lastValidTransaction
-              )}`
+                lastValidTransaction,
+              )}`,
           )
           throw new Error(
             'splitAndExecuteTx: no instructions to be added to the transaction, ' +
               'most probably the transaction contains split markers ' +
               TransactionInstructionSplitMarkerStart.name +
-              ' at indexes that the instructions cannot be split to executable chunks.'
+              ' at indexes that the instructions cannot be split to executable chunks.',
           )
         }
         transactions.push(transactionAdd)
@@ -807,7 +811,7 @@ export async function splitAndExecuteTx({
         i = addIdx - 1
         transactionStartIndex = addIdx
         // nulling data of the next transaction to check
-        lastValidTransaction = generateNewTransaction({
+        lastValidTransaction = await generateNewTransaction({
           feePayer: feePayerDefined,
           bh: blockhash,
           computeUnitLimit,
@@ -826,7 +830,7 @@ export async function splitAndExecuteTx({
       transaction.lastValidBlockHeight = priorTransaction?.lastValidBlockHeight
       const txSigners: (Signer | Wallet)[] = filterSignersForInstruction(
         transaction.instructions,
-        signers
+        signers,
       ).filter(s => !s.publicKey.equals(feePayerDefined))
       txSigners.push(feePayerSigner)
       const executeResult = await executeTxWithExceededBlockhashRetry({
@@ -849,7 +853,7 @@ export async function splitAndExecuteTx({
             : undefined
         }] ` +
           `${executionCounter}(${transaction.instructions.length} ixes)/${transactions.length} ` +
-          (simulate ? 'simulated' : 'executed')
+          (simulate ? 'simulated' : 'executed'),
       )
 
       if (executeResult !== undefined) {
@@ -866,7 +870,7 @@ export async function splitAndExecuteTx({
   return result
 }
 
-function generateNewTransaction({
+async function generateNewTransaction({
   feePayer,
   bh,
   computeUnitLimit,
@@ -879,9 +883,9 @@ function generateNewTransaction({
   }>
   computeUnitLimit?: number
   computeUnitPrice?: number
-}): Transaction {
+}): Promise<Transaction> {
   const transaction = getNewTransaction(feePayer, bh)
-  addComputeBudgetIxes({
+  await addComputeBudgetIxes({
     transaction,
     computeUnitLimit,
     computeUnitPrice,
@@ -905,7 +909,7 @@ export function debugStr(transaction: Transaction): string {
             (k, i) =>
               `  [${i}] ${k.pubkey.toString()} ${k.isWritable ? '(mut)' : ''} ${
                 k.isSigner ? '(signer)' : ''
-              }`
+              }`,
           ),
           `  Data (base64): ${ser.data.toString('base64')}`,
         ].join('\n')
