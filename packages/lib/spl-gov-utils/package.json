@@ -26,9 +26,9 @@
       "src"
     ],
     "devDependencies": {
-      "@solana/web3.js": "^1.93.0"
+      "@solana/web3.js": "^1.98.0"
     },
     "peerDependencies": {
-      "@solana/web3.js": "^1.93.0"
+      "@solana/web3.js": "^1.98.0"
     }
   }
