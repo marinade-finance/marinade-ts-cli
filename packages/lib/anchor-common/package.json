@@ -26,14 +26,14 @@
     "src"
   ],
   "devDependencies": {
-    "@solana/web3.js": "^1.93.0",
+    "@solana/web3.js": "^1.98.0",
     "bn.js": "^5.2.1",
     "@coral-xyz/anchor": "^0.29.0",
     "@marinade.finance/ts-common": "workspace: 2.4.9",
     "@marinade.finance/web3js-common": "workspace: 2.4.9"
   },
   "peerDependencies": {
-    "@solana/web3.js": "^1.93.0",
+    "@solana/web3.js": "^1.98.0",
     "bn.js": "^5.2.1",
     "@coral-xyz/anchor": "^0.29.0",
     "@marinade.finance/ts-common": "workspace: 2.4.9",
