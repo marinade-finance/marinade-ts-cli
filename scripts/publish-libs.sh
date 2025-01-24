@@ -30,11 +30,12 @@ pnpm build
 find -name package.json | xargs -I file sed -i 's/workspace:[ \t]*//' file
 find -name package.json | xargs -I file sed -i "s/${VERSION}/${NEW_VERSION}/" file
 
-echo "Going to publish the packages/libs to npm registry, from version ${VERSION} to ${NEW_VERSION}"
-read -p "Press enter to continue"
-
 git add .
 git ci -m "[chore] bump version to ${NEW_VERSION}"
+
+
+echo "Going to publish the packages/libs to npm registry, from version ${VERSION} to ${NEW_VERSION}"
+read -p "Press enter to continue"
 
 pnpm publish:libs
 
