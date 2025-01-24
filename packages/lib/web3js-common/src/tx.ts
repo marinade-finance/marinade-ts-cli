@@ -593,20 +593,22 @@ export type TransactionData<T extends Transaction | VersionedTransaction> = {
  */
 export class TransactionInstructionSplitMarkerStart extends TransactionInstruction {
   constructor() {
-    super({
+    const config = {
       keys: [],
       programId: PublicKey.default,
       data: Buffer.alloc(0),
-    })
+    }
+    super(config)
   }
 }
 export class TransactionInstructionSplitMarkerEnd extends TransactionInstruction {
   constructor() {
-    super({
+    const config = {
       keys: [],
       programId: PublicKey.default,
       data: Buffer.alloc(0),
-    })
+    }
+    super(config)
   }
 }
 export const SPLIT_MARKER_START_INSTANCE =

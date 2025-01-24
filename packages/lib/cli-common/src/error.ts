@@ -37,7 +37,8 @@ export class CliCommandError extends ExecutionError {
     } else {
       errorMessage = format('%s: %s', commandName, msg)
     }
-    super({ msg: errorMessage, cause, logs, transaction })
+    const config = { msg: errorMessage, cause, logs, transaction }
+    super(config)
   }
 
   static fromMsg(msg: string): CliCommandError {
