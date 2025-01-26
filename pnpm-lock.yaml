@@ -62,11 +62,11 @@ importers:
         specifier: ^0.29.0
         version: 0.29.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@marinade.finance/ts-common':
-        specifier: 2.4.11
-        version: 2.4.11
+        specifier: 2.4.12
+        version: 2.4.12
       '@marinade.finance/web3js-common':
-        specifier: 2.4.11
-        version: 2.4.11(@marinade.finance/ts-common@2.4.11)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)
+        specifier: 2.4.12
+        version: 2.4.12(@marinade.finance/ts-common@2.4.12)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)
       '@solana/web3.js':
         specifier: ^1.98.0
         version: 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -77,8 +77,8 @@ importers:
   packages/lib/bankrun-utils:
     devDependencies:
       '@marinade.finance/web3js-common':
-        specifier: 2.4.11
-        version: 2.4.11(@marinade.finance/ts-common@2.4.11)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)
+        specifier: 2.4.12
+        version: 2.4.12(@marinade.finance/ts-common@2.4.12)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)
       '@solana/web3.js':
         specifier: ^1.98.0
         version: 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -96,13 +96,13 @@ importers:
     devDependencies:
       '@marinade.finance/ledger-utils':
         specifier: ^3.0.1
-        version: 3.0.1(@ledgerhq/errors@6.16.1)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@2.4.11)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+        version: 3.0.1(@ledgerhq/errors@6.16.1)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@2.4.12)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@marinade.finance/ts-common':
-        specifier: 2.4.11
-        version: 2.4.11
+        specifier: 2.4.12
+        version: 2.4.12
       '@marinade.finance/web3js-common':
-        specifier: 2.4.11
-        version: 2.4.11(@marinade.finance/ts-common@2.4.11)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)
+        specifier: 2.4.12
+        version: 2.4.12(@marinade.finance/ts-common@2.4.12)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)
       '@solana/web3.js':
         specifier: ^1.98.0
         version: 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -148,14 +148,14 @@ importers:
   packages/lib/umi-utils:
     devDependencies:
       '@marinade.finance/web3js-common':
-        specifier: 2.4.11
-        version: 2.4.11(@marinade.finance/ts-common@2.4.11)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)
+        specifier: 2.4.12
+        version: 2.4.12(@marinade.finance/ts-common@2.4.12)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)
       '@metaplex-foundation/umi':
-        specifier: 1.0.0
-        version: 1.0.0
+        specifier: ^0.8.2
+        version: 0.8.10
       '@metaplex-foundation/umi-bundle-defaults':
-        specifier: 1.0.0
-        version: 1.0.0(@metaplex-foundation/umi@1.0.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+        specifier: ^0.8.2
+        version: 0.8.10(@metaplex-foundation/umi@0.8.10)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js':
         specifier: ^1.98.0
         version: 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -163,8 +163,8 @@ importers:
   packages/lib/web3js-common:
     devDependencies:
       '@marinade.finance/ts-common':
-        specifier: 2.4.11
-        version: 2.4.11
+        specifier: 2.4.12
+        version: 2.4.12
       '@solana/buffer-layout':
         specifier: ^4.0.1
         version: 4.0.1
@@ -190,17 +190,17 @@ importers:
         specifier: '0.28'
         version: 0.28.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       '@marinade.finance/cli-common':
-        specifier: 2.4.11
-        version: 2.4.11(@marinade.finance/ledger-utils@3.0.1(@ledgerhq/errors@6.16.1)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@2.4.11)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@marinade.finance/ts-common@2.4.11)(@marinade.finance/web3js-common@2.4.11(@marinade.finance/ts-common@2.4.11)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0))(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)(pino@9.6.0)(yaml@2.4.5)
+        specifier: 2.4.12
+        version: 2.4.12(@marinade.finance/ledger-utils@3.0.1(@ledgerhq/errors@6.16.1)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@2.4.12)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@marinade.finance/ts-common@2.4.12)(@marinade.finance/web3js-common@2.4.12(@marinade.finance/ts-common@2.4.12)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0))(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)(pino@9.6.0)(yaml@2.4.5)
       '@marinade.finance/ledger-utils':
         specifier: ^3.0.1
-        version: 3.0.1(@ledgerhq/errors@6.16.1)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@2.4.11)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+        version: 3.0.1(@ledgerhq/errors@6.16.1)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@2.4.12)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@marinade.finance/marinade-ts-sdk':
         specifier: 5.0.7
         version: 5.0.7(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(jsbi@4.3.0)(utf-8-validate@5.0.10)
       '@marinade.finance/web3js-common':
-        specifier: 2.4.11
-        version: 2.4.11(@marinade.finance/ts-common@2.4.11)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)
+        specifier: 2.4.12
+        version: 2.4.12(@marinade.finance/ts-common@2.4.12)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)
       '@solana/spl-governance':
         specifier: ^0.3.28
         version: 0.3.28(bufferutil@4.0.8)(utf-8-validate@5.0.10)
@@ -230,8 +230,8 @@ importers:
         version: 11.2.1
     devDependencies:
       '@marinade.finance/jest-utils':
-        specifier: 2.4.11
-        version: 2.4.11(@jest/globals@29.7.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(jest-shell-matchers@1.0.2(jest@29.7.0(@types/node@22.10.7)(ts-node@10.9.2(@types/node@22.10.7)(typescript@5.4.5))))
+        specifier: 2.4.12
+        version: 2.4.12(@jest/globals@29.7.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(jest-shell-matchers@1.0.2(jest@29.7.0(@types/node@22.10.7)(ts-node@10.9.2(@types/node@22.10.7)(typescript@5.4.5))))
       '@solana/spl-token-3.x':
         specifier: npm:@solana/spl-token@^0.3.11
         version: '@solana/spl-token@0.3.11(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(utf-8-validate@5.0.10)'
@@ -735,13 +735,13 @@ packages:
   '@ledgerhq/logs@6.12.0':
     resolution: {integrity: sha512-ExDoj1QV5eC6TEbMdLUMMk9cfvNKhhv5gXol4SmULRVCx/3iyCPhJ74nsb3S0Vb+/f+XujBEj3vQn5+cwS0fNA==}
 
-  '@marinade.finance/cli-common@2.4.11':
-    resolution: {integrity: sha512-aft+5hy5CH+rrhY6/hYy54oPgKjQUapSer3pLV4yWSHVC9+2YCNdJGXQHBBBnFl7f47vLO70O1IlqW0zsoSKkg==}
+  '@marinade.finance/cli-common@2.4.12':
+    resolution: {integrity: sha512-GDamdn8I6xjo52hGDRdzm1cnG5F/aUAmVmskSlRjMPWn3U9O6WFj1f5AjMWULD3MaBC71xm5SP0KcipRd7eYKQ==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
       '@marinade.finance/ledger-utils': ^3.0.1
-      '@marinade.finance/ts-common': 2.4.11
-      '@marinade.finance/web3js-common': 2.4.11
+      '@marinade.finance/ts-common': 2.4.12
+      '@marinade.finance/web3js-common': 2.4.12
       '@solana/web3.js': ^1.98.0
       bn.js: ^5.2.1
       borsh: ^0.7.0
@@ -757,8 +757,8 @@ packages:
       bn.js: ^5.2.1
       jsbi: ^4.3.0
 
-  '@marinade.finance/jest-utils@2.4.11':
-    resolution: {integrity: sha512-hH1ytMUocu/VYgc201/J+FaoVISRxnWYy82DamXATEDClu4hiUiPLsOwByZN/+oG2OJbE1D+VHLg6+9Zxz9VLw==}
+  '@marinade.finance/jest-utils@2.4.12':
+    resolution: {integrity: sha512-9yEwX+GtBXv2Rw37jwb2Jpq2hIwIdYwPmm+c4rlnORs45HbeeTNRIXsTSPTIxY5bcyeXErfAm8US12SF6gLRyQ==}
     peerDependencies:
       '@jest/globals': ^29.7.0
       '@solana/web3.js': ^1.98.0
@@ -781,95 +781,95 @@ packages:
   '@marinade.finance/native-staking-sdk@1.1.0':
     resolution: {integrity: sha512-+iuJLEBIcBgYETkshEGIhwQqUvbjCJ0rHV6BHNOiJur2ppMbswaaCsj3DPu0yJiB2PWvzItZGZMo+BSWUxvJvg==}
 
-  '@marinade.finance/ts-common@2.4.11':
-    resolution: {integrity: sha512-zQRhG6X2lSkiBGoikfoi2uTSoQutCPnPt0ZkpiDbkuVqykUiY3eLJBCt3OyMLzQkMvlhuBnSCyaOcGKWmrnDpg==}
+  '@marinade.finance/ts-common@2.4.12':
+    resolution: {integrity: sha512-vr8Q7PSZCOD9mkqiVUtaoeSMZXGe4N09zdAkzbMD4W8kZzBkkM/6WkRSB1mMV72/VBhBnlVpNCGPHJC6wcmV1g==}
 
-  '@marinade.finance/web3js-common@2.4.11':
-    resolution: {integrity: sha512-YEW2AaC75JX7Ad1jSnp4WDwjklggCJLz6C5KaK3jJ345b0lOh5MBg3Owc9jVZpKwUgkbmurv5jkll0qMgGGOzw==}
+  '@marinade.finance/web3js-common@2.4.12':
+    resolution: {integrity: sha512-H60T7ObhjqNsjVt+umqU+xoE2fmMq/4koQYWEg6wLwVkjdGhejByZ/UGtg8fvIngfMBcxtwfm1WTwckmEXOp6A==}
     engines: {node: '>=16.0.0'}
     peerDependencies:
-      '@marinade.finance/ts-common': 2.4.11
+      '@marinade.finance/ts-common': 2.4.12
       '@solana/buffer-layout': ^4.0.1
       '@solana/web3.js': ^1.98.0
       bn.js: ^5.2.1
       borsh: ^0.7.0
       bs58: ^6.0.0
 
-  '@metaplex-foundation/umi-bundle-defaults@1.0.0':
-    resolution: {integrity: sha512-Z8Ah4vJNkO5/sDvtG49kULNdGskaGYfJSygA9p061zG8BztML1okBkx0QZG/TM0fB0cMI8w5cwTd1O5gT64+Kg==}
+  '@metaplex-foundation/umi-bundle-defaults@0.8.10':
+    resolution: {integrity: sha512-eqt5uJlDb6SNV0qB7BiTWbRAk1Mnl22ve3qHRxalqvDGQ2bklEY6RzBZWC+R/eQnJ+pVsp7Dd34bhxY3I+Ht7g==}
     peerDependencies:
-      '@metaplex-foundation/umi': ^1.0.0
+      '@metaplex-foundation/umi': ^0.8.10
       '@solana/web3.js': ^1.72.0
 
-  '@metaplex-foundation/umi-downloader-http@1.0.0':
-    resolution: {integrity: sha512-qBG3A6SG8cgOwu+DVeGIDyakKw1oZsoi+ta6jPQYredeISDJwbysepg7O6ickvGmdjPA6WLeoVRjiZWmt2LgDg==}
+  '@metaplex-foundation/umi-downloader-http@0.8.10':
+    resolution: {integrity: sha512-i0YbSaPvo0/49XazVL+jmm3PpRSeE4bc8E1TUUsUCXrpb6lSup6u0cx7vYij2mis91UDhdO8hTgdxFwNdqvFHQ==}
     peerDependencies:
-      '@metaplex-foundation/umi': ^1.0.0
+      '@metaplex-foundation/umi': ^0.8.10
 
-  '@metaplex-foundation/umi-eddsa-web3js@1.0.0':
-    resolution: {integrity: sha512-mIdp65Fsi7bhFcDUFZxcThGQaMXQahMNGR46HkXUHglQtRxxYGLduT3XEq/aLPVZCW9mWfyK/M03AInwIAcJTw==}
+  '@metaplex-foundation/umi-eddsa-web3js@0.8.10':
+    resolution: {integrity: sha512-2CLsuQ67oPKczB7RuG07/Ro1rrW25vGZArren20/zBTgHubGIuFW7V8e9qZDqkHDt1nFecxrX55g0fNtQaU40g==}
     peerDependencies:
-      '@metaplex-foundation/umi': ^1.0.0
+      '@metaplex-foundation/umi': ^0.8.10
       '@solana/web3.js': ^1.72.0
 
-  '@metaplex-foundation/umi-http-fetch@1.0.0':
-    resolution: {integrity: sha512-yZbAcuxMOdSSFhvltWIMescBAuf4ddeYjK4LABbTXWKhZFTliYdSSMmViLArbO6lBJAekKhyNbIdM/uH6KhE/w==}
+  '@metaplex-foundation/umi-http-fetch@0.8.10':
+    resolution: {integrity: sha512-9QkVMaM8A8JFaTSanVJT3R7IzeLn05xrK7fFnfCTASaTvk+7Dj8ZsgXQjuyCi1pXQrMN+EsREn2NE/tn48ffMQ==}
     peerDependencies:
-      '@metaplex-foundation/umi': ^1.0.0
+      '@metaplex-foundation/umi': ^0.8.10
 
-  '@metaplex-foundation/umi-options@1.0.0':
-    resolution: {integrity: sha512-DhfwrXTsvOrDwPGT5FpzC7VooLGMRjUSBV8W9xkp+WMxkzbNXeUV+bFmoTNx+0ynLhINp6Ij76W/Rl+4dIwU0w==}
+  '@metaplex-foundation/umi-options@0.8.9':
+    resolution: {integrity: sha512-jSQ61sZMPSAk/TXn8v8fPqtz3x8d0/blVZXLLbpVbo2/T5XobiI6/MfmlUosAjAUaQl6bHRF8aIIqZEFkJiy4A==}
 
-  '@metaplex-foundation/umi-program-repository@1.0.0':
-    resolution: {integrity: sha512-kw1u/Dv7p4olyM1am0FbPvjPWbgoHDBI/cS7Dl0h0PFqlBq9I4JHZmpd53+C4P7lFZtWEcDWKEgmdqAsCja40Q==}
+  '@metaplex-foundation/umi-program-repository@0.8.10':
+    resolution: {integrity: sha512-zw+UMOg9z3xqqeosRfctmcnaDYkaoMMvqhu7Vpwt7K9tpVtMaMT5yei29ORvaYpiEVG5hZSbywr/vQsNY0EV9g==}
     peerDependencies:
-      '@metaplex-foundation/umi': ^1.0.0
+      '@metaplex-foundation/umi': ^0.8.10
 
-  '@metaplex-foundation/umi-public-keys@1.0.0':
-    resolution: {integrity: sha512-irTc5QGOCgV0mGLY/SU3YOrXVmvEEOrqb1gDvtBtr714X4EtwSv5Aqner9L1/s4PzaXmeN4f86FWFWM3knrlEw==}
+  '@metaplex-foundation/umi-public-keys@0.8.9':
+    resolution: {integrity: sha512-CxMzN7dgVGOq9OcNCJe2casKUpJ3RmTVoOvDFyeoTQuK+vkZ1YSSahbqC1iGuHEtKTLSjtWjKvUU6O7zWFTw3Q==}
 
-  '@metaplex-foundation/umi-rpc-chunk-get-accounts@1.0.0':
-    resolution: {integrity: sha512-srFzEAGh9rOfAclBSFE947SSNHcpq4SH8mThSt7EiDf59iPe/r1n5IPyZp1sHogEQJ4KKXst7vBV03qC7ASuDg==}
+  '@metaplex-foundation/umi-rpc-chunk-get-accounts@0.8.10':
+    resolution: {integrity: sha512-+fiQ+yza7C5N/vvCzDxoXkdE8NDg/Q5FOWCa4ysuupHB4P3/Ah+M5zJdB739I047ykIi+Fy/+JqmWsSZQsHNHA==}
     peerDependencies:
-      '@metaplex-foundation/umi': ^1.0.0
+      '@metaplex-foundation/umi': ^0.8.10
 
-  '@metaplex-foundation/umi-rpc-web3js@1.0.0':
-    resolution: {integrity: sha512-SANWIFaMfOVZCxecD9ycd1tzhKiJrkwRqHotEcM+LMb5EKMagTsqEHh3VAsCg3XfjKOG8m3XMeBJ534aySfEHw==}
+  '@metaplex-foundation/umi-rpc-web3js@0.8.10':
+    resolution: {integrity: sha512-+60uxlX1OcThL2UIW9dbcy0Ihr011ggxkQYSxc1qh4qitgD9wrZZ/v9nX4tzEN88a52UJGhH5G3SF6CNmqy4aw==}
     peerDependencies:
-      '@metaplex-foundation/umi': ^1.0.0
+      '@metaplex-foundation/umi': ^0.8.10
       '@solana/web3.js': ^1.72.0
 
-  '@metaplex-foundation/umi-serializer-data-view@1.0.0':
-    resolution: {integrity: sha512-LSn0uZiBC+qJrsaY98lIPFnMLDqlXlcJt0TZJhBKZNPIBLdSwvcU60ABloycxafR+dzpM0vzne0JXNVaKf3Cug==}
+  '@metaplex-foundation/umi-serializer-data-view@0.8.10':
+    resolution: {integrity: sha512-DVKUQw7FEfpRIE9RF4YU73Mwlaf42RAWDgcycNiYFWpj/FLRebNr+2NT3ALYlOqXsAchnCAYjlQVxCB0Sopn9Q==}
     peerDependencies:
-      '@metaplex-foundation/umi': ^1.0.0
+      '@metaplex-foundation/umi': ^0.8.10
 
-  '@metaplex-foundation/umi-serializers-core@1.0.0':
-    resolution: {integrity: sha512-Ov95ARxh179EX6elN6LoHeC+TczirYvzFeIA4gGZKTISpP3sqwRrej6ppnY6qQFk2bFKCKJyvVGiyP2jjuqjJg==}
+  '@metaplex-foundation/umi-serializers-core@0.8.9':
+    resolution: {integrity: sha512-WT82tkiYJ0Qmscp7uTj1Hz6aWQPETwaKLAENAUN5DeWghkuBKtuxyBKVvEOuoXerJSdhiAk0e8DWA4cxcTTQ/w==}
 
-  '@metaplex-foundation/umi-serializers-encodings@1.0.0':
-    resolution: {integrity: sha512-1278rWbkA9ZAPaq+EXmOwM9pi1LC8eaHsgm0XVFebxsZFkaHbCYPXmB9vkO2jTFFFy4uy5hsYGPRValFl4GdWg==}
+  '@metaplex-foundation/umi-serializers-encodings@0.8.9':
+    resolution: {integrity: sha512-N3VWLDTJ0bzzMKcJDL08U3FaqRmwlN79FyE4BHj6bbAaJ9LEHjDQ9RJijZyWqTm0jE7I750fU7Ow5EZL38Xi6Q==}
 
-  '@metaplex-foundation/umi-serializers-numbers@1.0.0':
-    resolution: {integrity: sha512-OXKX/hQbbc16X7PvpmM2hZ9WrhDBTPJsEcEbRSN4kQewNdmpyMnfXhaqW84Tfc99Ipvyl6Lpe3Dbl/oOTHqong==}
+  '@metaplex-foundation/umi-serializers-numbers@0.8.9':
+    resolution: {integrity: sha512-NtBf1fnVNQJHFQjLFzRu2i9GGnigb9hOm/Gfrk628d0q0tRJB7BOM3bs5C61VAs7kJs4yd+pDNVAERJkknQ7Lg==}
 
-  '@metaplex-foundation/umi-serializers@1.0.0':
-    resolution: {integrity: sha512-9lbVzH2cHjAfhrTm7oJ7+5xnfNz+/J3YY554JZUh+Dw7WxiQUvhs0v5DxrNNGbEZQENjm+gORnZ8WX3a3gW2VA==}
+  '@metaplex-foundation/umi-serializers@0.8.9':
+    resolution: {integrity: sha512-Sve8Etm3zqvLSUfza+MYRkjTnCpiaAFT7VWdqeHzA3n58P0AfT3p74RrZwVt/UFkxI+ln8BslwBDJmwzcPkuHw==}
 
-  '@metaplex-foundation/umi-transaction-factory-web3js@1.0.0':
-    resolution: {integrity: sha512-VyHo6gTElAFCOpA87bQJE2nvEqOV8c72dGIlb/qAJAF85kca1Pw7jh6YFVFaZMOKNXFpFrbHofgS+uNQZRYXRg==}
+  '@metaplex-foundation/umi-transaction-factory-web3js@0.8.10':
+    resolution: {integrity: sha512-hnkDKdtuZgY6DKH6aSEd6UrZGi5/WvfYqJUWeM8SVl1/8GhNypNKWvuppvFHpU9X2tLXuF4JSG4TVxAuIs9LBQ==}
     peerDependencies:
-      '@metaplex-foundation/umi': ^1.0.0
+      '@metaplex-foundation/umi': ^0.8.10
       '@solana/web3.js': ^1.72.0
 
-  '@metaplex-foundation/umi-web3js-adapters@1.0.0':
-    resolution: {integrity: sha512-daAuxorWSwF3cOWz9UjlYKlgGVM6eTw7cbLKyj8Sk90umxv5sfMZR5CjmaILHsXz5uaYIcjoivabSngucp4xNA==}
+  '@metaplex-foundation/umi-web3js-adapters@0.8.10':
+    resolution: {integrity: sha512-TGF+vzO/v0HMRM8sz1M1yh+wfZ5l4RCFm1Kkcy5MC9FrNDookPP6y9aYZ3R0QkEVVV3u+8QLptrTUrxr3EGmyQ==}
     peerDependencies:
-      '@metaplex-foundation/umi': ^1.0.0
+      '@metaplex-foundation/umi': ^0.8.10
       '@solana/web3.js': ^1.72.0
 
-  '@metaplex-foundation/umi@1.0.0':
-    resolution: {integrity: sha512-kCYwVI4REdDW8SwJGjPkef70t3JBPqkyf6k+zu/tBKUXdGh7jOkbZnUghdXk5GZ2Md+bqh9dtM93u/66N6xcWA==}
+  '@metaplex-foundation/umi@0.8.10':
+    resolution: {integrity: sha512-iGuGIfJh2+YFvUIkZ0nB/69EsQcaoq89DDPRPYvPBtOunfv8TH8SNrwcsXHlp9aBtn5FGKCPx3V3X/eurB32Fg==}
 
   '@noble/curves@1.7.0':
     resolution: {integrity: sha512-UTMhXK9SeDhFJVrHeUJ5uZlI6ajXg10O6Ddocf9S6GjbSBVZsJo88HzKwXznNfGpMTRDyJkqMjNDPYgf0qFWnw==}
@@ -916,12 +916,6 @@ packages:
 
   '@sinonjs/fake-timers@10.3.0':
     resolution: {integrity: sha512-V4BG07kuYSUkTCSBHG8G8TNhM+F19jXFWnQtzj+we8DrkpSBCee9Z3Ms8yiGer/dlmhe35/Xdgyo3/0rQKg7YA==}
-
-  '@soceanfi/solana-cli-config@0.2.0':
-    resolution: {integrity: sha512-te44VYk+a5NpYu3Cek6wGo+Lou8zT5DUCos3FA6spr/WBfXb4L1SsmOtxgDCB9GRIuBQJgwDFcydAC+G9oL2PQ==}
-    hasBin: true
-    peerDependencies:
-      '@solana/web3.js': ^1
 
   '@solana/buffer-layout-utils@0.2.0':
     resolution: {integrity: sha512-szG4sxgJGktbuZYDg2FfNmkMi0DYQoVjN2h7ta1W1hPrwzarcFLBq9UpX1UjNXsNpT9dn+chgprtWGioUAr4/g==}
@@ -4058,11 +4052,11 @@ snapshots:
 
   '@ledgerhq/logs@6.12.0': {}
 
-  '@marinade.finance/cli-common@2.4.11(@marinade.finance/ledger-utils@3.0.1(@ledgerhq/errors@6.16.1)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@2.4.11)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@marinade.finance/ts-common@2.4.11)(@marinade.finance/web3js-common@2.4.11(@marinade.finance/ts-common@2.4.11)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0))(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)(pino@9.6.0)(yaml@2.4.5)':
+  '@marinade.finance/cli-common@2.4.12(@marinade.finance/ledger-utils@3.0.1(@ledgerhq/errors@6.16.1)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@2.4.12)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)))(@marinade.finance/ts-common@2.4.12)(@marinade.finance/web3js-common@2.4.12(@marinade.finance/ts-common@2.4.12)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0))(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)(pino@9.6.0)(yaml@2.4.5)':
     dependencies:
-      '@marinade.finance/ledger-utils': 3.0.1(@ledgerhq/errors@6.16.1)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@2.4.11)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@marinade.finance/ts-common': 2.4.11
-      '@marinade.finance/web3js-common': 2.4.11(@marinade.finance/ts-common@2.4.11)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)
+      '@marinade.finance/ledger-utils': 3.0.1(@ledgerhq/errors@6.16.1)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@2.4.12)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@marinade.finance/ts-common': 2.4.12
+      '@marinade.finance/web3js-common': 2.4.12(@marinade.finance/ts-common@2.4.12)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)
       '@solana/web3.js': 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       bn.js: 5.2.1
       borsh: 0.7.0
@@ -4082,19 +4076,19 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@marinade.finance/jest-utils@2.4.11(@jest/globals@29.7.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(jest-shell-matchers@1.0.2(jest@29.7.0(@types/node@22.10.7)(ts-node@10.9.2(@types/node@22.10.7)(typescript@5.4.5))))':
+  '@marinade.finance/jest-utils@2.4.12(@jest/globals@29.7.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(jest-shell-matchers@1.0.2(jest@29.7.0(@types/node@22.10.7)(ts-node@10.9.2(@types/node@22.10.7)(typescript@5.4.5))))':
     dependencies:
       '@jest/globals': 29.7.0
       '@solana/web3.js': 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       bn.js: 5.2.1
       jest-shell-matchers: 1.0.2(jest@29.7.0(@types/node@22.10.7)(ts-node@10.9.2(@types/node@22.10.7)(typescript@5.4.5)))
 
-  '@marinade.finance/ledger-utils@3.0.1(@ledgerhq/errors@6.16.1)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@2.4.11)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@marinade.finance/ledger-utils@3.0.1(@ledgerhq/errors@6.16.1)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@2.4.12)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
       '@ledgerhq/errors': 6.16.1
       '@ledgerhq/hw-app-solana': 7.1.2
       '@ledgerhq/hw-transport-node-hid-noevents': 6.29.2
-      '@marinade.finance/ts-common': 2.4.11
+      '@marinade.finance/ts-common': 2.4.12
       '@solana/web3.js': 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
   '@marinade.finance/marinade-ts-sdk@5.0.7(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(jsbi@4.3.0)(utf-8-validate@5.0.10)':
@@ -4125,110 +4119,109 @@ snapshots:
       - encoding
       - utf-8-validate
 
-  '@marinade.finance/ts-common@2.4.11': {}
+  '@marinade.finance/ts-common@2.4.12': {}
 
-  '@marinade.finance/web3js-common@2.4.11(@marinade.finance/ts-common@2.4.11)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)':
+  '@marinade.finance/web3js-common@2.4.12(@marinade.finance/ts-common@2.4.12)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))(bn.js@5.2.1)(borsh@0.7.0)(bs58@6.0.0)':
     dependencies:
-      '@marinade.finance/ts-common': 2.4.11
+      '@marinade.finance/ts-common': 2.4.12
       '@solana/buffer-layout': 4.0.1
       '@solana/web3.js': 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       bn.js: 5.2.1
       borsh: 0.7.0
       bs58: 6.0.0
 
-  '@metaplex-foundation/umi-bundle-defaults@1.0.0(@metaplex-foundation/umi@1.0.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@metaplex-foundation/umi-bundle-defaults@0.8.10(@metaplex-foundation/umi@0.8.10)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
-      '@metaplex-foundation/umi': 1.0.0
-      '@metaplex-foundation/umi-downloader-http': 1.0.0(@metaplex-foundation/umi@1.0.0)
-      '@metaplex-foundation/umi-eddsa-web3js': 1.0.0(@metaplex-foundation/umi@1.0.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@metaplex-foundation/umi-http-fetch': 1.0.0(@metaplex-foundation/umi@1.0.0)
-      '@metaplex-foundation/umi-program-repository': 1.0.0(@metaplex-foundation/umi@1.0.0)
-      '@metaplex-foundation/umi-rpc-chunk-get-accounts': 1.0.0(@metaplex-foundation/umi@1.0.0)
-      '@metaplex-foundation/umi-rpc-web3js': 1.0.0(@metaplex-foundation/umi@1.0.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
-      '@metaplex-foundation/umi-serializer-data-view': 1.0.0(@metaplex-foundation/umi@1.0.0)
-      '@metaplex-foundation/umi-transaction-factory-web3js': 1.0.0(@metaplex-foundation/umi@1.0.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@metaplex-foundation/umi': 0.8.10
+      '@metaplex-foundation/umi-downloader-http': 0.8.10(@metaplex-foundation/umi@0.8.10)
+      '@metaplex-foundation/umi-eddsa-web3js': 0.8.10(@metaplex-foundation/umi@0.8.10)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@metaplex-foundation/umi-http-fetch': 0.8.10(@metaplex-foundation/umi@0.8.10)
+      '@metaplex-foundation/umi-program-repository': 0.8.10(@metaplex-foundation/umi@0.8.10)
+      '@metaplex-foundation/umi-rpc-chunk-get-accounts': 0.8.10(@metaplex-foundation/umi@0.8.10)
+      '@metaplex-foundation/umi-rpc-web3js': 0.8.10(@metaplex-foundation/umi@0.8.10)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@metaplex-foundation/umi-serializer-data-view': 0.8.10(@metaplex-foundation/umi@0.8.10)
+      '@metaplex-foundation/umi-transaction-factory-web3js': 0.8.10(@metaplex-foundation/umi@0.8.10)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
     transitivePeerDependencies:
       - encoding
 
-  '@metaplex-foundation/umi-downloader-http@1.0.0(@metaplex-foundation/umi@1.0.0)':
+  '@metaplex-foundation/umi-downloader-http@0.8.10(@metaplex-foundation/umi@0.8.10)':
     dependencies:
-      '@metaplex-foundation/umi': 1.0.0
+      '@metaplex-foundation/umi': 0.8.10
 
-  '@metaplex-foundation/umi-eddsa-web3js@1.0.0(@metaplex-foundation/umi@1.0.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@metaplex-foundation/umi-eddsa-web3js@0.8.10(@metaplex-foundation/umi@0.8.10)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
-      '@metaplex-foundation/umi': 1.0.0
-      '@metaplex-foundation/umi-web3js-adapters': 1.0.0(@metaplex-foundation/umi@1.0.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@metaplex-foundation/umi': 0.8.10
+      '@metaplex-foundation/umi-web3js-adapters': 0.8.10(@metaplex-foundation/umi@0.8.10)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@noble/curves': 1.7.0
-      '@soceanfi/solana-cli-config': 0.2.0(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
-  '@metaplex-foundation/umi-http-fetch@1.0.0(@metaplex-foundation/umi@1.0.0)':
+  '@metaplex-foundation/umi-http-fetch@0.8.10(@metaplex-foundation/umi@0.8.10)':
     dependencies:
-      '@metaplex-foundation/umi': 1.0.0
+      '@metaplex-foundation/umi': 0.8.10
       node-fetch: 2.7.0
     transitivePeerDependencies:
       - encoding
 
-  '@metaplex-foundation/umi-options@1.0.0': {}
+  '@metaplex-foundation/umi-options@0.8.9': {}
 
-  '@metaplex-foundation/umi-program-repository@1.0.0(@metaplex-foundation/umi@1.0.0)':
+  '@metaplex-foundation/umi-program-repository@0.8.10(@metaplex-foundation/umi@0.8.10)':
     dependencies:
-      '@metaplex-foundation/umi': 1.0.0
+      '@metaplex-foundation/umi': 0.8.10
 
-  '@metaplex-foundation/umi-public-keys@1.0.0':
+  '@metaplex-foundation/umi-public-keys@0.8.9':
     dependencies:
-      '@metaplex-foundation/umi-serializers-encodings': 1.0.0
+      '@metaplex-foundation/umi-serializers-encodings': 0.8.9
 
-  '@metaplex-foundation/umi-rpc-chunk-get-accounts@1.0.0(@metaplex-foundation/umi@1.0.0)':
+  '@metaplex-foundation/umi-rpc-chunk-get-accounts@0.8.10(@metaplex-foundation/umi@0.8.10)':
     dependencies:
-      '@metaplex-foundation/umi': 1.0.0
+      '@metaplex-foundation/umi': 0.8.10
 
-  '@metaplex-foundation/umi-rpc-web3js@1.0.0(@metaplex-foundation/umi@1.0.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@metaplex-foundation/umi-rpc-web3js@0.8.10(@metaplex-foundation/umi@0.8.10)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
-      '@metaplex-foundation/umi': 1.0.0
-      '@metaplex-foundation/umi-web3js-adapters': 1.0.0(@metaplex-foundation/umi@1.0.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@metaplex-foundation/umi': 0.8.10
+      '@metaplex-foundation/umi-web3js-adapters': 0.8.10(@metaplex-foundation/umi@0.8.10)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
-  '@metaplex-foundation/umi-serializer-data-view@1.0.0(@metaplex-foundation/umi@1.0.0)':
+  '@metaplex-foundation/umi-serializer-data-view@0.8.10(@metaplex-foundation/umi@0.8.10)':
     dependencies:
-      '@metaplex-foundation/umi': 1.0.0
+      '@metaplex-foundation/umi': 0.8.10
 
-  '@metaplex-foundation/umi-serializers-core@1.0.0': {}
+  '@metaplex-foundation/umi-serializers-core@0.8.9': {}
 
-  '@metaplex-foundation/umi-serializers-encodings@1.0.0':
+  '@metaplex-foundation/umi-serializers-encodings@0.8.9':
     dependencies:
-      '@metaplex-foundation/umi-serializers-core': 1.0.0
+      '@metaplex-foundation/umi-serializers-core': 0.8.9
 
-  '@metaplex-foundation/umi-serializers-numbers@1.0.0':
+  '@metaplex-foundation/umi-serializers-numbers@0.8.9':
     dependencies:
-      '@metaplex-foundation/umi-serializers-core': 1.0.0
+      '@metaplex-foundation/umi-serializers-core': 0.8.9
 
-  '@metaplex-foundation/umi-serializers@1.0.0':
+  '@metaplex-foundation/umi-serializers@0.8.9':
     dependencies:
-      '@metaplex-foundation/umi-options': 1.0.0
-      '@metaplex-foundation/umi-public-keys': 1.0.0
-      '@metaplex-foundation/umi-serializers-core': 1.0.0
-      '@metaplex-foundation/umi-serializers-encodings': 1.0.0
-      '@metaplex-foundation/umi-serializers-numbers': 1.0.0
+      '@metaplex-foundation/umi-options': 0.8.9
+      '@metaplex-foundation/umi-public-keys': 0.8.9
+      '@metaplex-foundation/umi-serializers-core': 0.8.9
+      '@metaplex-foundation/umi-serializers-encodings': 0.8.9
+      '@metaplex-foundation/umi-serializers-numbers': 0.8.9
 
-  '@metaplex-foundation/umi-transaction-factory-web3js@1.0.0(@metaplex-foundation/umi@1.0.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@metaplex-foundation/umi-transaction-factory-web3js@0.8.10(@metaplex-foundation/umi@0.8.10)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
-      '@metaplex-foundation/umi': 1.0.0
-      '@metaplex-foundation/umi-web3js-adapters': 1.0.0(@metaplex-foundation/umi@1.0.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
+      '@metaplex-foundation/umi': 0.8.10
+      '@metaplex-foundation/umi-web3js-adapters': 0.8.10(@metaplex-foundation/umi@0.8.10)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))
       '@solana/web3.js': 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
 
-  '@metaplex-foundation/umi-web3js-adapters@1.0.0(@metaplex-foundation/umi@1.0.0)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
+  '@metaplex-foundation/umi-web3js-adapters@0.8.10(@metaplex-foundation/umi@0.8.10)(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
     dependencies:
-      '@metaplex-foundation/umi': 1.0.0
+      '@metaplex-foundation/umi': 0.8.10
       '@solana/web3.js': 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
       buffer: 6.0.3
 
-  '@metaplex-foundation/umi@1.0.0':
+  '@metaplex-foundation/umi@0.8.10':
     dependencies:
-      '@metaplex-foundation/umi-options': 1.0.0
-      '@metaplex-foundation/umi-public-keys': 1.0.0
-      '@metaplex-foundation/umi-serializers': 1.0.0
+      '@metaplex-foundation/umi-options': 0.8.9
+      '@metaplex-foundation/umi-public-keys': 0.8.9
+      '@metaplex-foundation/umi-serializers': 0.8.9
 
   '@noble/curves@1.7.0':
     dependencies:
@@ -4269,11 +4262,6 @@ snapshots:
   '@sinonjs/fake-timers@10.3.0':
     dependencies:
       '@sinonjs/commons': 3.0.0
-
-  '@soceanfi/solana-cli-config@0.2.0(@solana/web3.js@1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10))':
-    dependencies:
-      '@solana/web3.js': 1.98.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)
-      yaml: 2.4.5
 
   '@solana/buffer-layout-utils@0.2.0(bufferutil@4.0.8)(utf-8-validate@5.0.10)':
     dependencies:
