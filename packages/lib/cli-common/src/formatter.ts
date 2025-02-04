@@ -6,7 +6,7 @@ import { CliCommandError } from './error'
 export const FORMAT_TYPE_DEF = ['text', 'yaml', 'json'] as const
 export type FormatType = (typeof FORMAT_TYPE_DEF)[number]
 
-export function print_data(
+export function printData(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any,
   format: FormatType,
