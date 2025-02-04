@@ -25,19 +25,19 @@
   ],
   "devDependencies": {
     "@marinade.finance/ts-common": "2.4.13",
-    "@solana/web3.js": "^1.98.0",
-    "@solana/buffer-layout": "^4.0.1",
-    "bn.js": "^5.2.1",
-    "borsh": "^0.7.0",
-    "bs58": "^6.0.0"
+    "@solana/web3.js": "1.98.2",
+    "@solana/buffer-layout": "4.0.1",
+    "bn.js": "5.2.2",
+    "borsh": "0.7.0",
+    "bs58": "6.0.0"
   },
   "peerDependencies": {
     "@marinade.finance/ts-common": "2.4.13",
-    "@solana/web3.js": "^1.98.0",
-    "@solana/buffer-layout": "^4.0.1",
-    "bn.js": "^5.2.1",
-    "borsh": "^0.7.0",
-    "bs58": "^6.0.0"
+    "@solana/web3.js": "1.98.2",
+    "@solana/buffer-layout": "4.0.1",
+    "bn.js": "5.2.2",
+    "borsh": "0.7.0",
+    "bs58": "6.0.0"
   },
   "engines": {
     "node": ">=16.0.0"

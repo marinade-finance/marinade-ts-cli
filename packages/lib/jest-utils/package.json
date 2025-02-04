@@ -24,15 +24,15 @@
       "src"
     ],
     "devDependencies": {
-      "bn.js": "^5.2.1",
-      "@solana/web3.js": "^1.98.0",
-      "@jest/globals": "^29.7.0",
-      "jest-shell-matchers": "^1.0.2"
+      "bn.js": "5.2.2",
+      "@solana/web3.js": "1.98.2",
+      "@jest/globals": "29.7.0",
+      "jest-shell-matchers": "1.0.2"
     },
     "peerDependencies": {
-      "bn.js": "^5.2.1",
-      "@solana/web3.js": "^1.98.0",
-      "@jest/globals": "^29.7.0",
-      "jest-shell-matchers": "^1.0.2"
+      "bn.js": "5.2.2",
+      "@solana/web3.js": "1.98.2",
+      "@jest/globals": "29.7.0",
+      "jest-shell-matchers": "1.0.2"
     }
   }
