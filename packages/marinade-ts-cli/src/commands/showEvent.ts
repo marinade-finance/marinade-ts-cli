@@ -1,7 +1,7 @@
 import { Command } from 'commander'
 import { getMarinadeCliContext } from '../context'
 import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
-import { print_data, reformat } from '@marinade.finance/cli-common'
+import { printData, reformat } from '@marinade.finance/cli-common'
 
 export function installShowEvent(program: Command) {
   program
@@ -38,5 +38,5 @@ async function showEvent({ eventData }: { eventData: string }) {
   }
 
   const reformattedData = reformat(decodedData)
-  print_data(reformattedData, 'yaml')
+  printData(reformattedData, 'yaml')
 }
