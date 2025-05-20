@@ -1,6 +1,6 @@
 {
     "name": "@marinade.finance/spl-gov-utils",
-    "version": "2.4.13",
+    "version": "2.4.15",
     "description": "SPL Governance Marinade constants",
     "repository": {
       "type": "git",
@@ -26,9 +26,9 @@
       "src"
     ],
     "devDependencies": {
-      "@solana/web3.js": "^1.98.0"
+      "@solana/web3.js": "1.98.2"
     },
     "peerDependencies": {
-      "@solana/web3.js": "^1.98.0"
+      "@solana/web3.js": "1.98.2"
     }
   }

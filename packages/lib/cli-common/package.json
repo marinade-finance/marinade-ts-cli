@@ -1,6 +1,6 @@
 {
   "name": "@marinade.finance/cli-common",
-  "version": "2.4.13",
+  "version": "2.4.15",
   "description": "CLI tooling",
   "repository": {
     "type": "git",
@@ -25,26 +25,26 @@
     "src"
   ],
   "devDependencies": {
-    "@solana/web3.js": "^1.98.0",
-    "@marinade.finance/web3js-common": "2.4.13",
-    "@marinade.finance/ts-common": "2.4.13",
-    "@marinade.finance/ledger-utils": "^3.0.1",
-    "bn.js": "^5.2.1",
-    "borsh": "^0.7.0",
-    "bs58": "^6.0.0",
-    "pino": "^9.6.0",
-    "yaml": "^2.4.5"
+    "@solana/web3.js": "1.98.2",
+    "@marinade.finance/web3js-common": "2.4.15",
+    "@marinade.finance/ts-common": "2.4.15",
+    "@marinade.finance/ledger-utils": "3.0.1",
+    "bn.js": "5.2.2",
+    "borsh": "0.7.0",
+    "bs58": "6.0.0",
+    "pino": "9.7.0",
+    "yaml": "2.8.0"
   },
   "peerDependencies": {
-    "@solana/web3.js": "^1.98.0",
-    "@marinade.finance/web3js-common": "2.4.13",
-    "@marinade.finance/ts-common": "2.4.13",
-    "@marinade.finance/ledger-utils": "^3.0.1",
-    "bn.js": "^5.2.1",
-    "borsh": "^0.7.0",
-    "bs58": "^6.0.0",
-    "pino": "^9.6.0",
-    "yaml": "^2.4.5"
+    "@solana/web3.js": "1.98.2",
+    "@marinade.finance/web3js-common": "2.4.15",
+    "@marinade.finance/ts-common": "2.4.15",
+    "@marinade.finance/ledger-utils": "3.0.1",
+    "bn.js": "5.2.2",
+    "borsh": "0.7.0",
+    "bs58": "6.0.0",
+    "pino": "9.7.0",
+    "yaml": "2.8.0"
   },
   "engines": {
     "node": ">=16.0.0"
