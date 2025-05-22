@@ -1,7 +1,6 @@
 import { shellMatchers } from '@marinade.finance/jest-utils'
 import {
   CONNECTION,
-  getSolanaTestValidatorVoteAccountPubkey,
   STAKE_ACCOUNT,
   waitForStakeAccountActivation,
   SDK_USER_PATH,
@@ -14,9 +13,6 @@ beforeAll(async () => {
 
 describe('Deposit stake account using CLI', () => {
   it('deposit stake account', async () => {
-    const solanaTestValidatorVotePubkey =
-      await getSolanaTestValidatorVoteAccountPubkey()
-
     // STAKE_ACCOUNT was created in globalSetup.ts
     await waitForStakeAccountActivation({
       stakeAccount: STAKE_ACCOUNT.publicKey,
@@ -35,8 +31,6 @@ describe('Deposit stake account using CLI', () => {
           STAKE_ACCOUNT.publicKey.toBase58(),
           '--keypair',
           SDK_USER_PATH,
-          '--validator',
-          solanaTestValidatorVotePubkey.toBase58(),
           '--confirmation-finality',
           'confirmed',
           '-d',

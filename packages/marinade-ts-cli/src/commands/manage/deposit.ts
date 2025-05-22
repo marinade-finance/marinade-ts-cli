@@ -24,18 +24,12 @@ export function installDeposit(program: Command) {
       'The address of the owner account where mSOL will be minted to for the deposited amount (default: wallet pubkey)',
       parsePubkey,
     )
-    .option(
-      '-v, --validator <validator-vote-address>',
-      'The vote address of the validator to direct your stake to (default: none)',
-      parsePubkey,
-    )
     .action(
       async (
         amountSol: number,
         {
           referralCode,
           owner,
-          validatorVoteAddress,
         }: {
           referralCode: Promise<PublicKey>
           owner: Promise<PublicKey>
@@ -46,7 +40,6 @@ export function installDeposit(program: Command) {
           amountSol,
           referralCode: await referralCode,
           owner: await owner,
-          validatorVoteAddress: await validatorVoteAddress,
         })
       },
     )
@@ -56,12 +49,10 @@ export async function deposit({
   amountSol,
   referralCode,
   owner = getMarinadeCliContext().wallet.publicKey,
-  validatorVoteAddress,
 }: {
   amountSol: number
   referralCode?: PublicKey
   owner?: PublicKey
-  validatorVoteAddress?: PublicKey
 }): Promise<void> {
   const {
     connection,
@@ -88,7 +79,6 @@ export async function deposit({
 
   const { associatedMSolTokenAccountAddress, transaction } =
     await marinade.deposit(amountLamports, {
-      directToValidatorVoteAddress: validatorVoteAddress,
       mintToOwnerAddress: owner,
     })
   logger.info(
@@ -111,7 +101,6 @@ export async function deposit({
     amountSol,
     wallet.publicKey.toBase58(),
     owner.toBase58(),
-    validatorVoteAddress?.toBase58() || 'none',
     referralCode?.toBase58() || 'none',
   )
 }
