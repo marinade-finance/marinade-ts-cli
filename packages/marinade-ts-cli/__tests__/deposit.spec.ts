@@ -1,11 +1,7 @@
 import { shellMatchers } from '@marinade.finance/jest-utils'
 import { createTempFileKeypair } from '@marinade.finance/web3js-common'
 import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js'
-import {
-  CONNECTION,
-  transfer,
-  getSolanaTestValidatorVoteAccountPubkey,
-} from './setup/globalSetup'
+import { CONNECTION, transfer } from './setup/globalSetup'
 
 beforeAll(async () => {
   shellMatchers()
@@ -44,8 +40,6 @@ describe('Deposit using CLI', () => {
       CONNECTION.getBalance(ownerKeypair.publicKey),
     ).resolves.toStrictEqual(33 * LAMPORTS_PER_SOL)
 
-    const solanaTestValidatorVotePubkey =
-      await getSolanaTestValidatorVoteAccountPubkey()
     await (
       expect([
         'pnpm',
@@ -59,8 +53,6 @@ describe('Deposit using CLI', () => {
           walletPath,
           '--owner',
           ownerKeypair.publicKey.toBase58(),
-          '--validator',
-          solanaTestValidatorVotePubkey.toBase58(),
           '--confirmation-finality',
           'confirmed',
         ],
