@@ -32,8 +32,6 @@
     "dependencies": {
         "@coral-xyz/anchor": "0.28",
         "@solana/web3.js": "1.98.2",
-        "@solana/spl-governance": "0.3.28",
-        "@solana/spl-token": "0.3.11",
         "bn.js": "5.2.2",
         "borsh": "0.7.0",
         "bs58": "6.0.0",
