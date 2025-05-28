@@ -1,6 +1,6 @@
 {
   "name": "@marinade.finance/umi-utils",
-  "version": "2.4.15",
+  "version": "2.4.16",
   "description": "Umi library utilities",
   "repository": {
     "type": "git",
@@ -28,13 +28,13 @@
     "@solana/web3.js": "1.98.2",
     "@metaplex-foundation/umi-bundle-defaults": "0.8.10",
     "@metaplex-foundation/umi": "0.8.10",
-    "@marinade.finance/web3js-common": "2.4.15"
+    "@marinade.finance/web3js-common": "2.4.16"
   },
   "peerDependencies": {
     "@solana/web3.js": "1.98.2",
     "@metaplex-foundation/umi-bundle-defaults": "0.8.10",
     "@metaplex-foundation/umi": "0.8.10",
-    "@marinade.finance/web3js-common": "2.4.15"
+    "@marinade.finance/web3js-common": "2.4.16"
   },
   "engines": {
     "node": ">=16.0.0"
