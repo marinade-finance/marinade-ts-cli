@@ -1,4 +1,5 @@
-import { shellMatchers } from '@marinade.finance/jest-utils'
+import { extendJestWithShellMatchers } from '@marinade.finance/jest-shell-matcher'
+
 import {
   CONNECTION,
   STAKE_ACCOUNT,
@@ -7,8 +8,8 @@ import {
   PROVIDER,
 } from './setup/globalSetup'
 
-beforeAll(async () => {
-  shellMatchers()
+beforeAll(() => {
+  extendJestWithShellMatchers()
 })
 
 describe('Deposit stake account using CLI', () => {
@@ -20,24 +21,21 @@ describe('Deposit stake account using CLI', () => {
       provider: PROVIDER,
     })
 
-    await (
-      expect([
-        'pnpm',
-        [
-          'cli',
-          '--url',
-          CONNECTION.rpcEndpoint,
-          'deposit-stake-account',
-          STAKE_ACCOUNT.publicKey.toBase58(),
-          '--keypair',
-          SDK_USER_PATH,
-          '--confirmation-finality',
-          'confirmed',
-          '-d',
-        ],
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ]) as any
-    ).toHaveMatchingSpawnOutput({
+    await expect([
+      'pnpm',
+      [
+        'cli',
+        '--url',
+        CONNECTION.rpcEndpoint,
+        'deposit-stake-account',
+        STAKE_ACCOUNT.publicKey.toBase58(),
+        '--keypair',
+        SDK_USER_PATH,
+        '--confirmation-finality',
+        'confirmed',
+        '-d',
+      ],
+    ]).toHaveMatchingSpawnOutput({
       code: 0,
       // stderr: '', omitting this check because of the github actions error:
       //             bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)

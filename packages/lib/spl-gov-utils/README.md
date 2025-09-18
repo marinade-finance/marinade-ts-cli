@@ -2,4 +2,4 @@
 
 [`@marinade.finance/spl-gov-utils`](https://www.npmjs.com/package/@marinade.finance/spl-gov-utils)
 
-This contains ONLY definitions of Marinade constants from version 2.1.1+.
+The repository moved to [marinade-finance/spl-gov-utils](https://github.com/marinade-finance/typescript-common/tree/main/packages/spl-gov-utils)

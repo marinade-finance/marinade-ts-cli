@@ -5,11 +5,11 @@ module.exports = {
   testEnvironment: 'node',
   testTimeout: 90000,
   detectOpenHandles: true,
-  modulePathIgnorePatterns: ['<rootDir>/build/'],
+  modulePathIgnorePatterns: ['dist/'],
   testPathIgnorePatterns: ['__tests__/.*.skip.ts', '__tests__/setup/*'],
   globalSetup:
     '<rootDir>/packages/marinade-ts-cli/__tests__/setup/globalSetup.ts',
   setupFilesAfterEnv: [
-    '<rootDir>/packages/lib/jest-utils/src/equalityTesters.ts',
+    '<rootDir>/packages/marinade-ts-cli/node_modules/@marinade.finance/web3js-1x/dist/src/equalityTesters',
   ],
 }

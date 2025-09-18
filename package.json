@@ -1,66 +1,60 @@
 {
-    "description": "Marinade typescript-based SDK for CLI",
-    "license": "ISC",
-    "author": "Marinade.Finance",
-    "scripts": {
-        "compile": "tsc --project tsconfig.build.json",
-        "_copy-readme": "cp packages/lib/anchor-common/*.md build/packages/lib/anchor-common/ && cp packages/lib/cli-common/*.md build/packages/lib/cli-common/ && cp packages/lib/jest-utils/*.md build/packages/lib/jest-utils/ && cp packages/lib/spl-gov-utils/*.md build/packages/lib/spl-gov-utils/ && cp packages/lib/web3js-common/*.md build/packages/lib/web3js-common/ && cp packages/lib/umi-utils/*.md build/packages/lib/umi-utils/ && cp packages/lib/bankrun-utils/*.md build/packages/lib/bankrun-utils/ && cp packages/marinade-ts-cli/*.md build/packages/marinade-ts-cli/",
-        "build": "pnpm compile && pnpm _copy-readme",
-        "marinade": "pnpm cli",
-        "cli": "ts-node ./packages/marinade-ts-cli/src/index.ts",
-        "lint:fix": "gts fix",
-        "lint": "gts lint",
-        "test": "anchor test",
-        "_test": "jest $FILE",
-        "test:no-anchor": "jest --globalSetup='' $FILE",
-        "publish:ts-common": "pnpm build && pnpm publish build/packages/lib/ts-common",
-        "publish:web3js-common": "pnpm build && pnpm publish build/packages/lib/web3js-common",
-        "publish:umi-utils": "pnpm build && pnpm publish build/packages/lib/umi-utils",
-        "publish:bankrun-utils": "pnpm build && pnpm publish build/packages/lib/bankrun-utils",
-        "publish:cli-common": "pnpm build && pnpm publish build/packages/lib/cli-common",
-        "publish:anchor-common": "pnpm build && pnpm publish build/packages/lib/anchor-common",
-        "publish:jest-utils": "pnpm build && pnpm publish build/packages/lib/jest-utils",
-        "publish:spl-gov-utils": "pnpm build && pnpm publish build/packages/lib/spl-gov-utils",
-        "publish:marinade-ts-cli": "pnpm build && pnpm publish build/packages/marinade-ts-cli",
-        "publish:libs": "pnpm publish:ts-common && pnpm publish:web3js-common && pnpm publish:umi-utils && pnpm publish:bankrun-utils && pnpm publish:cli-common && pnpm publish:anchor-common && pnpm publish:jest-utils && pnpm publish:spl-gov-utils",
-        "publish:all": "pnpm publish:libs && pnpm publish:marinade-ts-cli"
+  "description": "Marinade typescript-based SDK for CLI",
+  "license": "ISC",
+  "author": "Marinade.Finance",
+  "scripts": {
+    "build": "pnpm -r build",
+    "clean": "tsc --build --clean",
+    "test": "anchor test",
+    "_test": "jest $FILE",
+    "test:no-anchor": "jest --globalSetup='' $FILE",
+    "marinade": "pnpm cli",
+    "cli": "ts-node ./packages/marinade-ts-cli/src/index.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "pnpm lint && pnpm format:check",
+    "fix": "pnpm lint:fix && pnpm format",
+    "prepare": "husky",
+    "publish:test": "pnpm build && pnpm test && pnpm publish -r --dry-run",
+    "publish:all": "pnpm build && pnpm test && pnpm publish -r"
+  },
+  "devDependencies": {
+    "@jest/globals": "30.1.2",
+    "@marinade.finance/eslint-config": "1.2.1",
+    "@types/bn.js": "5.2.0",
+    "@types/jest": "30.0.0",
+    "@types/node": "22.10.7",
+    "eslint": "^9.28.0",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "jest-mock": "^29.7.0",
+    "expect": "^29.7.0",
+    "prettier": "^3.6.2",
+    "ts-jest": "29.4.4",
+    "ts-node": "10.9.2",
+    "typescript": "5.4.5"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "pnpm": {
+    "overrides": {
+      "semver@<6.3.1": "6.3.1",
+      "micromatch@<4.0.8": "4.0.8",
+      "base-x@<3.0.11": "3.0.11",
+      "base-x@4.0.0": "4.0.1",
+      "base-x@5.0.0": "5.0.1",
+      "@babel/helpers@<7.26.10": "7.27.1",
+      "@babel/runtime@<7.26.10": "7.27.1"
     },
-    "devDependencies": {
-        "@jest/globals": "29.7.0",
-        "@types/jest": "29.5.12",
-        "@types/node": "22.10.7",
-        "@types/bn.js": "5.1.5",
-        "gts": "6.0.2",
-        "eslint": "8.57.1",
-        "husky": "9.0.11",
-        "jest": "29.7.0",
-        "lint-staged": "15.2.2",
-        "ts-jest": "29.2.5",
-        "ts-node": "10.9.2",
-        "typescript": "5.4.5"
-    },
-    "engines": {
-        "node": ">=16.0.0"
-    },
-    "lint-staged": {
-        "src/**/*.ts": [
-            "gts lint"
-        ]
-    },
-    "pnpm": {
-        "overrides": {
-            "semver@<6.3.1": "6.3.1",
-            "micromatch@<4.0.8": "4.0.8",
-            "base-x@<3.0.11": "3.0.11",
-            "base-x@4.0.0": "4.0.1",
-            "base-x@5.0.0": "5.0.1",
-            "@babel/helpers@<7.26.10": "7.27.1",
-            "@babel/runtime@<7.26.10": "7.27.1"
-        }
-    },
-    "husky": {
-        "hooks": {
-            "commit-msg": "[[ -n $HUSKY_BYPASS ]] || commitlint -E HUSKY_GIT_PARAMS"
-        }
-    }
+    "onlyBuiltDependencies": [
+      "bigint-buffer",
+      "bufferutil",
+      "node-hid",
+      "unrs-resolver",
+      "utf-8-validate"
+    ]
+  }
 }

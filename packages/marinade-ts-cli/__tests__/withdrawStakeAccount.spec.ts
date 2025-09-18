@@ -1,4 +1,8 @@
-import { shellMatchers } from '@marinade.finance/jest-utils'
+import { extendJestWithShellMatchers } from '@marinade.finance/jest-shell-matcher'
+import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
+import { getAccount } from '@solana/spl-token-3.x'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+
 import {
   CONNECTION,
   waitForStakeAccountActivation,
@@ -8,15 +12,13 @@ import {
   transfer,
   STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY_PATH,
 } from './setup/globalSetup'
-import { getAccount } from '@solana/spl-token-3.x'
-import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
-import { LAMPORTS_PER_SOL } from '@solana/web3.js'
 
-beforeAll(async () => {
-  shellMatchers()
+beforeAll(() => {
+  extendJestWithShellMatchers()
 })
 
 // Withdraw stake account SDK call is not implemented
+// eslint-disable-next-line jest/no-disabled-tests
 describe.skip('Withdraw stake account using CLI', () => {
   it('withdraw stake account', async () => {
     // Fill SOLs to authority key that's used by Marinade as fee payer
@@ -42,30 +44,27 @@ describe.skip('Withdraw stake account using CLI', () => {
 
     const msolTokenBefore = await getAccount(
       CONNECTION,
-      associatedMSolTokenAccountAddress,
+      associatedMSolTokenAccountAddress
     )
     const toWithdraw = 321 * LAMPORTS_PER_SOL
 
-    await (
-      expect([
-        'pnpm',
-        [
-          'cli',
-          '--url',
-          CONNECTION.rpcEndpoint,
-          'withdraw-stake-account',
-          toWithdraw,
-          '--stake-account',
-          STAKE_ACCOUNT_TO_WITHDRAW.publicKey.toBase58(),
-          '--keypair',
-          STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY_PATH,
-          '--confirmation-finality',
-          'confirmed',
-          '-d',
-        ],
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ]) as any
-    ).toHaveMatchingSpawnOutput({
+    await expect([
+      'pnpm',
+      [
+        'cli',
+        '--url',
+        CONNECTION.rpcEndpoint,
+        'withdraw-stake-account',
+        toWithdraw,
+        '--stake-account',
+        STAKE_ACCOUNT_TO_WITHDRAW.publicKey.toBase58(),
+        '--keypair',
+        STAKE_ACCOUNT_TO_WITHDRAW_AUTHORITY_PATH,
+        '--confirmation-finality',
+        'confirmed',
+        '-d',
+      ],
+    ]).toHaveMatchingSpawnOutput({
       code: 0,
       // stderr: '', omitting this check because of the github actions error:
       //             bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)
@@ -74,10 +73,10 @@ describe.skip('Withdraw stake account using CLI', () => {
 
     const msolTokenAfter = await getAccount(
       CONNECTION,
-      associatedMSolTokenAccountAddress,
+      associatedMSolTokenAccountAddress
     )
     expect(msolTokenAfter.amount).toBe(
-      msolTokenBefore.amount - BigInt(toWithdraw),
+      msolTokenBefore.amount - BigInt(toWithdraw)
     )
   })
 })

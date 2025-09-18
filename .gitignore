@@ -4,7 +4,10 @@ target
 build/
 **/*.rs.bk
 node_modules
+*.tsbuildinfo
+dist/
 marinade-ts-cli.iml
+
 .idea/workspace.xml
 .idea/vcs.xml
 .idea/modules.xml

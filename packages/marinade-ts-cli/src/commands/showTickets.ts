@@ -3,21 +3,23 @@ import {
   MarinadeConfig,
   MarinadeUtils,
 } from '@marinade.finance/marinade-ts-sdk'
-import { Command } from 'commander'
-import { parsePubkey } from '@marinade.finance/cli-common'
-import { PublicKey } from '@solana/web3.js'
+import { parsePubkey } from '@marinade.finance/web3js-1x'
+
 import { getMarinadeCliContext } from '../context'
+
+import type { PublicKey } from '@solana/web3.js'
+import type { Command } from 'commander'
 
 export function installShowTickets(program: Command) {
   program
     .command('show-tickets')
     .description(
-      'Show delayed unstake tickets for a beneficiary (initialized by order-unstake)',
+      'Show delayed unstake tickets for a beneficiary (initialized by order-unstake)'
     )
     .option(
       '-b, --beneficiary <pubkey>',
       'Tickets beneficiary that can claim them later (default: wallet keypair pubkey)',
-      parsePubkey,
+      parsePubkey
     )
     .action(async ({ beneficiary }: { beneficiary?: Promise<PublicKey> }) => {
       await showTickets({
@@ -49,7 +51,7 @@ async function showTickets({
       console.log(
         '-- amount: %d SOL (lamports: %s)',
         MarinadeUtils.lamportsToSol(amount),
-        amount.toString(),
+        amount.toString()
       )
       console.log('-- created epoch:', ticket[1].createdEpoch.toString())
       console.log('-- state address:', ticket[1].stateAddress.toBase58())

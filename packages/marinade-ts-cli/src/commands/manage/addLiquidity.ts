@@ -3,9 +3,11 @@ import {
   MarinadeConfig,
   MarinadeUtils,
 } from '@marinade.finance/marinade-ts-sdk'
-import { Command } from 'commander'
-import { executeTx } from '@marinade.finance/web3js-common'
+import { executeTx } from '@marinade.finance/web3js-1x'
+
 import { getMarinadeCliContext } from '../../context'
+
+import type { Command } from 'commander'
 
 export function installAddLiquidity(program: Command) {
   program
@@ -37,7 +39,7 @@ export async function addLiquidity({
   logger.info(
     'Adding liquidity: %d SOL (lamports %s)',
     amountSol,
-    amountLamports.toString(),
+    amountLamports.toString()
   )
 
   const marinadeConfig = new MarinadeConfig({
@@ -51,7 +53,7 @@ export async function addLiquidity({
 
   logger.info(
     'Using associated LP account: %s',
-    associatedLPTokenAccountAddress.toBase58(),
+    associatedLPTokenAccountAddress.toBase58()
   )
 
   await executeTx({
@@ -67,6 +69,6 @@ export async function addLiquidity({
   logger.info(
     'Successfully added liquidity of %d SOLs from %s',
     amountSol,
-    wallet.publicKey.toBase58(),
+    wallet.publicKey.toBase58()
   )
 }

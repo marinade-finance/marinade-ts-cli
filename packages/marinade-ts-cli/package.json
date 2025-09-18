@@ -1,56 +1,61 @@
 {
-    "name": "@marinade.finance/marinade-ts-cli",
-    "version": "5.1.11",
-    "description": "Marinade typescript-based CLI",
-    "license": "ISC",
-    "author": "Marinade.Finance",
-    "bin": {
-        "marinade": "./src/index.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/marinade-finance/marinade-ts-cli.git"
-    },
-    "publishConfig": {
-        "access": "public"
-    },
-    "main": "src/index",
-    "files": [
-        "src"
-    ],
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [
-        "solana",
-        "marinade.finance",
-        "blockchain",
-        "staking",
-        "msol",
-        "mnde"
-    ],
-    "dependencies": {
-        "@coral-xyz/anchor": "0.28",
-        "@solana/web3.js": "1.98.2",
-        "@solana/spl-token": "0.3.11",
-        "bn.js": "5.2.2",
-        "borsh": "0.7.0",
-        "bs58": "6.0.0",
-        "commander": "11.0.0",
-        "pino": "9.7.0",
-        "pino-pretty": "11.2.1",
-        "@marinade.finance/ledger-utils": "3.0.1",
-        "@marinade.finance/cli-common": "2.4.16",
-        "@marinade.finance/web3js-common": "2.4.16",
-        "@marinade.finance/marinade-ts-sdk": "5.0.15",
-        "@anza-xyz/solana-rpc-get-stake-activation": "1.0.1"
-    },
-    "devDependencies": {
-        "@marinade.finance/jest-utils": "2.4.16",
-        "@types/bn.js": "5.1.5",
-        "@solana/spl-token-3.x": "npm:@solana/spl-token@^0.3.11"
-    },
-    "engines": {
-        "node": ">=16.0.0"
-    }
+  "name": "@marinade.finance/marinade-ts-cli",
+  "version": "5.1.11",
+  "description": "Marinade typescript-based CLI",
+  "license": "ISC",
+  "author": "Marinade.Finance",
+  "bin": {
+    "marinade": "./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marinade-finance/marinade-ts-cli.git"
+  },
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist/",
+    "!dist/src/__tests__",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc --build",
+    "test": "pnpm jest --config ../../jest.config.js --testPathPattern=\"$(pwd)\""
+  },
+  "keywords": [
+    "solana",
+    "marinade.finance",
+    "blockchain",
+    "staking",
+    "msol",
+    "mnde"
+  ],
+  "dependencies": {
+    "@coral-xyz/anchor": "0.28",
+    "@solana/web3.js": "1.98.4",
+    "@solana/spl-token": "0.3.11",
+    "bn.js": "5.2.2",
+    "borsh": "0.7.0",
+    "bs58": "6.0.0",
+    "commander": "14.0.1",
+    "pino": "9.11.0",
+    "pino-pretty": "13.1.1",
+    "@marinade.finance/ledger-utils": "3.1.0",
+    "@marinade.finance/ts-common": "4.0.0",
+    "@marinade.finance/cli-common": "4.0.0",
+    "@marinade.finance/web3js-1x": "4.0.0",
+    "@marinade.finance/marinade-ts-sdk": "5.0.15",
+    "@anza-xyz/solana-rpc-get-stake-activation": "1.0.1"
+  },
+  "devDependencies": {
+    "@marinade.finance/jest-shell-matcher": "1.1.1",
+    "@types/bn.js": "5.2.0",
+    "@solana/spl-token-3.x": "npm:@solana/spl-token@^0.3.11"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }

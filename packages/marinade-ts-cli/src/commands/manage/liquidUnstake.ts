@@ -3,11 +3,12 @@ import {
   MarinadeConfig,
   MarinadeUtils,
 } from '@marinade.finance/marinade-ts-sdk'
-import { parsePubkey } from '@marinade.finance/cli-common'
-import { Command } from 'commander'
-import { PublicKey } from '@solana/web3.js'
-import { executeTx } from '@marinade.finance/web3js-common'
+import { executeTx, parsePubkey } from '@marinade.finance/web3js-1x'
+
 import { getMarinadeCliContext } from '../../context'
+
+import type { PublicKey } from '@solana/web3.js'
+import type { Command } from 'commander'
 
 export function installLiquidUnstake(program: Command) {
   program
@@ -17,18 +18,18 @@ export function installLiquidUnstake(program: Command) {
     .option(
       '-r, --referral <referral-code>',
       'Use the referral code for liquid unstaking',
-      parsePubkey,
+      parsePubkey
     )
     .action(
       async (
         amountMsol: number,
-        { referralCode }: { referralCode: Promise<PublicKey> },
+        { referralCode }: { referralCode: Promise<PublicKey> }
       ) => {
         await liquidUnstake({
           amountMsol,
           referralCode: await referralCode,
         })
-      },
+      }
     )
 }
 
@@ -52,7 +53,7 @@ export async function liquidUnstake({
   logger.info(
     'Liquid unstake: %d mSOL (lamports %s)',
     amountMsol,
-    amountLamports.toString(),
+    amountLamports.toString()
   )
 
   const marinadeConfig = new MarinadeConfig({
@@ -66,7 +67,7 @@ export async function liquidUnstake({
     await marinade.liquidUnstake(amountLamports)
   logger.info(
     'Using associated mSOL account: %s',
-    associatedMSolTokenAccountAddress.toBase58(),
+    associatedMSolTokenAccountAddress.toBase58()
   )
 
   await executeTx({
@@ -83,6 +84,6 @@ export async function liquidUnstake({
     'Successfully liquid unstaked %d mSOLs, signed by %s (referral code: %s)',
     amountMsol,
     wallet.publicKey.toBase58(),
-    referralCode?.toBase58() ?? 'none',
+    referralCode?.toBase58() ?? 'none'
   )
 }

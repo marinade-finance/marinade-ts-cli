@@ -1,9 +1,10 @@
 import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
-import { Command } from 'commander'
-import { parsePubkey } from '@marinade.finance/cli-common'
-import { PublicKey } from '@solana/web3.js'
-import { executeTx } from '@marinade.finance/web3js-common'
+import { executeTx, parsePubkey } from '@marinade.finance/web3js-1x'
+
 import { getMarinadeCliContext } from '../../context'
+
+import type { PublicKey } from '@solana/web3.js'
+import type { Command } from 'commander'
 
 export function installDepositStakeAccount(program: Command) {
   program
@@ -13,7 +14,7 @@ export function installDepositStakeAccount(program: Command) {
     .option(
       '-r, --referral <referral-code>',
       'Use the referral code for depositing stake account',
-      parsePubkey,
+      parsePubkey
     )
     .action(
       async (
@@ -22,13 +23,13 @@ export function installDepositStakeAccount(program: Command) {
           referralCode,
         }: {
           referralCode: Promise<PublicKey>
-        },
+        }
       ) => {
         await depositStakeAccount({
           stakeAccount: await stakeAccount,
           referralCode: await referralCode,
         })
-      },
+      }
     )
 }
 
@@ -51,7 +52,7 @@ export async function depositStakeAccount({
   logger.info(
     'Depositing stake account: %s from wallet key %s',
     stakeAccount.toBase58(),
-    wallet.publicKey.toBase58(),
+    wallet.publicKey.toBase58()
   )
 
   const marinadeConfig = new MarinadeConfig({
@@ -77,6 +78,6 @@ export async function depositStakeAccount({
     'Successfully deposited stake account %s from wallet key %s (validator vote address: %s, referral code: %s)',
     stakeAccount.toBase58(),
     wallet.publicKey.toBase58(),
-    referralCode?.toBase58() || 'none',
+    referralCode?.toBase58() || 'none'
   )
 }

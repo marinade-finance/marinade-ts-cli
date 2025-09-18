@@ -9,15 +9,15 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-        # TODO: change to docker image from marinade registry when available
-        image: docker.io/ochaloup/solana-test-validator:1.14.18-2
-        options: --user root
+      # TODO: change to docker image from marinade registry when available
+      image: docker.io/ochaloup/solana-test-validator:1.14.18-2
+      options: --user root
     timeout-minutes: 15
 
     strategy:
       fail-fast: true
       matrix:
-        node-version: [16]
+        node-version: [20]
 
     steps:
       - name: Link AVM, solana .config, check versions
@@ -29,7 +29,6 @@ jobs:
           anchor --version
           solana --version
 
-
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -38,7 +37,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: 9
 
       - name: Lint, build and test
         timeout-minutes: 5

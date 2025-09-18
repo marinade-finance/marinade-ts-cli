@@ -1,10 +1,11 @@
-import { Command } from 'commander'
-import { installShow } from './show'
 import { installShowBalance } from './balance'
+import { installManage } from './manage'
+import { installShow } from './show'
+import { installShowEvent } from './showEvent'
 import { installShowReferralState } from './showReferralState'
 import { installShowTickets } from './showTickets'
-import { installShowEvent } from './showEvent'
-import { installManage } from './manage'
+
+import type { Command } from 'commander'
 
 export function installCommands(program: Command) {
   installShowBalance(program)

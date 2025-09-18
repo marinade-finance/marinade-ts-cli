@@ -1,21 +1,24 @@
-import { Command } from 'commander'
-import { getMarinadeCliContext } from '../context'
+import { printData } from '@marinade.finance/cli-common'
 import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
-import { printData, reformat } from '@marinade.finance/cli-common'
+import { reformat } from '@marinade.finance/web3js-1x'
+
+import { getMarinadeCliContext } from '../context'
+
+import type { Command } from 'commander'
 
 export function installShowEvent(program: Command) {
   program
     .command('show-event')
     .description('Showing data of anchor event')
     .argument('<event-data>', 'base64 data of anchor event')
-    .action(async (eventData: string) => {
-      await showEvent({
+    .action((eventData: string) => {
+      showEvent({
         eventData,
       })
     })
 }
 
-async function showEvent({ eventData }: { eventData: string }) {
+function showEvent({ eventData }: { eventData: string }) {
   const { connection, wallet } = getMarinadeCliContext()
 
   const marinadeConfig = new MarinadeConfig({
@@ -24,19 +27,24 @@ async function showEvent({ eventData }: { eventData: string }) {
   })
   const marinade = new Marinade(marinadeConfig)
 
-  eventData = eventData
+  const eventDataTrimmed = eventData
     .trim()
     .replace(/Program data:/g, '')
     .trim()
   const decodedData =
-    marinade.marinadeFinanceProgram.program.coder.events.decode(eventData) ??
-    marinade.marinadeReferralProgram.program.coder.events.decode(eventData)
+    marinade.marinadeFinanceProgram.program.coder.events.decode(
+      eventDataTrimmed
+    ) ??
+    marinade.marinadeReferralProgram.program.coder.events.decode(
+      eventDataTrimmed
+    )
   if (decodedData === null) {
     throw new Error(
-      'Failed to decode event data as MarinadeFinance (liquid-staking-program) or MarinadeReferral (/liquid-staking-referral-program) event',
+      'Failed to decode event data as MarinadeFinance (liquid-staking-program) or MarinadeReferral (/liquid-staking-referral-program) event'
     )
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const reformattedData = reformat(decodedData)
   printData(reformattedData, 'yaml')
 }

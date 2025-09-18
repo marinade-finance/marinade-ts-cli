@@ -1,28 +1,11 @@
 # jest-utils
 
-[`@marinade.finance/jest-utils`](https://www.npmjs.com/package/@marinade.finance/jest-utils)
+Library was removed and replaced with
+[`@marinade.finance/jest-shell-matcher`](
 
-Jest testing utilities.
+The past deployments of this package are still available on npm:
+[`@marinade.finance/jest-utils`](https://github.com/marinade-finance/typescript-common/tree/main/packages/jest-shell-matcher)
 
-For global equality tester it can be added to check `BN` and `@solana/web3.js` `PublicKey`
-and when using [`jest-shell-matchers`](https://www.npmjs.com/package/jest-shell-matchers)
-then adding TypeScript typing for it.
+For using the Pubkey/BN equality testers, please refer to
+[`@marinade.finance/web3js-1x`](https://github.com/marinade-finance/typescript-common/tree/main/packages/web3js-1x)
 
-## Configuration of the equality tester for global usage
-
-Add to `jest.config.js` something like this
-
-```js
-/** @type {import('ts-jest').JestConfigWithTsJest} */
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  testTimeout: 90000,
-  detectOpenHandles: true,
-  modulePathIgnorePatterns: ['<rootDir>/build/'],
-  testPathIgnorePatterns: ['__tests__/.*.skip.ts', '__tests__/setup/*'],
-  globalSetup:
-    '<rootDir>/packages/marinade-ts-cli/__tests__/setup/globalSetup.ts',
-  setupFilesAfterEnv: ['<rootDir>/packages/jest-utils/src/equalityTesters.ts'],
-}
-```

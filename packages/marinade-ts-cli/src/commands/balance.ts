@@ -3,21 +3,22 @@ import {
   lamportsToSol,
   getAssociatedTokenAccountAddress,
 } from '@marinade.finance/marinade-ts-sdk/dist/src/util'
-import { Command } from 'commander'
+import { parsePubkey } from '@marinade.finance/web3js-1x'
 import { BN } from 'bn.js'
-import { parsePubkey } from '@marinade.finance/cli-common'
-import { PublicKey } from '@solana/web3.js'
+
 import { getMarinadeCliContext } from '../context'
 
+import type { PublicKey } from '@solana/web3.js'
+import type { Command } from 'commander'
+
 export function installShowBalance(program: Command) {
-  program
   program
     .command('balance')
     .description('Show account balance')
     .argument(
       '[account-pubkey]',
       'Account to show balance for (default: wallet pubkey)',
-      parsePubkey,
+      parsePubkey
     )
     .action(async (accountPubkey: Promise<PublicKey>) => {
       await showBalance({
@@ -37,7 +38,7 @@ export async function showBalance({
   logger.info(
     'Main account: %s (%s)',
     accountPubkey.toBase58(),
-    'Note: transactions can take up to a minute to be reflected here',
+    'Note: transactions can take up to a minute to be reflected here'
   )
 
   const config = new MarinadeConfig({ connection })
@@ -51,7 +52,7 @@ export async function showBalance({
 
   const userMSolATA = await getAssociatedTokenAccountAddress(
     mSolMintAddress,
-    accountPubkey,
+    accountPubkey
   )
   try {
     const {
@@ -62,14 +63,14 @@ export async function showBalance({
   } catch (e) {
     logger.error(
       `MSOL ATA of the account ${accountPubkey.toBase58()} does not exist`,
-      e,
+      e
     )
   }
 
   try {
     const userLpATA = await getAssociatedTokenAccountAddress(
       lpMint.address,
-      accountPubkey,
+      accountPubkey
     )
     const {
       value: { amount: amountLP },
@@ -79,7 +80,7 @@ export async function showBalance({
   } catch (e) {
     logger.error(
       `LP ATA of the account ${accountPubkey.toBase58()} does not exist`,
-      e,
+      e
     )
   }
 }
