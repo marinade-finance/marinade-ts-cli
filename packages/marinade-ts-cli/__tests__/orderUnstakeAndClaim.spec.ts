@@ -1,13 +1,17 @@
-import { BN } from 'bn.js'
-import { shellMatchers } from '@marinade.finance/jest-utils'
-import { createTempFileKeypair } from '@marinade.finance/web3js-common'
-import { Keypair, LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js'
-import { CONNECTION, transfer, PROVIDER, sleep } from './setup/globalSetup'
+import { extendJestWithShellMatchers } from '@marinade.finance/jest-shell-matcher'
 import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
-import { TicketAccount } from '@marinade.finance/marinade-ts-sdk/dist/src/marinade-state/borsh/ticket-account'
+import { sleep } from '@marinade.finance/ts-common'
+import { createTempFileKeypair } from '@marinade.finance/web3js-1x'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { BN } from 'bn.js'
 
-beforeAll(async () => {
-  shellMatchers()
+import { CONNECTION, transfer, PROVIDER } from './setup/globalSetup'
+
+import type { TicketAccount } from '@marinade.finance/marinade-ts-sdk/dist/src/marinade-state/borsh/ticket-account'
+import type { Keypair, PublicKey } from '@solana/web3.js'
+
+beforeAll(() => {
+  extendJestWithShellMatchers()
 })
 
 describe('Order unstake and claim using CLI', () => {
@@ -16,7 +20,6 @@ describe('Order unstake and claim using CLI', () => {
   let cleanupWallet: () => Promise<void>
 
   beforeEach(async () => {
-    // eslint-disable-next-line @typescript-eslint/no-extra-semi
     ;({
       path: walletPath,
       keypair: walletKeypair,
@@ -31,7 +34,7 @@ describe('Order unstake and claim using CLI', () => {
 
   it('order unstake and claim', async () => {
     console.log(
-      'WARN: this test takes about 1 minute to run. Claiming tickets requires waiting for the ticket to be ready.',
+      'WARN: this test takes about 1 minute to run. Claiming tickets requires waiting for the ticket to be ready.'
     )
 
     const marinadeConfig = new MarinadeConfig({
@@ -40,28 +43,25 @@ describe('Order unstake and claim using CLI', () => {
     })
     const marinade = new Marinade(marinadeConfig)
     const { transaction } = await marinade.deposit(
-      new BN(555 * LAMPORTS_PER_SOL),
+      new BN(555 * LAMPORTS_PER_SOL)
     )
     await PROVIDER.sendAndConfirm(transaction, [walletKeypair])
 
-    await (
-      expect([
-        'pnpm',
-        [
-          'cli',
-          '--url',
-          CONNECTION.rpcEndpoint,
-          'order-unstake',
-          '444',
-          '--keypair',
-          walletPath,
-          '--confirmation-finality',
-          'confirmed',
-          '-d',
-        ],
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ]) as any
-    ).toHaveMatchingSpawnOutput({
+    await expect([
+      'pnpm',
+      [
+        'cli',
+        '--url',
+        CONNECTION.rpcEndpoint,
+        'order-unstake',
+        '444',
+        '--keypair',
+        walletPath,
+        '--confirmation-finality',
+        'confirmed',
+        '-d',
+      ],
+    ]).toHaveMatchingSpawnOutput({
       code: 0,
       stdout: /Successfully ordered unstake/,
     })
@@ -69,7 +69,7 @@ describe('Order unstake and claim using CLI', () => {
     // Waiting for the ticket to be ready; max time is now hardcoded
     const timeoutSeconds = 60
     const tickets = await marinade.getDelayedUnstakeTickets(
-      walletKeypair.publicKey,
+      walletKeypair.publicKey
     )
     expect(tickets.size).toBe(1)
     const startTime = Date.now()
@@ -86,7 +86,7 @@ describe('Order unstake and claim using CLI', () => {
         ticket[0].toBase58(),
         'elapsed time:',
         (Date.now() - startTime) / 1000,
-        'seconds',
+        'seconds'
       )
       await sleep(5000)
       ticket = (
@@ -96,7 +96,7 @@ describe('Order unstake and claim using CLI', () => {
         .next().value
       if (ticket && Date.now() - startTime > timeoutSeconds * 1000) {
         throw new Error(
-          `Ticket ${ticket[0]} was not available for claiming in timeout of ${timeoutSeconds} seconds`,
+          `Ticket ${ticket[0].toBase58()} was not available for claiming in timeout of ${timeoutSeconds} seconds`
         )
       }
     }
@@ -105,23 +105,20 @@ describe('Order unstake and claim using CLI', () => {
       throw new Error('Ticket is undefined')
     }
 
-    await (
-      expect([
-        'pnpm',
-        [
-          'cli',
-          '--url',
-          CONNECTION.rpcEndpoint,
-          'claim',
-          ticket[0].toBase58(),
-          '--keypair',
-          walletPath,
-          '--confirmation-finality',
-          'confirmed',
-        ],
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ]) as any
-    ).toHaveMatchingSpawnOutput({
+    await expect([
+      'pnpm',
+      [
+        'cli',
+        '--url',
+        CONNECTION.rpcEndpoint,
+        'claim',
+        ticket[0].toBase58(),
+        '--keypair',
+        walletPath,
+        '--confirmation-finality',
+        'confirmed',
+      ],
+    ]).toHaveMatchingSpawnOutput({
       code: 0,
       stdout: /Successfully claimed ticket/,
     })

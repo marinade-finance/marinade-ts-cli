@@ -1,10 +1,12 @@
-import { shellMatchers } from '@marinade.finance/jest-utils'
-import { createTempFileKeypair } from '@marinade.finance/web3js-common'
-import { Keypair } from '@solana/web3.js'
+import { extendJestWithShellMatchers } from '@marinade.finance/jest-shell-matcher'
+import { createTempFileKeypair } from '@marinade.finance/web3js-1x'
+
 import { CONNECTION, transfer } from './setup/globalSetup'
 
-beforeAll(async () => {
-  shellMatchers()
+import type { Keypair } from '@solana/web3.js'
+
+beforeAll(() => {
+  extendJestWithShellMatchers()
 })
 
 describe('Add liquidity using CLI', () => {
@@ -13,7 +15,6 @@ describe('Add liquidity using CLI', () => {
   let cleanupWallet: () => Promise<void>
 
   beforeEach(async () => {
-    // eslint-disable-next-line @typescript-eslint/no-extra-semi
     ;({
       path: walletPath,
       keypair: walletKeypair,
@@ -27,23 +28,20 @@ describe('Add liquidity using CLI', () => {
   })
 
   it('add liquidity', async () => {
-    await (
-      expect([
-        'pnpm',
-        [
-          'cli',
-          '--url',
-          CONNECTION.rpcEndpoint,
-          'add-liquidity',
-          '888',
-          '--keypair',
-          walletPath,
-          '--confirmation-finality',
-          'confirmed',
-        ],
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ]) as any
-    ).toHaveMatchingSpawnOutput({
+    await expect([
+      'pnpm',
+      [
+        'cli',
+        '--url',
+        CONNECTION.rpcEndpoint,
+        'add-liquidity',
+        '888',
+        '--keypair',
+        walletPath,
+        '--confirmation-finality',
+        'confirmed',
+      ],
+    ]).toHaveMatchingSpawnOutput({
       code: 0,
       // stderr: '', omitting this check because of the github actions error:
       //             bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)

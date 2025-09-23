@@ -1,19 +1,26 @@
-import { Connection, Finality } from '@solana/web3.js'
-import { Wallet as AnchorWalletInterface } from '@coral-xyz/anchor/dist/cjs/provider'
+import { CLIContext } from '@marinade.finance/cli-common'
 import { MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
+import { getContext, setContext } from '@marinade.finance/ts-common'
 import {
-  Context,
-  parseClusterUrl,
-  parseCommitment,
-  setContext,
-  getContext,
   parseConfirmationFinality,
-} from '@marinade.finance/cli-common'
-import { Logger } from 'pino'
+  parseCommitment,
+  parseClusterUrl,
+} from '@marinade.finance/web3js-1x'
+import { Connection } from '@solana/web3.js'
 
-export class MarinadeCLIContext extends Context {
+import type { Wallet as AnchorWalletInterface } from '@coral-xyz/anchor/dist/cjs/provider'
+import type { Wallet } from '@marinade.finance/web3js-1x'
+import type { Finality } from '@solana/web3.js'
+import type { Logger } from 'pino'
+
+export class MarinadeCLIContext extends CLIContext {
   readonly connection: Connection
   readonly marinadeDefaults: MarinadeConfig
+  readonly wallet: Wallet
+  readonly skipPreflight: boolean
+  readonly confirmationFinality: Finality
+  readonly simulate: boolean
+  readonly printOnly: boolean
 
   constructor({
     connection,
@@ -37,16 +44,16 @@ export class MarinadeCLIContext extends Context {
     marinadeDefaults: MarinadeConfig
   }) {
     super({
-      wallet,
       logger,
-      skipPreflight,
-      confirmationFinality,
-      simulate,
-      printOnly,
       commandName,
     })
     this.connection = connection
     this.marinadeDefaults = marinadeDefaults
+    this.wallet = wallet
+    this.skipPreflight = skipPreflight
+    this.confirmationFinality = confirmationFinality
+    this.simulate = simulate
+    this.printOnly = printOnly
   }
 }
 
@@ -67,13 +74,13 @@ export function setMarinadeCLIContext({
   printOnly: boolean
   skipPreflight: boolean
   commitment: string
-  confirmationFinality: Finality
+  confirmationFinality: string
   logger: Logger
   command: string
 }) {
   const connection = new Connection(
     parseClusterUrl(url),
-    parseCommitment(commitment),
+    parseCommitment(commitment)
   )
   setContext(
     new MarinadeCLIContext({
@@ -86,10 +93,10 @@ export function setMarinadeCLIContext({
       confirmationFinality: parseConfirmationFinality(confirmationFinality),
       commandName: command,
       marinadeDefaults: new MarinadeConfig(),
-    }),
+    })
   )
 }
 
 export function getMarinadeCliContext(): MarinadeCLIContext {
-  return getContext() as MarinadeCLIContext
+  return getContext<MarinadeCLIContext>()
 }

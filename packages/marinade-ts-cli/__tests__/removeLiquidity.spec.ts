@@ -1,12 +1,15 @@
-import { BN } from 'bn.js'
-import { shellMatchers } from '@marinade.finance/jest-utils'
-import { createTempFileKeypair } from '@marinade.finance/web3js-common'
-import { Keypair, LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { CONNECTION, PROVIDER, transfer } from './setup/globalSetup'
+import { extendJestWithShellMatchers } from '@marinade.finance/jest-shell-matcher'
 import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
+import { createTempFileKeypair } from '@marinade.finance/web3js-1x'
+import { LAMPORTS_PER_SOL } from '@solana/web3.js'
+import { BN } from 'bn.js'
 
-beforeAll(async () => {
-  shellMatchers()
+import { CONNECTION, PROVIDER, transfer } from './setup/globalSetup'
+
+import type { Keypair } from '@solana/web3.js'
+
+beforeAll(() => {
+  extendJestWithShellMatchers()
 })
 
 describe('Remove liquidity using CLI', () => {
@@ -15,7 +18,6 @@ describe('Remove liquidity using CLI', () => {
   let cleanupWallet: () => Promise<void>
 
   beforeEach(async () => {
-    // eslint-disable-next-line @typescript-eslint/no-extra-semi
     ;({
       path: walletPath,
       keypair: walletKeypair,
@@ -35,27 +37,24 @@ describe('Remove liquidity using CLI', () => {
     })
     const marinade = new Marinade(marinadeConfig)
     const { transaction } = await marinade.addLiquidity(
-      new BN(500 * LAMPORTS_PER_SOL),
+      new BN(500 * LAMPORTS_PER_SOL)
     )
     await PROVIDER.sendAndConfirm(transaction, [walletKeypair])
 
-    await (
-      expect([
-        'pnpm',
-        [
-          'cli',
-          '--url',
-          CONNECTION.rpcEndpoint,
-          'remove-liquidity',
-          '123',
-          '--keypair',
-          walletPath,
-          '--confirmation-finality',
-          'confirmed',
-        ],
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ]) as any
-    ).toHaveMatchingSpawnOutput({
+    await expect([
+      'pnpm',
+      [
+        'cli',
+        '--url',
+        CONNECTION.rpcEndpoint,
+        'remove-liquidity',
+        '123',
+        '--keypair',
+        walletPath,
+        '--confirmation-finality',
+        'confirmed',
+      ],
+    ]).toHaveMatchingSpawnOutput({
       code: 0,
       // stderr: '', omitting this check because of the github actions error:
       //             bigint: Failed to load bindings, pure JS will be used (try npm run rebuild?)

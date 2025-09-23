@@ -1,7 +1,9 @@
-import { Command } from 'commander'
-import { parsePubkey } from '@marinade.finance/cli-common'
-import { PublicKey } from '@solana/web3.js'
+import { parsePubkey } from '@marinade.finance/web3js-1x'
+
 import { getMarinadeCliContext } from '../../context'
+
+import type { PublicKey } from '@solana/web3.js'
+import type { Command } from 'commander'
 
 export function installWithdrawStakeAccount(program: Command) {
   program
@@ -11,7 +13,7 @@ export function installWithdrawStakeAccount(program: Command) {
     .requiredOption(
       '-s, --stake-account <stake-account-address>',
       'Stake account to withdraw',
-      parsePubkey,
+      parsePubkey
     )
     .action(
       async (
@@ -20,23 +22,23 @@ export function installWithdrawStakeAccount(program: Command) {
           stakeAccount,
         }: {
           stakeAccount: Promise<PublicKey>
-        },
+        }
       ) => {
-        await withdrawStakeAccount({
+        withdrawStakeAccount({
           amountMsol,
           stakeAccount: await stakeAccount,
         })
-      },
+      }
     )
 }
 
-export async function withdrawStakeAccount({
+export function withdrawStakeAccount({
   amountMsol,
   stakeAccount,
 }: {
   amountMsol: number
   stakeAccount: PublicKey
-}): Promise<void> {
+}): void {
   // const { connection, wallet, logger, simulate, printOnly, confirmationFinality } =
   //   getMarinadeCliContext()
 
@@ -45,16 +47,16 @@ export async function withdrawStakeAccount({
     'Withdrawing %d MSOLs from stake account: %s with wallet key %s',
     amountMsol,
     stakeAccount.toBase58(),
-    wallet.publicKey.toBase58(),
+    wallet.publicKey.toBase58()
   )
 
   logger.debug(
     'A workaround could be (not sure if working in future) ' +
-      'to use version 5.0.6-beta of @marinade.finance/marinade-ts-sdk',
+      'to use version 5.0.6-beta of @marinade.finance/marinade-ts-sdk'
   )
   logger.debug(
     'The SDK call was removed as it was decided not to be part of SDK' +
-      'and to be used only within contract interaction',
+      'and to be used only within contract interaction'
   )
   throw new Error('Not implemented in marinade-ts-sdk')
 

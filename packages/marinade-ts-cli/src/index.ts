@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 
-/* eslint-disable no-process-exit */
-import { Command } from 'commander'
-import { setMarinadeCLIContext } from './context'
-import { installCommands } from './commands'
-import { Logger } from 'pino'
+import { pinoConfiguration } from '@marinade.finance/ts-common'
 import {
-  configureLogger,
+  ExecutionError,
   parseWalletFromOpts,
-} from '@marinade.finance/cli-common'
-import { ExecutionError } from '@marinade.finance/web3js-common'
+} from '@marinade.finance/web3js-1x'
+import { Command } from 'commander'
+import pino from 'pino'
+
+import { installCommands } from './commands'
+import { setMarinadeCLIContext } from './context'
 
 const DEFAULT_KEYPAIR_PATH = '~/.config/solana/id.json'
-const logger: Logger = configureLogger()
+export const logger = pino(pinoConfiguration('info'), pino.destination())
+logger.level = 'debug'
 
 const program = new Command('marinade')
 program
@@ -22,30 +23,30 @@ program
     '-u, --url <url-or-moniker>',
     'URL of Solana cluster or ' +
       'moniker (m/mainnet/mainnet-beta, d/devnet, t/testnet, l/localhost)',
-    'mainnet',
+    'mainnet'
   )
   .option(
     '-k, --keypair <keypair-or-ledger>',
     'Wallet keypair (path or ledger url in format usb://ledger/[<pubkey>][?key=<derivedPath>]) ' +
-      ` (default: ${DEFAULT_KEYPAIR_PATH})`,
+      ` (default: ${DEFAULT_KEYPAIR_PATH})`
   )
   .option('-s, --simulate', 'Simulate', false)
   .option(
     '-p, --print-only',
     'Print only mode, no execution, instructions are printed in base64 to output. ' +
       'This can be used for placing the admin commands to SPL Governance UI by hand.',
-    false,
+    false
   )
   .option(
     '--skip-preflight',
     'setting transaction execution flag "skip-preflight"',
-    false,
+    false
   )
   .option('--commitment <commitment>', 'Commitment', 'confirmed')
   .option(
     '--confirmation-finality <finality>',
     'Confirmation finality',
-    'finalized',
+    'finalized'
   )
   .option('-d, --debug', 'Debug', false)
   .option('-v, --verbose', 'Verbose (the same as --debug)', false)
@@ -56,20 +57,20 @@ program
 
     const printOnly = Boolean(command.opts().printOnly)
     const walletKeypair = await parseWalletFromOpts(
-      command.opts().keypair,
+      command.opts().keypair as string | undefined,
       printOnly,
       command.args,
-      logger,
+      logger
     )
 
     setMarinadeCLIContext({
-      url: command.opts().url as string,
+      url: String(command.opts().url),
       walletKeypair,
       simulate: Boolean(command.opts().simulate),
       printOnly: Boolean(command.opts().printOnly),
       skipPreflight: Boolean(command.opts().skipPreflight),
-      commitment: command.opts().commitment,
-      confirmationFinality: command.opts().confirmationFinality,
+      commitment: String(command.opts().commitment),
+      confirmationFinality: String(command.opts().confirmationFinality),
       logger,
       command: action.name(),
     })
@@ -85,9 +86,9 @@ program.parseAsync(process.argv).then(
     logger.error(
       err instanceof ExecutionError
         ? err.messageWithTransactionError()
-        : err.message,
+        : err.message
     )
     logger.debug({ resolution: 'Failure', err, args: process.argv })
     process.exitCode = 1
-  },
+  }
 )

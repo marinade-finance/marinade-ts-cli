@@ -1,12 +1,13 @@
-import { Command } from 'commander'
 import { installAddLiquidity } from './addLiquidity'
-import { installRemoveLiquidity } from './removeLiquidity'
-import { installDeposit } from './deposit'
-import { installLiquidUnstake } from './liquidUnstake'
-import { installDepositStakeAccount } from './depositStakeAccount'
 import { installClaim } from './claim'
+import { installDeposit } from './deposit'
+import { installDepositStakeAccount } from './depositStakeAccount'
+import { installLiquidUnstake } from './liquidUnstake'
 import { installOrderUnstake } from './orderUnstake'
+import { installRemoveLiquidity } from './removeLiquidity'
 import { installWithdrawStakeAccount } from './withdrawStakeAccount'
+
+import type { Command } from 'commander'
 
 export function installManage(program: Command) {
   installAddLiquidity(program)

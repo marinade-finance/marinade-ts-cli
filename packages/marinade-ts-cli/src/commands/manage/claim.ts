@@ -1,9 +1,10 @@
 import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
-import { parsePubkey } from '@marinade.finance/cli-common'
-import { Command } from 'commander'
-import { PublicKey } from '@solana/web3.js'
-import { executeTx } from '@marinade.finance/web3js-common'
+import { executeTx, parsePubkey } from '@marinade.finance/web3js-1x'
+
 import { getMarinadeCliContext } from '../../context'
+
+import type { PublicKey } from '@solana/web3.js'
+import type { Command } from 'commander'
 
 export function installClaim(program: Command) {
   program
