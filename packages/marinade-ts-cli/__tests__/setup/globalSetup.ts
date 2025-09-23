@@ -10,7 +10,7 @@ import { AnchorProvider } from '@coral-xyz/anchor'
 import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet'
 import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
 import { getParsedStakeAccountInfo } from '@marinade.finance/marinade-ts-sdk/dist/src/util'
-import { sleep } from '@marinade.finance/ts-common'
+import { jsonStringify, sleep } from '@marinade.finance/ts-common'
 import {
   Keypair,
   PublicKey,
@@ -258,7 +258,7 @@ export async function waitForStakeAccountActivation({
     if (stakeAccountActivationEpoch === null) {
       throw new Error(
         'Expected stake account to be already activated. Unexpected setup error stake account:' +
-          JSON.stringify(stakeAccountData)
+          jsonStringify(stakeAccountData)
       )
     }
 
