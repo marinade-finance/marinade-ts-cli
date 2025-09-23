@@ -8,8 +8,11 @@ import path from 'path'
 import { getStakeActivation } from '@anza-xyz/solana-rpc-get-stake-activation'
 import { AnchorProvider } from '@coral-xyz/anchor'
 import NodeWallet from '@coral-xyz/anchor/dist/cjs/nodewallet'
-import { Marinade, MarinadeConfig } from '@marinade.finance/marinade-ts-sdk'
-import { getParsedStakeAccountInfo } from '@marinade.finance/marinade-ts-sdk/dist/src/util'
+import {
+  Marinade,
+  MarinadeConfig,
+  MarinadeUtils,
+} from '@marinade.finance/marinade-ts-sdk'
 import { jsonStringify, sleep } from '@marinade.finance/ts-common'
 import {
   Keypair,
@@ -250,7 +253,7 @@ export async function waitForStakeAccountActivation({
 
   // 2. the stake account is active, but it needs to be active for at least waitForEpochs epochs
   if (activatedAtLeastFor > 0) {
-    const stakeAccountData = await getParsedStakeAccountInfo(
+    const stakeAccountData = await MarinadeUtils.getParsedStakeAccountInfo(
       provider,
       stakeAccount
     )
