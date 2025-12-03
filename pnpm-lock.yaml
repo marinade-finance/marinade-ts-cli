@@ -73,7 +73,7 @@ importers:
         version: 4.0.0(@marinade.finance/ts-common@4.0.0)(class-validator@0.14.2)
       '@marinade.finance/ledger-utils':
         specifier: 3.1.0
-        version: 3.1.0(@ledgerhq/errors@6.26.0)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@4.0.0)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
+        version: 3.1.0(@ledgerhq/errors@6.27.0)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@4.0.0)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
       '@marinade.finance/marinade-ts-sdk':
         specifier: 5.0.15
         version: 5.0.15(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))(bn.js@5.2.2)(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(jsbi@4.3.0)(typescript@5.4.5)(utf-8-validate@5.0.10)
@@ -82,7 +82,7 @@ importers:
         version: 4.0.0
       '@marinade.finance/web3js-1x':
         specifier: 4.0.0
-        version: 4.0.0(@jest/globals@30.1.2)(@marinade.finance/ledger-utils@3.1.0(@ledgerhq/errors@6.26.0)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@4.0.0)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)))(@marinade.finance/ts-common@4.0.0)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))(@types/bn.js@5.2.0)(bn.js@5.2.2)(borsh@0.7.0)(bs58@6.0.0)
+        version: 4.0.0(@jest/globals@30.1.2)(@marinade.finance/ledger-utils@3.1.0(@ledgerhq/errors@6.27.0)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@4.0.0)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)))(@marinade.finance/ts-common@4.0.0)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))(@types/bn.js@5.2.0)(bn.js@5.2.2)(borsh@0.7.0)(bs58@6.0.0)
       '@solana/spl-token':
         specifier: 0.3.11
         version: 0.3.11(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.4.5)(utf-8-validate@5.0.10)
@@ -625,11 +625,11 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
-  '@ledgerhq/devices@8.6.1':
-    resolution: {integrity: sha512-PQR2fyWz7P/wMFHY9ZLz17WgFdxC/Im0RVDcWXpp24+iRQRyxhQeX2iG4mBKUzfaAW6pOIEiWt+vmJh88QP9rQ==}
+  '@ledgerhq/devices@8.7.0':
+    resolution: {integrity: sha512-3pSOULPUhClk2oOxa6UnoyXW8+05FK7r6cpq2WiTey4kyIUjmIraO7AX9lhz9IU73dGVtBMdU+NCPPO2RYJaTQ==}
 
-  '@ledgerhq/errors@6.26.0':
-    resolution: {integrity: sha512-4OlisaDBafkn7KN5emue08lCGMVREX6T+nxj47C7W30EBA/leLAEDaVvUw5/gFOWrv8Q2A9Scb8aMM3uokyt0w==}
+  '@ledgerhq/errors@6.27.0':
+    resolution: {integrity: sha512-EE2hATONHdNP3YWFe3rZwwpSEzI5oN+q/xTjOulnjHZo84TLjungegEJ54A/Pzld0woulkkeVA27FbW5SAO1aA==}
 
   '@ledgerhq/hw-app-solana@7.1.2':
     resolution: {integrity: sha512-2hTaZxKMXe//EBKrS7MYgF/KSty+tAikwQmmKGZWMIRmhSTuqugpMwql8uhm5paRByaFkvlFv/eZ+CMTgdFjbQ==}
@@ -637,8 +637,8 @@ packages:
   '@ledgerhq/hw-transport-node-hid-noevents@6.29.2':
     resolution: {integrity: sha512-bVRHCWxSTwIW5AQFqMrqg45U6Ae1IdF1eCDMGDg1bHzgOOHGtWrhdMf3GatUVI9FO3l0khYdGuRbheSfantjJg==}
 
-  '@ledgerhq/hw-transport@6.31.12':
-    resolution: {integrity: sha512-FO5LRIXYC8ELtaohlO8qK0b3TfHUNBZ3+CXKPHiHj2jJwrxPf4s5kcgBYrmzuf1C/1vfrMOjzyty6OgrMIbU6Q==}
+  '@ledgerhq/hw-transport@6.31.13':
+    resolution: {integrity: sha512-MrJRDk74wY980ofiFPRpTHQBbRw1wDuKbdag1zqlO1xtJglymwwY03K2kvBNvkm1RTSCPUp/nAoNG+WThZuuew==}
 
   '@ledgerhq/logs@6.13.0':
     resolution: {integrity: sha512-4+qRW2Pc8V+btL0QEmdB2X+uyx0kOWMWE1/LWsq5sZy3Q5tpi4eItJS6mB0XL3wGW59RQ+8bchNQQ1OW/va8Og==}
@@ -951,8 +951,8 @@ packages:
   '@types/uuid@8.3.4':
     resolution: {integrity: sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw==}
 
-  '@types/validator@13.15.3':
-    resolution: {integrity: sha512-7bcUmDyS6PN3EuD9SlGGOxM77F8WLVsrwkxyWxKnxzmXoequ6c7741QBrANq6htVRGOITJ7z72mTP6Z4XyuG+Q==}
+  '@types/validator@13.15.10':
+    resolution: {integrity: sha512-T8L6i7wCuyoK8A/ZeLYt1+q0ty3Zb9+qbSSvrIVitzT3YjZqkTZ40IbRsPanlB4h1QB3JVL1SYCdR6ngtFYcuA==}
 
   '@types/ws@7.4.7':
     resolution: {integrity: sha512-JQbbmxZTZehdc2iszGKs5oC3NFnjeay7mtAWrdt7qNtAVK0g19muApzAy4bm9byz79xa2ZnO/BOBC2R8RC5Lww==}
@@ -2616,8 +2616,8 @@ packages:
     resolution: {integrity: sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ==}
     engines: {node: '>= 0.8.0'}
 
-  libphonenumber-js@1.12.25:
-    resolution: {integrity: sha512-u90tUu/SEF8b+RaDKCoW7ZNFDakyBtFlX1ex3J+VH+ElWes/UaitJLt/w4jGu8uAE41lltV/s+kMVtywcMEg7g==}
+  libphonenumber-js@1.12.31:
+    resolution: {integrity: sha512-Z3IhgVgrqO1S5xPYM3K5XwbkDasU67/Vys4heW+lfSBALcUZjeIIzI8zCLifY+OCzSq+fpDdywMDa7z+4srJPQ==}
 
   lines-and-columns@1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
@@ -2715,8 +2715,8 @@ packages:
   no-case@3.0.4:
     resolution: {integrity: sha512-fgAN3jGAh+RoxUGZHTSOLJIqUc2wmoBwGR4tbpNAKmmovFoWq0OdRkb0VkldReO2a2iBT/OEulG9XSUc10r3zg==}
 
-  node-abi@3.78.0:
-    resolution: {integrity: sha512-E2wEyrgX/CqvicaQYU3Ze1PFGjc4QYPGsjUrlYkqAE0WjHEZwgOsGMPMzkMse4LjJbDmaEuDX3CM036j5K2DSQ==}
+  node-abi@3.85.0:
+    resolution: {integrity: sha512-zsFhmbkAzwhTft6nd3VxcG0cvJsT70rL+BIGHWVq5fi6MwGrHwzqKaxXE+Hl2GmnGItnDKPPkO5/LQqjVkIdFg==}
     engines: {node: '>=10'}
 
   node-addon-api@3.2.1:
@@ -3449,8 +3449,8 @@ packages:
     resolution: {integrity: sha512-6z3GW9x8G1gd+JIIgQQQxXuiJtCXeAjp6RaPEPLv62mH3iPHPxV6W3robxtCzNErRo6ZwTmzWhsbNvjyEBKzKA==}
     engines: {node: '>=10.12.0'}
 
-  validator@13.15.20:
-    resolution: {integrity: sha512-KxPOq3V2LmfQPP4eqf3Mq/zrT0Dqp2Vmx2Bn285LwVahLc+CsxOM0crBHczm8ijlcjZ0Q5Xd6LW3z3odTPnlrw==}
+  validator@13.15.23:
+    resolution: {integrity: sha512-4yoz1kEWqUjzi5zsPbAS/903QXSYp0UOtHsPpp7p9rHAw/W+dkInskAE386Fat3oKRROwO98d9ZB0G4cObgUyw==}
     engines: {node: '>= 0.10'}
 
   walker@1.0.8:
@@ -4357,33 +4357,33 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.1
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  '@ledgerhq/devices@8.6.1':
+  '@ledgerhq/devices@8.7.0':
     dependencies:
-      '@ledgerhq/errors': 6.26.0
+      '@ledgerhq/errors': 6.27.0
       '@ledgerhq/logs': 6.13.0
       rxjs: 7.8.2
       semver: 7.7.3
 
-  '@ledgerhq/errors@6.26.0': {}
+  '@ledgerhq/errors@6.27.0': {}
 
   '@ledgerhq/hw-app-solana@7.1.2':
     dependencies:
-      '@ledgerhq/errors': 6.26.0
-      '@ledgerhq/hw-transport': 6.31.12
+      '@ledgerhq/errors': 6.27.0
+      '@ledgerhq/hw-transport': 6.31.13
       bip32-path: 0.4.2
 
   '@ledgerhq/hw-transport-node-hid-noevents@6.29.2':
     dependencies:
-      '@ledgerhq/devices': 8.6.1
-      '@ledgerhq/errors': 6.26.0
-      '@ledgerhq/hw-transport': 6.31.12
+      '@ledgerhq/devices': 8.7.0
+      '@ledgerhq/errors': 6.27.0
+      '@ledgerhq/hw-transport': 6.31.13
       '@ledgerhq/logs': 6.13.0
       node-hid: 2.2.0
 
-  '@ledgerhq/hw-transport@6.31.12':
+  '@ledgerhq/hw-transport@6.31.13':
     dependencies:
-      '@ledgerhq/devices': 8.6.1
-      '@ledgerhq/errors': 6.26.0
+      '@ledgerhq/devices': 8.7.0
+      '@ledgerhq/errors': 6.27.0
       '@ledgerhq/logs': 6.13.0
       events: 3.3.0
 
@@ -4444,9 +4444,9 @@ snapshots:
       jest-mock: 29.7.0
       spawn-with-mocks: 1.0.2
 
-  '@marinade.finance/ledger-utils@3.1.0(@ledgerhq/errors@6.26.0)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@4.0.0)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))':
+  '@marinade.finance/ledger-utils@3.1.0(@ledgerhq/errors@6.27.0)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@4.0.0)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))':
     dependencies:
-      '@ledgerhq/errors': 6.26.0
+      '@ledgerhq/errors': 6.27.0
       '@ledgerhq/hw-app-solana': 7.1.2
       '@ledgerhq/hw-transport-node-hid-noevents': 6.29.2
       '@marinade.finance/ts-common': 4.0.0
@@ -4486,10 +4486,10 @@ snapshots:
     dependencies:
       decimal.js: 10.6.0
 
-  '@marinade.finance/web3js-1x@4.0.0(@jest/globals@30.1.2)(@marinade.finance/ledger-utils@3.1.0(@ledgerhq/errors@6.26.0)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@4.0.0)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)))(@marinade.finance/ts-common@4.0.0)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))(@types/bn.js@5.2.0)(bn.js@5.2.2)(borsh@0.7.0)(bs58@6.0.0)':
+  '@marinade.finance/web3js-1x@4.0.0(@jest/globals@30.1.2)(@marinade.finance/ledger-utils@3.1.0(@ledgerhq/errors@6.27.0)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@4.0.0)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)))(@marinade.finance/ts-common@4.0.0)(@solana/buffer-layout@4.0.1)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))(@types/bn.js@5.2.0)(bn.js@5.2.2)(borsh@0.7.0)(bs58@6.0.0)':
     dependencies:
       '@jest/globals': 30.1.2
-      '@marinade.finance/ledger-utils': 3.1.0(@ledgerhq/errors@6.26.0)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@4.0.0)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
+      '@marinade.finance/ledger-utils': 3.1.0(@ledgerhq/errors@6.27.0)(@ledgerhq/hw-app-solana@7.1.2)(@ledgerhq/hw-transport-node-hid-noevents@6.29.2)(@marinade.finance/ts-common@4.0.0)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))
       '@marinade.finance/ts-common': 4.0.0
       '@solana/buffer-layout': 4.0.1
       '@solana/web3.js': 1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
@@ -4823,7 +4823,7 @@ snapshots:
 
   '@types/uuid@8.3.4': {}
 
-  '@types/validator@13.15.3': {}
+  '@types/validator@13.15.10': {}
 
   '@types/ws@7.4.7':
     dependencies:
@@ -5409,9 +5409,9 @@ snapshots:
 
   class-validator@0.14.2:
     dependencies:
-      '@types/validator': 13.15.3
-      libphonenumber-js: 1.12.25
-      validator: 13.15.20
+      '@types/validator': 13.15.10
+      libphonenumber-js: 1.12.31
+      validator: 13.15.23
 
   cliui@8.0.1:
     dependencies:
@@ -6946,7 +6946,7 @@ snapshots:
       prelude-ls: 1.2.1
       type-check: 0.4.0
 
-  libphonenumber-js@1.12.25: {}
+  libphonenumber-js@1.12.31: {}
 
   lines-and-columns@1.2.4: {}
 
@@ -7028,7 +7028,7 @@ snapshots:
       lower-case: 2.0.2
       tslib: 2.6.1
 
-  node-abi@3.78.0:
+  node-abi@3.85.0:
     dependencies:
       semver: 7.7.3
 
@@ -7227,7 +7227,7 @@ snapshots:
       minimist: 1.2.8
       mkdirp-classic: 0.5.3
       napi-build-utils: 2.0.0
-      node-abi: 3.78.0
+      node-abi: 3.85.0
       pump: 3.0.3
       rc: 1.2.8
       simple-get: 4.0.1
@@ -7859,7 +7859,7 @@ snapshots:
       '@types/istanbul-lib-coverage': 2.0.4
       convert-source-map: 1.9.0
 
-  validator@13.15.20: {}
+  validator@13.15.23: {}
 
   walker@1.0.8:
     dependencies:
