@@ -56,6 +56,6 @@
     "@solana/spl-token-3.x": "npm:@solana/spl-token@^0.3.11"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.13.0"
   }
 }
