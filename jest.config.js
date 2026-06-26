@@ -10,6 +10,6 @@ module.exports = {
   globalSetup:
     '<rootDir>/packages/marinade-ts-cli/__tests__/setup/globalSetup.ts',
   setupFilesAfterEnv: [
-    '<rootDir>/packages/marinade-ts-cli/node_modules/@marinade.finance/web3js-1x/dist/src/equalityTesters',
+    '<rootDir>/packages/marinade-ts-cli/node_modules/@marinade.finance/marinade-ts-sdk/dist/test/setup/equalityTesters',
   ],
 }
