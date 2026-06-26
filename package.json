@@ -37,24 +37,6 @@
     "typescript": "5.4.5"
   },
   "engines": {
-    "node": ">=16.0.0"
-  },
-  "pnpm": {
-    "overrides": {
-      "semver@<6.3.1": "6.3.1",
-      "micromatch@<4.0.8": "4.0.8",
-      "base-x@<3.0.11": "3.0.11",
-      "base-x@4.0.0": "4.0.1",
-      "base-x@5.0.0": "5.0.1",
-      "@babel/helpers@<7.26.10": "7.27.1",
-      "@babel/runtime@<7.26.10": "7.27.1"
-    },
-    "onlyBuiltDependencies": [
-      "bigint-buffer",
-      "bufferutil",
-      "node-hid",
-      "unrs-resolver",
-      "utf-8-validate"
-    ]
+    "node": ">=20.0.0"
   }
 }

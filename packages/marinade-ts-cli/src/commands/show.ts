@@ -75,7 +75,7 @@ async function show({
   } = await connection.getTokenAccountBalance(state.liqPool.msolLeg)
   const mSolLegBalance = new BN(amount)
 
-  const solLeg = await marinadeState.solLeg() // @todo fetch from Marinade instead?, rm await
+  const solLeg = marinadeState.solLeg() // @todo fetch from Marinade instead?
   const solLegBalance = new BN(await connection.getBalance(solLeg)).sub(
     state.rentExemptForTokenAcc
   )
@@ -214,6 +214,12 @@ async function show({
       state.withdrawStakeAccountFee.bpCents / 10000
     }%`,
     state.withdrawStakeAccountEnabled ? 'enabled' : 'disabled'
+  )
+  console.log(`  Deposit SOL Fee: ${state.depositSolFee.bpCents / 10000}%`)
+  console.log(
+    `  Deposit Stake Account Fee: ${
+      state.depositStakeAccountFee.bpCents / 10000
+    }%`
   )
   console.log(`  Max stake moved per epoch: ${maxStakeMovedPerEpoch}%`)
   console.log(`  Stake moved: ${state.stakeMoved.toString()} epoch`)

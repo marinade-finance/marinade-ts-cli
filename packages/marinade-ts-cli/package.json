@@ -1,6 +1,6 @@
 {
   "name": "@marinade.finance/marinade-ts-cli",
-  "version": "5.2.0",
+  "version": "6.0.0",
   "description": "Marinade typescript-based CLI",
   "license": "ISC",
   "author": "Marinade.Finance",
@@ -47,7 +47,7 @@
     "@marinade.finance/ts-common": "4.0.0",
     "@marinade.finance/cli-common": "4.0.0",
     "@marinade.finance/web3js-1x": "4.0.0",
-    "@marinade.finance/marinade-ts-sdk": "5.0.15",
+    "@marinade.finance/marinade-ts-sdk": "6.0.0",
     "@anza-xyz/solana-rpc-get-stake-activation": "1.0.1"
   },
   "devDependencies": {
