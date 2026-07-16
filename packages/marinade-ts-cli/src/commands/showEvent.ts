@@ -33,14 +33,14 @@ function showEvent({ eventData }: { eventData: string }) {
     .trim()
   const decodedData =
     marinade.marinadeFinanceProgram.program.coder.events.decode(
-      eventDataTrimmed
+      eventDataTrimmed,
     ) ??
     marinade.marinadeReferralProgram.program.coder.events.decode(
-      eventDataTrimmed
+      eventDataTrimmed,
     )
   if (decodedData === null) {
     throw new Error(
-      'Failed to decode event data as MarinadeFinance (liquid-staking-program) or MarinadeReferral (/liquid-staking-referral-program) event'
+      'Failed to decode event data as MarinadeFinance (liquid-staking-program) or MarinadeReferral (/liquid-staking-referral-program) event',
     )
   }
 

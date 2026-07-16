@@ -44,7 +44,7 @@ describe.skip('Withdraw stake account using CLI', () => {
 
     const msolTokenBefore = await getAccount(
       CONNECTION,
-      associatedMSolTokenAccountAddress
+      associatedMSolTokenAccountAddress,
     )
     const toWithdraw = 321 * LAMPORTS_PER_SOL
 
@@ -73,10 +73,10 @@ describe.skip('Withdraw stake account using CLI', () => {
 
     const msolTokenAfter = await getAccount(
       CONNECTION,
-      associatedMSolTokenAccountAddress
+      associatedMSolTokenAccountAddress,
     )
     expect(msolTokenAfter.amount).toBe(
-      msolTokenBefore.amount - BigInt(toWithdraw)
+      msolTokenBefore.amount - BigInt(toWithdraw),
     )
   })
 })

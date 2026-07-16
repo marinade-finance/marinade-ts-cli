@@ -14,7 +14,7 @@ export function installDepositStakeAccount(program: Command) {
     .option(
       '-r, --referral <referral-code>',
       'Use the referral code for depositing stake account',
-      parsePubkey
+      parsePubkey,
     )
     .action(
       async (
@@ -23,13 +23,13 @@ export function installDepositStakeAccount(program: Command) {
           referralCode,
         }: {
           referralCode: Promise<PublicKey>
-        }
+        },
       ) => {
         await depositStakeAccount({
           stakeAccount: await stakeAccount,
           referralCode: await referralCode,
         })
-      }
+      },
     )
 }
 
@@ -52,7 +52,7 @@ export async function depositStakeAccount({
   logger.info(
     'Depositing stake account: %s from wallet key %s',
     stakeAccount.toBase58(),
-    wallet.publicKey.toBase58()
+    wallet.publicKey.toBase58(),
   )
 
   const marinadeConfig = new MarinadeConfig({
@@ -78,6 +78,6 @@ export async function depositStakeAccount({
     'Successfully deposited stake account %s from wallet key %s (validator vote address: %s, referral code: %s)',
     stakeAccount.toBase58(),
     wallet.publicKey.toBase58(),
-    referralCode?.toBase58() || 'none'
+    referralCode?.toBase58() || 'none',
   )
 }
