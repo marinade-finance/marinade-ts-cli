@@ -3,6 +3,7 @@ import {
   MarinadeUtils,
   MarinadeConfig,
 } from '@marinade.finance/marinade-ts-sdk'
+import { lamportsToSol } from '@marinade.finance/ts-common'
 import { parsePubkey } from '@marinade.finance/web3js-1x'
 import { BN } from 'bn.js'
 
@@ -346,9 +347,9 @@ async function listValidatorsWithStake(marinadeState: MarinadeState) {
       const delegation = stakeInfo.stake.Stake?.stake
         .delegation as MarinadeBorsh.Delegation
       const meta = stakeInfo.stake.Stake?.meta as MarinadeBorsh.Meta
-      const extraBalance = MarinadeUtils.lamportsToSol(
-        stakeInfo.balance.sub(delegation.stake).sub(meta.rentExemptReserve),
-      )
+      const balanceOffset = stakeInfo.balance
+        .sub(delegation.stake)
+        .sub(meta.rentExemptReserve)
 
       console.log(
         `  ${
@@ -357,7 +358,7 @@ async function listValidatorsWithStake(marinadeState: MarinadeState) {
           ` ${MarinadeUtils.lamportsToSol(
             delegation ? delegation.stake : new BN(0),
           )} activation_epoch:${delegation.activationEpoch.toString()}` +
-          (extraBalance > 0 ? ` (extra balance ${extraBalance})` : ''),
+          balanceOffsetNote(balanceOffset),
       )
 
       totalStaked = totalStaked.add(delegation.stake)
@@ -398,9 +399,9 @@ async function listValidatorsWithStake(marinadeState: MarinadeState) {
       const delegation = stakeInfo.stake.Stake?.stake.delegation
       if (delegation) {
         const meta = stakeInfo.stake.Stake?.meta as MarinadeBorsh.Meta
-        const extraBalance = MarinadeUtils.lamportsToSol(
-          stakeInfo.balance.sub(delegation.stake).sub(meta.rentExemptReserve),
-        )
+        const balanceOffset = stakeInfo.balance
+          .sub(delegation.stake)
+          .sub(meta.rentExemptReserve)
 
         console.log(
           `  ${
@@ -409,7 +410,7 @@ async function listValidatorsWithStake(marinadeState: MarinadeState) {
             ` ${MarinadeUtils.lamportsToSol(
               delegation ? delegation.stake : new BN(0),
             )} to ${delegation.voterPubkey.toBase58()}` +
-            (extraBalance > 0 ? ` (extra balance ${extraBalance})` : ''),
+            balanceOffsetNote(balanceOffset),
         )
       } else {
         console.log(
@@ -420,6 +421,19 @@ async function listValidatorsWithStake(marinadeState: MarinadeState) {
       }
     })
   }
+}
+
+// the program requires balance == delegation + meta.rentExemptReserve, and SIMD-0437 froze the reserve above the live rent
+export function balanceOffsetNote(
+  offsetLamports: InstanceType<typeof BN>,
+): string {
+  if (offsetLamports.isZero()) {
+    return ''
+  }
+  const sol = lamportsToSol(BigInt(offsetLamports.abs().toString()))
+  return offsetLamports.isNeg()
+    ? ` (missing balance ${sol})`
+    : ` (extra balance ${sol})`
 }
 
 function aligned(label: string, n: number): string {

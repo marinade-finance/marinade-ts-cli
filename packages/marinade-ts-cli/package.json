@@ -47,7 +47,7 @@
     "@marinade.finance/ts-common": "4.3.1",
     "@marinade.finance/cli-common": "4.3.1",
     "@marinade.finance/web3js-1x": "4.3.1",
-    "@marinade.finance/marinade-ts-sdk": "6.0.0",
+    "@marinade.finance/marinade-ts-sdk": "6.1.0",
     "@anza-xyz/solana-rpc-get-stake-activation": "1.0.1"
   },
   "devDependencies": {

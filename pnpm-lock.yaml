@@ -100,8 +100,8 @@ importers:
         specifier: 3.2.1
         version: 3.2.1(@marinade.finance/ts-common@4.3.1)(@solana/web3.js@1.98.4(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10))(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.4.5)
       '@marinade.finance/marinade-ts-sdk':
-        specifier: 6.0.0
-        version: 6.0.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.4.5)(utf-8-validate@5.0.10)
+        specifier: 6.1.0
+        version: 6.1.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.4.5)(utf-8-validate@5.0.10)
       '@marinade.finance/ts-common':
         specifier: 4.3.1
         version: 4.3.1
@@ -700,8 +700,8 @@ packages:
       '@marinade.finance/ts-common': ^4.2.0
       '@solana/web3.js': ^1.98.4
 
-  '@marinade.finance/marinade-ts-sdk@6.0.0':
-    resolution: {integrity: sha512-XYY3+cxvXS//zFmPPtA2sestNVZD6bpEOEcZTTeangf5J5JofpIEk10E8+00NKnc3wCr4anuTMMdRbLTrAypcA==}
+  '@marinade.finance/marinade-ts-sdk@6.1.0':
+    resolution: {integrity: sha512-A87KNY8oLjEav1P7BPgFppNup0RkVN5ciPGQsDhurM04UdLfN9DrBN26IRHVpaQBneAbdA9c+mdfEsap6E3MZw==}
     engines: {anchor: '>=0.28.0', node: '>=20.0.0'}
 
   '@marinade.finance/native-staking-sdk@1.1.0':
@@ -2055,6 +2055,7 @@ packages:
   eslint@9.35.0:
     resolution: {integrity: sha512-QePbBFMJFjgmlE+cXAlbHZbHpdFVS2E/6vzCy7aKlebddvl1vadiC4JFV5u/wqTkNUwEV8WrQi257jf5f06hrg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+    deprecated: This version is no longer supported. Please see https://eslint.org/version-support for other options.
     hasBin: true
     peerDependencies:
       jiti: '*'
@@ -4599,7 +4600,7 @@ snapshots:
       - fastestsmallesttextencoderdecoder
       - typescript
 
-  '@marinade.finance/marinade-ts-sdk@6.0.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.4.5)(utf-8-validate@5.0.10)':
+  '@marinade.finance/marinade-ts-sdk@6.1.0(bufferutil@4.0.8)(fastestsmallesttextencoderdecoder@1.0.22)(typescript@5.4.5)(utf-8-validate@5.0.10)':
     dependencies:
       '@coral-xyz/anchor': 0.28.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
       '@marinade.finance/native-staking-sdk': 1.1.0(bufferutil@4.0.8)(typescript@5.4.5)(utf-8-validate@5.0.10)
