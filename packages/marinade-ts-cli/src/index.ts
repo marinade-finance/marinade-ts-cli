@@ -17,7 +17,7 @@ logger.level = 'debug'
 
 const program = new Command('marinade')
 program
-  .version('6.0.0')
+  .version('6.1.0')
   .allowExcessArguments(false)
   .option(
     '-u, --url <url-or-moniker>',
